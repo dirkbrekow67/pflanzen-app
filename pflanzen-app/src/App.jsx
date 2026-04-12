@@ -1,3 +1,5 @@
+import PotCard from './components/PotCard'
+
 function App() {
   const pots = [
     { id: 'TOPF-001', plantName: 'Tomate', sowingDate: '12.04.2026' },
@@ -6,16 +8,17 @@ function App() {
   ]
 
   return (
-    <div>
+    <div style={{padding: '20px'}}>
       <h1>Pflanzen App 🌱</h1>
       <p>Meine ersten Töpfe</p>
 
       {pots.map((pot) => (
-        <div key={pot.id}>
-          <h2>{pot.id}</h2>
-          <p>Pflanze: {pot.plantName}</p>
-          <p>Aussaatdatum: {pot.sowingDate}</p>
-        </div>
+        <PotCard
+        key={pot.id}
+        id={pot.id}
+        plantName={pot.plantName}
+        sowingDate={pot.sowingDate}
+        />
       ))}
     </div>
   )
