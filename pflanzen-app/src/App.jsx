@@ -1,12 +1,13 @@
+// 1. externe Bibliotheken
+
+// 2. interne Komponenten
 import PotCard from './components/PotCard'
+// 3. Daten / Assets
+import pots from './data/pots.json'
+// 4. Styles (falls vorhanden)
+
 
 function App() {
-  const pots = [
-    { id: 'TOPF-001', plantName: 'Tomate', sowingDate: '12.04.2026' },
-    { id: 'TOPF-002', plantName: 'Basilikum', sowingDate: '10.04.2026' },
-    { id: 'TOPF-003', plantName: 'Paprika', sowingDate: '08.04.2026' },
-  ]
-
   return (
     <div style={{padding: '20px'}}>
       <h1>Pflanzen App 🌱</h1>
