@@ -1,16 +1,20 @@
-function PotCard(props) {
+function PotCard({id, plantName, sowingDate}) {
   return (
     <div
       style={{
-        border: '1px solid #ccc',
+        border: '2px dashed green',
         padding: '12px',
         marginBottom: '12px',
         borderRadius: '8px',
+        backgroundColor: '#f9f9f9',
       }}
     >
-      <h2>{props.id}</h2>
-      <p>Pflanze: {props.plantName}</p>
-      <p>Aussaatdatum: {props.sowingDate}</p>
+      <h2 style={{
+        color: 'green',
+        marginTop: 0
+        }}>{id}</h2>
+      <p>Pflanze: {plantName}</p>
+      <p>Aussaatdatum: {sowingDate}</p>
     </div>
   )
 }
