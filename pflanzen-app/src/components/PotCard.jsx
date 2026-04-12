@@ -1,6 +1,7 @@
-function PotCard({id, plantName, sowingDate}) {
+function PotCard({id, plantName, sowingDate, onSelect}) {
   return (
     <div
+        onClick={onSelect}
       style={{
         border: '2px dashed green',
         padding: '12px',
