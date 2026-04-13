@@ -25,6 +25,7 @@ function App() {
         plantName={pot.plantName}
         sowingDate={pot.sowingDate}
         onSelect={() => handleSelectedPot(pot)}
+        isSelected={selectedPot?.id === pot.id}
         />
       ))}
       <hr style={{margin: '24px 0'}}/>
