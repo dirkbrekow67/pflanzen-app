@@ -12,6 +12,7 @@ function App() {
   const [pots, setPots] = useState(initialPots)
   const [selectedPot, setSelectedPot] = useState(null)
   const [newPlantName, setNewPlantName] = useState('')
+  const [newLifeCycle, setNewLifeCycle] = useState('annual')
   
 
   function handleSelectedPot(pot) {
@@ -22,7 +23,7 @@ function App() {
     if (!newPlantName) return
 
     const newPot = {
-      id: 'Topf-' + (pots.length + 1).toString().padStart(3, '0'),
+      id: 'TOPF-' + (pots.length + 1).toString().padStart(3, '0'),
       plantName: newPlantName,
       sowingDate: new Date().toLocaleDateString(),
       sowingDepthCm: 1,
@@ -32,7 +33,7 @@ function App() {
       germinationDaysMax: 20,
       outdoorFromMonth: 'Mai',
       outdoorToMonth: 'Juli',
-      lifecycle: 'annual'
+      lifecycle: newLifeCycle
     }
     setPots([...pots, newPot])
     setNewPlantName('')
@@ -50,7 +51,22 @@ function App() {
       onChange={(e) => setNewPlantName(e.target.value)}
       />
 
-      <button onClick={handleAddPot}Hinzufügen></button>
+      <select
+      value={newLifeCycle}
+      onChange={(e) => setNewLifeCycle(e.target.value)}
+      >
+        <option value="annual">Einjährig</option>
+        <option value="biennal">Zweijährig</option>
+        <option value="prennial">Mehrjährig</option>
+      </select>
+
+      <button onClick={handleAddPot}
+      style={{
+        marginLeft: '10px',
+        padding: '8px 16px',
+        fontSize: '16px',
+        cursor: 'pointer'
+      }}>Hinzufügen</button>
 
       {pots.map((pot) => (
         <PotCard
