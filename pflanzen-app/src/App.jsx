@@ -2,6 +2,7 @@
 import { useState } from 'react'
 // 2. interne Komponenten
 import PotCard from './components/PotCard'
+import PotDetails from './components/PotDetails'
 // 3. Daten / Assets
 import pots from './data/pots.json'
 // 4. Styles (falls vorhanden)
@@ -30,18 +31,8 @@ function App() {
       ))}
       <hr style={{margin: '24px 0'}}/>
 
-      <h2>Ausgewählter Pot</h2>
-
-      {selectedPot ? (
-        <div>
-          <p><strong>ID:</strong> {selectedPot.id}</p>
-          <p><strong>Pflanze:</strong> {selectedPot.plantName}</p>
-          <p><strong>Aussaatdatum</strong> {selectedPot.sowingDate}</p>
-        </div>
-      ) : (
-        <p>Bite wähle einen Topf aus.</p>
-      )}
-    </div>
+      <PotDetails pot={selectedPot} />
+      </div>
   )
 }
 
