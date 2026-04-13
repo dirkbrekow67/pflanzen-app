@@ -17,6 +17,8 @@ function App() {
   const [newGerminationTempMax, setNewGerminationTempMax] = useState(20)
   const [newGerminationDaysMin, setNewGerminationDaysMin] = useState(10)
   const [newGerminationDaysMax, setNewGerminationDaysMax] = useState(20)
+  const [newSowingDepthCm, setNewSowingDepthCm] = useState(1)
+  const [newSowingDate, setNewSowingDate] = useState('')
   
 
   function handleSelectedPot(pot) {
@@ -29,8 +31,8 @@ function App() {
     const newPot = {
       id: 'TOPF-' + (pots.length + 1).toString().padStart(3, '0'),
       plantName: newPlantName,
-      sowingDate: new Date().toLocaleDateString(),
-      sowingDepthCm: 1,
+      sowingDate: newSowingDate || new Date().toLocaleDateString(),
+      sowingDepthCm: Number(newSowingDepthCm),
       germinationTempMin: Number(newGerminationTempMin),
       germinationTempMax: Number(newGerminationTempMax),
       germinationDaysMin: Number(newGerminationDaysMin),
@@ -46,6 +48,8 @@ function App() {
     setNewGerminationTempMax(20)
     setNewGerminationDaysMin(10)
     setNewGerminationDaysMax(20)
+    setNewSowingDepthCm(1)
+    setNewSowingDate('')
   } 
 
   return (
@@ -96,8 +100,22 @@ function App() {
           onChange={(e) => setNewGerminationDaysMax(e.target.value)}
           style={{ marginLeft: '8px' }} />
 
+        </div>
 
-      </div>
+        <div style={{marginTop: '12px'}}>
+          <input
+            type='number'
+            placeholder='Aussaattiefe in cm'
+            value={newSowingDepthCm}
+            onChange={(e) => setNewSowingDepthCm(e.target.value)}/>
+          
+          <input 
+            type="date"
+            placeholder='Aussaatdatum'
+            value={newSowingDate}
+            onChange={(e) => setNewSowingDate(e.target.value)} />
+
+        </div>
 
       <button onClick={handleAddPot}
       style={{
