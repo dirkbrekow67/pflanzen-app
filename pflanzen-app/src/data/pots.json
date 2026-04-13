@@ -1,17 +1,41 @@
 [
   {
     "id": "TOPF-001",
-    "plantName": "Tomate",
-    "sowingDate": "12.04.2026"
+    "plantName": "Estragon",
+    "sowingDate": "12.04.2026",
+    "sowingDepthCm": 1,
+    "germinationTempMin": 10,
+    "germinationTempMax": 22,
+    "germinationDaysMin": 14,
+    "germinationDaysMax": 20,
+    "outdoorFromMonth": "Mai",
+    "outdoorToMonth": "August",
+    "lifecycle": "perennial"
   },
   {
     "id": "TOPF-002",
-    "plantName": "Basilikum",
-    "sowingDate": "10.04.2026"
+    "plantName": "Dill",
+    "sowingDate": "10.04.2026",
+    "sowingDepthCm": 1,
+    "germinationTempMin": 15,
+    "germinationTempMax": 20,
+    "germinationDaysMin": 15,
+    "germinationDaysMax": 20,
+    "outdoorFromMonth": "April",
+    "outdoorToMonth": "Juni",
+    "lifecycle": "annual"
   },
   {
     "id": "TOPF-003",
-    "plantName": "Paprika",
-    "sowingDate": "08.04.2026"
+    "plantName": "Petersilie",
+    "sowingDate": "08.04.2026",
+    "sowingDepthCm": 1,
+    "germinationTempMin": 15,
+    "germinationTempMax": 20,
+    "germinationDaysMin": 14,
+    "germinationDaysMax": 28,
+    "outdoorFromMonth": "März",
+    "outdoorToMonth": "Juli",
+    "lifecycle": "biennial"
   }
 ]

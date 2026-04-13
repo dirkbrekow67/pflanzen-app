@@ -13,6 +13,14 @@ function PotDetails({ pot }) {
             <p><strong>ID:</strong> {pot.id}</p>
             <p><strong>Pflanze:</strong> {pot.plantName}</p>
             <p><strong>Aussaatdatum:</strong> {pot.sowingDate}</p>
+            <p><strong>Aussaattiefe:</strong> {pot.sowingDepthCm} cm</p>
+            <p><strong>Keimtemperatur:</strong> {pot.germinationTempMin} bis {pot.germinationTempMax} °C</p>
+            <p><strong>Keimdauer:</strong> {pot.germinationDaysMin} bis {pot.germinationDaysMax} Tage</p>
+            <p><strong>Nach draußen:</strong> {pot.outdoorFromMonth} bis {pot.outdoorToMonth}</p>
+            <p><strong>Lebensdauer:</strong> {' '} 
+            {pot.lifecycle === 'annual' ? 'Einjährig'
+             : pot.lifecycle === 'biennial' ? 'Zweijährig'
+             : 'Mehrjährig'}</p>
         </div>
     )
 }
