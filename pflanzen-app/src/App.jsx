@@ -12,7 +12,11 @@ function App() {
   const [pots, setPots] = useState(initialPots)
   const [selectedPot, setSelectedPot] = useState(null)
   const [newPlantName, setNewPlantName] = useState('')
-  const [newLifeCycle, setNewLifeCycle] = useState('annual')
+  const [newLifecycle, setNewLifecycle] = useState('annual')
+  const [newGerminationTempMin, setNewGerminationTempMin] = useState(10)
+  const [newGerminationTempMax, setNewGerminationTempMax] = useState(20)
+  const [newGerminationDaysMin, setNewGerminationDaysMin] = useState(10)
+  const [newGerminationDaysMax, setNewGerminationDaysMax] = useState(20)
   
 
   function handleSelectedPot(pot) {
@@ -27,16 +31,21 @@ function App() {
       plantName: newPlantName,
       sowingDate: new Date().toLocaleDateString(),
       sowingDepthCm: 1,
-      germinationTempMin: 10,
-      germinationTempMax: 20,
-      germinationDaysMin: 10,
-      germinationDaysMax: 20,
+      germinationTempMin: Number(newGerminationTempMin),
+      germinationTempMax: Number(newGerminationTempMax),
+      germinationDaysMin: Number(newGerminationDaysMin),
+      germinationDaysMax: Number(newGerminationDaysMax),
       outdoorFromMonth: 'Mai',
       outdoorToMonth: 'Juli',
-      lifecycle: newLifeCycle
+      lifecycle: newLifecycle
     }
     setPots([...pots, newPot])
     setNewPlantName('')
+    setNewLifecycle('annual')
+    setNewGerminationTempMin(10)
+    setNewGerminationTempMax(20)
+    setNewGerminationDaysMin(10)
+    setNewGerminationDaysMax(20)
   } 
 
   return (
@@ -52,13 +61,43 @@ function App() {
       />
 
       <select
-      value={newLifeCycle}
-      onChange={(e) => setNewLifeCycle(e.target.value)}
+      value={newLifecycle}
+      onChange={(e) => setNewLifecycle(e.target.value)}
       >
         <option value="annual">Einjährig</option>
-        <option value="biennal">Zweijährig</option>
-        <option value="prennial">Mehrjährig</option>
+        <option value="biennial">Zweijährig</option>
+        <option value="perennial">Mehrjährig</option>
       </select>
+
+      <div style={{marginTop: '12px'}}>
+        <input 
+          type="number"
+          placeholder='Keimtemp. Min'
+          value={newGerminationTempMin}
+          onChange={(e) => setNewGerminationTempMin(e.target.value)} />
+        
+        <input 
+          type="number"
+          placeholder='Keimtemp. Max.'
+          value={newGerminationTempMax}
+          onChange={(e) => setNewGerminationTempMax(e.target.value)} 
+          style={{ marginLeft: '8px' }}/>
+
+        <input 
+          type="number"
+          placeholder='Keimdauer Min.'
+          value={newGerminationDaysMin}
+          onChange={(e) => setNewGerminationDaysMin(e.target.value)} />
+
+        <input 
+          type="number"
+          placeholder='Keimdauer Max.'
+          value={newGerminationDaysMax}
+          onChange={(e) => setNewGerminationDaysMax(e.target.value)}
+          style={{ marginLeft: '8px' }} />
+
+
+      </div>
 
       <button onClick={handleAddPot}
       style={{
