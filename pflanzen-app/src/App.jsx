@@ -20,7 +20,10 @@ function App() {
     germinationDaysMax: 20,
     sowingDepthCm: 1,
     sowingDate: "",
+    outdoorFromMonth: "Mai",
+    outdoorToMonth: "Juli",
   });
+  const [formError, setFormError] = useState("");
 
   function handleSelectedPot(pot) {
     setSelectedPot(pot);
@@ -34,7 +37,31 @@ function App() {
   }
 
   function handleAddPot() {
-    if (!formData.plantName) return;
+    if (!formData.plantName.trim()) {
+      setFormError("Bitte einen Pflanzennamen eingeben!");
+      return;
+    }
+
+    if (
+      Number(formData.germinationTempMin) > Number(formData.germinationTempMax)
+    ) {
+      setFormError("Keimtemperatur min darf nicht größer als max sein.");
+      return;
+    }
+
+    if (
+      Number(formData.germinationDaysMin) > Number(formData.germinationDaysMax)
+    ) {
+      setFormError("Keimdauer min darf nicht größer als max sein!");
+      return;
+    }
+
+    if (Number(formData.sowingDepthCm) < 0) {
+      setFormError("Aussaattiefe darf nicht negativ sein!");
+      return;
+    }
+
+    setFormError("");
 
     const newPot = {
       id: "TOPF-" + (pots.length + 1).toString().padStart(3, "0"),
@@ -45,8 +72,8 @@ function App() {
       germinationTempMax: Number(formData.germinationTempMax),
       germinationDaysMin: Number(formData.germinationDaysMin),
       germinationDaysMax: Number(formData.germinationDaysMax),
-      outdoorFromMonth: "Mai",
-      outdoorToMonth: "Juli",
+      outdoorFromMonth: formData.outdoorFromMonth,
+      outdoorToMonth: formData.outdoorToMonth,
       lifecycle: formData.lifecycle,
     };
     setPots([...pots, newPot]);
@@ -59,7 +86,10 @@ function App() {
       germinationDaysMax: 20,
       sowingDepthCm: 1,
       sowingDate: "",
+      outdoorFromMonth: "Mai",
+      outdoorToMonth: "Juni",
     });
+    setFormError("");
   }
 
   return (
@@ -70,6 +100,7 @@ function App() {
         formData={formData}
         handleFormChange={handleFormChange}
         handleAddPot={handleAddPot}
+        formError={formError}
       />
       {pots.map((pot) => (
         <PotCard

@@ -1,4 +1,4 @@
-function PotForm({ formData, handleFormChange, handleAddPot }) {
+function PotForm({ formData, handleFormChange, handleAddPot, formError }) {
   return (
     <div
       style={{
@@ -10,6 +10,19 @@ function PotForm({ formData, handleFormChange, handleAddPot }) {
       }}
     >
       <h2 style={{ marginTop: 0 }}>Neuen Topf hinzufügen</h2>
+      {formError && (
+        <p
+          style={{
+            color: "darkred",
+            backgroundColor: "#ffe5e5",
+            padding: "8px",
+            borderRadius: "6px",
+            marginBottom: "16px",
+          }}
+        >
+          {formError}
+        </p>
+      )}
       <div style={{ marginBottom: "16px" }}>
         <h3 style={{ marginBottom: "8px" }}>Grunddaten</h3>
 
@@ -38,7 +51,7 @@ function PotForm({ formData, handleFormChange, handleAddPot }) {
           </select>
         </div>
       </div>
-      <div style={{ marginTop: "12px" }}>
+      <div style={{ marginBottom: "16px" }}>
         <h3 style={{ marginBottom: "8px" }}>Keimung</h3>
 
         <div style={{ marginBottom: "12px" }}>
@@ -115,6 +128,34 @@ function PotForm({ formData, handleFormChange, handleAddPot }) {
             type="date"
             value={formData.sowingDate}
             onChange={(e) => handleFormChange("sowingDate", e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div style={{ marginBottom: "16px" }}>
+        <h3 style={{ marginBottom: "8px" }}>Nach Draussen</h3>
+
+        <div style={{ marginBottom: "12px" }}>
+          <label style={{ display: "block", marginBottom: "4px" }}>
+            Nach draußen stellen von
+          </label>
+          <input
+            type="text"
+            value={formData.outdoorFromMonth}
+            onChange={(e) =>
+              handleFormChange("outdoorFromMonth", e.target.value)
+            }
+          />
+        </div>
+
+        <div style={{ marginBottom: "12px" }}>
+          <label style={{ display: "block", marginBottom: "4px" }}>
+            Nach draussen stellen bis
+          </label>
+          <input
+            type="text"
+            value={formData.outdoorToMonth}
+            onChange={(e) => handleFormChange("outdoorToMonth", e.target.value)}
           />
         </div>
       </div>
