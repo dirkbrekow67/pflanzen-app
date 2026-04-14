@@ -69,34 +69,53 @@ function App() {
         <div style={{ marginBottom: "16px" }}>
           <h3 style={{ marginBottom: "8px" }}>Grunddaten</h3>
 
-          <input
-            type="text"
-            placeholder="Pflanzenname"
-            value={newPlantName}
-            onChange={(e) => setNewPlantName(e.target.value)}
-          />
+          <div style={{ marginBottom: "12px" }}>
+            <label style={{ display: "block", marginBottom: "4px" }}>
+              Pflanzenname
+            </label>
+            <input
+              type="text"
+              placeholder="Pflanzenname"
+              value={newPlantName}
+              onChange={(e) => setNewPlantName(e.target.value)}
+            />
+          </div>
 
-          <select
-            value={newLifecycle}
-            onChange={(e) => setNewLifecycle(e.target.value)}
-            style={{ marginLeft: "8px" }}
-          >
-            <option value="annual">Einjährig</option>
-            <option value="biennial">Zweijährig</option>
-            <option value="perennial">Mehrjährig</option>
-          </select>
+          <div style={{ marginBottom: "12px" }}>
+            <label style={{ display: "block", marginBottom: "4px" }}>
+              Lebenszyklus
+            </label>
+            <select
+              value={newLifecycle}
+              onChange={(e) => setNewLifecycle(e.target.value)}
+              style={{ marginLeft: "8px" }}
+            >
+              <option value="annual">Einjährig</option>
+              <option value="biennial">Zweijährig</option>
+              <option value="perennial">Mehrjährig</option>
+            </select>
+          </div>
         </div>
 
         <div style={{ marginTop: "12px" }}>
           <h3 style={{ marginBottom: "8px" }}>Keimung</h3>
-          <div>
+
+          <div style={{ marginBottom: "12px" }}>
+            <label style={{ display: "block", marginBottom: "4px" }}>
+              Keimtemperatur min (°C)
+            </label>
             <input
               type="number"
               placeholder="Keimtemp. Min"
               value={newGerminationTempMin}
               onChange={(e) => setNewGerminationTempMin(e.target.value)}
             />
+          </div>
 
+          <div style={{ marginBottom: "12px" }}>
+            <label style={{ display: "block", marginBottom: "4px" }}>
+              Keimtemperatur max (°C)
+            </label>
             <input
               type="number"
               placeholder="Keimtemp. Max."
@@ -106,14 +125,22 @@ function App() {
             />
           </div>
 
-          <div style={{ marginTop: "8px" }}>
+          <div style={{ marginBottom: "12px" }}>
+            <label style={{ display: "block", marginBottom: "4px" }}>
+              Keimdauer min (Tage)
+            </label>
             <input
               type="number"
               placeholder="Keimdauer Min."
               value={newGerminationDaysMin}
               onChange={(e) => setNewGerminationDaysMin(e.target.value)}
             />
+          </div>
 
+          <div style={{ marginBottom: "12px" }}>
+            <label style={{ display: "block", marginBottom: "4px" }}>
+              Keimdauer max (Tage)
+            </label>
             <input
               type="number"
               placeholder="Keimdauer Max."
@@ -126,19 +153,30 @@ function App() {
 
         <div style={{ marginBottom: "16px" }}>
           <h3 style={{ marginBottom: "8px" }}>Aussaat</h3>
-          <input
-            type="number"
-            placeholder="Aussaattiefe in cm"
-            value={newSowingDepthCm}
-            onChange={(e) => setNewSowingDepthCm(e.target.value)}
-          />
 
-          <input
-            type="date"
-            value={newSowingDate}
-            onChange={(e) => setNewSowingDate(e.target.value)}
-            style={{ marginLeft: "8px" }}
-          />
+          <div style={{ marginBottom: "12px" }}>
+            <label style={{ display: "block", marginBottom: "4px" }}>
+              Aussaattiefe (cm)
+            </label>
+            <input
+              type="number"
+              placeholder="Aussaattiefe in cm"
+              value={newSowingDepthCm}
+              onChange={(e) => setNewSowingDepthCm(e.target.value)}
+            />
+          </div>
+
+          <div style={{ marginBottom: "12px" }}>
+            <label style={{ display: "block", marginBottom: "4px" }}>
+              Aussaatdatum
+            </label>
+            <input
+              type="date"
+              value={newSowingDate}
+              onChange={(e) => setNewSowingDate(e.target.value)}
+              style={{ marginLeft: "8px" }}
+            />
+          </div>
         </div>
 
         <button
