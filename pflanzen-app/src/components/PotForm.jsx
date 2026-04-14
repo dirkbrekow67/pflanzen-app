@@ -1,22 +1,4 @@
-function PotForm({
-  newPlantName,
-  setNewPlantName,
-  newLifecycle,
-  setNewLifecycle,
-  newGerminationTempMin,
-  setNewGerminationTempMin,
-  newGerminationTempMax,
-  setNewGerminationTempMax,
-  newGerminationDaysMin,
-  setNewGerminationDaysMin,
-  newGerminationDaysMax,
-  setNewGerminationDaysMax,
-  newSowingDepthCm,
-  setNewSowingDepthCm,
-  newSowingDate,
-  setNewSowingDate,
-  handleAddPot,
-}) {
+function PotForm({ formData, handleFormChange, handleAddPot }) {
   return (
     <div
       style={{
@@ -37,8 +19,8 @@ function PotForm({
           </label>
           <input
             type="text"
-            value={newPlantName}
-            onChange={(e) => setNewPlantName(e.target.value)}
+            value={formData.plantName}
+            onChange={(e) => handleFormChange("plantName", e.target.value)}
           />
         </div>
 
@@ -47,8 +29,8 @@ function PotForm({
             Lebenszyklus
           </label>
           <select
-            value={newLifecycle}
-            onChange={(e) => setNewLifecycle(e.target.value)}
+            value={formData.lifecycle}
+            onChange={(e) => handleFormChange("lifecycle", e.target.value)}
           >
             <option value="annual">Einjährig</option>
             <option value="biennial">Zweijährig</option>
@@ -65,8 +47,10 @@ function PotForm({
           </label>
           <input
             type="number"
-            value={newGerminationTempMin}
-            onChange={(e) => setNewGerminationTempMin(e.target.value)}
+            value={formData.germinationTempMin}
+            onChange={(e) =>
+              handleFormChange("germinationTempMin", e.target.value)
+            }
           />
         </div>
 
@@ -76,8 +60,10 @@ function PotForm({
           </label>
           <input
             type="number"
-            value={newGerminationTempMax}
-            onChange={(e) => setNewGerminationTempMax(e.target.value)}
+            value={formData.germinationTempMax}
+            onChange={(e) =>
+              handleFormChange("germinationTempMax", e.target.value)
+            }
           />
         </div>
 
@@ -87,8 +73,10 @@ function PotForm({
           </label>
           <input
             type="number"
-            value={newGerminationDaysMin}
-            onChange={(e) => setNewGerminationDaysMin(e.target.value)}
+            value={formData.germinationDaysMin}
+            onChange={(e) =>
+              handleFormChange("germinationDaysMin", e.target.value)
+            }
           />
         </div>
 
@@ -98,8 +86,10 @@ function PotForm({
           </label>
           <input
             type="number"
-            value={newGerminationDaysMax}
-            onChange={(e) => setNewGerminationDaysMax(e.target.value)}
+            value={formData.germinationDaysMax}
+            onChange={(e) =>
+              handleFormChange("germinationDaysMax", e.target.value)
+            }
           />
         </div>
       </div>
@@ -112,8 +102,8 @@ function PotForm({
           </label>
           <input
             type="number"
-            value={newSowingDepthCm}
-            onChange={(e) => setNewSowingDepthCm(e.target.value)}
+            value={formData.sowingDepthCm}
+            onChange={(e) => handleFormChange("sowingDepthCm", e.target.value)}
           />
         </div>
 
@@ -123,8 +113,8 @@ function PotForm({
           </label>
           <input
             type="date"
-            value={newSowingDate}
-            onChange={(e) => setNewSowingDate(e.target.value)}
+            value={formData.sowingDate}
+            onChange={(e) => handleFormChange("sowingDate", e.target.value)}
           />
         </div>
       </div>
