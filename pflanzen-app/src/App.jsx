@@ -20,8 +20,8 @@ function App() {
     germinationDaysMax: 20,
     sowingDepthCm: 1,
     sowingDate: "",
-    outdoorFromMonth: "Mai",
-    outdoorToMonth: "Juli",
+    outdoorFromMonth: 5,
+    outdoorToMonth: 7,
   });
   const [formError, setFormError] = useState("");
 
@@ -86,8 +86,8 @@ function App() {
       germinationDaysMax: 20,
       sowingDepthCm: 1,
       sowingDate: "",
-      outdoorFromMonth: "Mai",
-      outdoorToMonth: "Juni",
+      outdoorFromMonth: 5,
+      outdoorToMonth: 7,
     });
     setFormError("");
   }

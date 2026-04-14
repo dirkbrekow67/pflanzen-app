@@ -1,3 +1,18 @@
+const months = [
+  { label: "Januar", value: 1 },
+  { label: "Februar", value: 2 },
+  { label: "März", value: 3 },
+  { label: "April", value: 4 },
+  { label: "Mai", value: 5 },
+  { label: "Juni", value: 6 },
+  { label: "Juli", value: 7 },
+  { label: "August", value: 8 },
+  { label: "September", value: 9 },
+  { label: "Oktober", value: 10 },
+  { label: "November", value: 11 },
+  { label: "Dezember", value: 12 },
+];
+
 function PotForm({ formData, handleFormChange, handleAddPot, formError }) {
   return (
     <div
@@ -139,24 +154,36 @@ function PotForm({ formData, handleFormChange, handleAddPot, formError }) {
           <label style={{ display: "block", marginBottom: "4px" }}>
             Nach draußen stellen von
           </label>
-          <input
-            type="text"
+          <select
             value={formData.outdoorFromMonth}
             onChange={(e) =>
-              handleFormChange("outdoorFromMonth", e.target.value)
+              handleFormChange("outdoorFromMonth", Number(e.target.value))
             }
-          />
+          >
+            {months.map((month) => (
+              <option key={month.value} value={month.value}>
+                {month.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div style={{ marginBottom: "12px" }}>
           <label style={{ display: "block", marginBottom: "4px" }}>
             Nach draussen stellen bis
           </label>
-          <input
-            type="text"
+          <select
             value={formData.outdoorToMonth}
-            onChange={(e) => handleFormChange("outdoorToMonth", e.target.value)}
-          />
+            onChange={(e) =>
+              handleFormChange("outdoorToMonth", Number(e.target.value))
+            }
+          >
+            {months.map((month) => (
+              <option key={month.value} value={month.value}>
+                {month.label}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
