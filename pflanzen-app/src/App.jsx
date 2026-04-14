@@ -3,6 +3,7 @@ import { useState } from "react";
 // 2. interne Komponenten
 import PotCard from "./components/PotCard";
 import PotDetails from "./components/PotDetails";
+import PotForm from "./components/PotForm";
 // 3. Daten / Assets
 import initialPots from "./data/pots.json";
 // 4. Styles (falls vorhanden)
@@ -54,143 +55,25 @@ function App() {
     <div style={{ padding: "20px" }}>
       <h1>Pflanzen App 🌱</h1>
       <p>Meine ersten Töpfe</p>
-
-      <div
-        style={{
-          border: "1px solid #ccc",
-          borderRadius: "8px",
-          padding: "16px",
-          marginBottom: "24px",
-          backgroundColor: "#f7f7f7",
-        }}
-      >
-        <h2 style={{ marginTop: 0 }}>Neuen Topf hinzufügen</h2>
-
-        <div style={{ marginBottom: "16px" }}>
-          <h3 style={{ marginBottom: "8px" }}>Grunddaten</h3>
-
-          <div style={{ marginBottom: "12px" }}>
-            <label style={{ display: "block", marginBottom: "4px" }}>
-              Pflanzenname
-            </label>
-            <input
-              type="text"
-              placeholder="Pflanzenname"
-              value={newPlantName}
-              onChange={(e) => setNewPlantName(e.target.value)}
-            />
-          </div>
-
-          <div style={{ marginBottom: "12px" }}>
-            <label style={{ display: "block", marginBottom: "4px" }}>
-              Lebenszyklus
-            </label>
-            <select
-              value={newLifecycle}
-              onChange={(e) => setNewLifecycle(e.target.value)}
-              style={{ marginLeft: "8px" }}
-            >
-              <option value="annual">Einjährig</option>
-              <option value="biennial">Zweijährig</option>
-              <option value="perennial">Mehrjährig</option>
-            </select>
-          </div>
-        </div>
-
-        <div style={{ marginTop: "12px" }}>
-          <h3 style={{ marginBottom: "8px" }}>Keimung</h3>
-
-          <div style={{ marginBottom: "12px" }}>
-            <label style={{ display: "block", marginBottom: "4px" }}>
-              Keimtemperatur min (°C)
-            </label>
-            <input
-              type="number"
-              placeholder="Keimtemp. Min"
-              value={newGerminationTempMin}
-              onChange={(e) => setNewGerminationTempMin(e.target.value)}
-            />
-          </div>
-
-          <div style={{ marginBottom: "12px" }}>
-            <label style={{ display: "block", marginBottom: "4px" }}>
-              Keimtemperatur max (°C)
-            </label>
-            <input
-              type="number"
-              placeholder="Keimtemp. Max."
-              value={newGerminationTempMax}
-              onChange={(e) => setNewGerminationTempMax(e.target.value)}
-              style={{ marginLeft: "8px" }}
-            />
-          </div>
-
-          <div style={{ marginBottom: "12px" }}>
-            <label style={{ display: "block", marginBottom: "4px" }}>
-              Keimdauer min (Tage)
-            </label>
-            <input
-              type="number"
-              placeholder="Keimdauer Min."
-              value={newGerminationDaysMin}
-              onChange={(e) => setNewGerminationDaysMin(e.target.value)}
-            />
-          </div>
-
-          <div style={{ marginBottom: "12px" }}>
-            <label style={{ display: "block", marginBottom: "4px" }}>
-              Keimdauer max (Tage)
-            </label>
-            <input
-              type="number"
-              placeholder="Keimdauer Max."
-              value={newGerminationDaysMax}
-              onChange={(e) => setNewGerminationDaysMax(e.target.value)}
-              style={{ marginLeft: "8px" }}
-            />
-          </div>
-        </div>
-
-        <div style={{ marginBottom: "16px" }}>
-          <h3 style={{ marginBottom: "8px" }}>Aussaat</h3>
-
-          <div style={{ marginBottom: "12px" }}>
-            <label style={{ display: "block", marginBottom: "4px" }}>
-              Aussaattiefe (cm)
-            </label>
-            <input
-              type="number"
-              placeholder="Aussaattiefe in cm"
-              value={newSowingDepthCm}
-              onChange={(e) => setNewSowingDepthCm(e.target.value)}
-            />
-          </div>
-
-          <div style={{ marginBottom: "12px" }}>
-            <label style={{ display: "block", marginBottom: "4px" }}>
-              Aussaatdatum
-            </label>
-            <input
-              type="date"
-              value={newSowingDate}
-              onChange={(e) => setNewSowingDate(e.target.value)}
-              style={{ marginLeft: "8px" }}
-            />
-          </div>
-        </div>
-
-        <button
-          onClick={handleAddPot}
-          style={{
-            padding: "10px 18px",
-            fontSize: "16px",
-            cursor: "pointer",
-          }}
-        >
-          Hinzufügen
-        </button>
-      </div>
-
+      <PotForm
+        newPlantName={newPlantName}
+        setNewPlantName={setNewPlantName}
+        newLifecycle={newLifecycle}
+        setNewLifecycle={setNewLifecycle}
+        newGerminationTempMin={newGerminationTempMin}
+        setNewGerminationTempMin={setNewGerminationTempMin}
+        newGerminationTempMax={newGerminationTempMax}
+        setNewGerminationTempMax={setNewGerminationTempMax}
+        newGerminationDaysMin={newGerminationDaysMin}
+        setNewGerminationDaysMin={setNewGerminationDaysMin}
+        newGerminationDaysMax={newGerminationDaysMax}
+        setNewGerminationDaysMax={setNewGerminationDaysMax}
+        newSowingDepthCm={newSowingDepthCm}
+        setNewSowingDepthCm={setNewSowingDepthCm}
+        newSowingDate={newSowingDate}
+        setNewSowingDate={setNewSowingDate}
+        handleAddPot={handleAddPot}
+      />
       {pots.map((pot) => (
         <PotCard
           key={pot.id}
@@ -202,7 +85,6 @@ function App() {
         />
       ))}
       <hr style={{ margin: "24px 0" }} />
-
       <PotDetails pot={selectedPot} />
     </div>
   );
