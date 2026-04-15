@@ -8,8 +8,8 @@
     "germinationTempMax": 22,
     "germinationDaysMin": 14,
     "germinationDaysMax": 20,
-    "outdoorFromMonth": "Mai",
-    "outdoorToMonth": "August",
+    "outdoorFromMonth": 5,
+    "outdoorToMonth": 8,
     "lifecycle": "perennial"
   },
   {
@@ -21,8 +21,8 @@
     "germinationTempMax": 20,
     "germinationDaysMin": 15,
     "germinationDaysMax": 20,
-    "outdoorFromMonth": "April",
-    "outdoorToMonth": "Juni",
+    "outdoorFromMonth": 4,
+    "outdoorToMonth": 6,
     "lifecycle": "annual"
   },
   {
@@ -34,8 +34,8 @@
     "germinationTempMax": 20,
     "germinationDaysMin": 14,
     "germinationDaysMax": 28,
-    "outdoorFromMonth": "März",
-    "outdoorToMonth": "Juli",
+    "outdoorFromMonth": 3,
+    "outdoorToMonth": 7,
     "lifecycle": "biennial"
   }
 ]

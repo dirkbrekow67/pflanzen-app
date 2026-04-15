@@ -37,6 +37,15 @@ function App() {
   }
 
   function handleAddPot() {
+    const today = new Date().toISOString().split("T")[0];
+
+    if (formData.sowingDate && formData.sowingDate > today) {
+      setFormError(
+        "Das Aussaatdatum darf aktuell nicht in der Zukunft liegen.",
+      );
+      return;
+    }
+
     if (!formData.plantName.trim()) {
       setFormError("Bitte einen Pflanzennamen eingeben!");
       return;
