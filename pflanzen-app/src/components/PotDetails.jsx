@@ -16,31 +16,17 @@ const monthLabels = {
 function PotDetails({ pot }) {
   if (!pot) {
     return (
-      <div
-        style={{
-          border: "1px solid #ccc",
-          borderRadius: "8px",
-          padding: "8px",
-          backgroundColour: "#fafafa",
-        }}
-      >
+      <div className="card-light">
         <h2 style={{ marginTop: 0 }}>Ausgewählter Topf</h2>
         <p>Bitte wähle einen Topf aus.</p>
       </div>
     );
   }
   return (
-    <div
-      style={{
-        border: "1px solid #ccc",
-        borderRadius: "8px",
-        padding: "16px",
-        backgroundColor: "#fafafa",
-      }}
-    >
+    <div className="card-light">
       <h2 style={{ marginTop: 0 }}>Ausgewählter Topf</h2>
-      <div style={{ marginBottom: "16" }}>
-        <h3 style={{ marginBottom: "8px" }}>Grunddaten</h3>
+      <div className="section">
+        <h3 className="section-title">Grunddaten</h3>
         <p>
           <strong>ID:</strong> {pot.id}
         </p>
@@ -56,8 +42,8 @@ function PotDetails({ pot }) {
               : "Mehrjährig"}
         </p>
       </div>
-      <div style={{ marginBottom: "16x" }}>
-        <h3 style={{ marginBottom: "8px" }}>Keimung</h3>
+      <div className="section">
+        <h3 className="section-title">Keimung</h3>
         <p>
           <strong>Keimtemperatur:</strong> {pot.germinationTempMin} bis{" "}
           {pot.germinationTempMax} °C
@@ -68,7 +54,7 @@ function PotDetails({ pot }) {
         </p>
       </div>
       <div>
-        <h3 style={{ marginBottom: "8px" }}>Aussaat</h3>
+        <h3 className="section-title">Aussaat</h3>
         <p>
           <strong>Aussaatdatum:</strong> {pot.sowingDate}
         </p>

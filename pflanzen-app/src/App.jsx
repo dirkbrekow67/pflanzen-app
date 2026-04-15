@@ -7,6 +7,7 @@ import PotForm from "./components/PotForm";
 // 3. Daten / Assets
 import initialPots from "./data/pots.json";
 // 4. Styles (falls vorhanden)
+import "./App.css";
 
 function App() {
   const [pots, setPots] = useState(initialPots);
@@ -109,7 +110,7 @@ function App() {
   }
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="container">
       <h1>Pflanzen App 🌱</h1>
       <p>Meine ersten Töpfe</p>
       <PotForm

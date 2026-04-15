@@ -15,15 +15,7 @@ const months = [
 
 function PotForm({ formData, handleFormChange, handleAddPot, formError }) {
   return (
-    <div
-      style={{
-        border: "1px solid #ccc",
-        borderRadius: "8px",
-        padding: "16px",
-        marginBottom: "24px",
-        backgroundColor: "#f7f7f7",
-      }}
-    >
+    <div className="card">
       <h2 style={{ marginTop: 0 }}>Neuen Topf hinzufügen</h2>
       {formError && (
         <p
@@ -38,8 +30,8 @@ function PotForm({ formData, handleFormChange, handleAddPot, formError }) {
           {formError}
         </p>
       )}
-      <div style={{ marginBottom: "16px" }}>
-        <h3 style={{ marginBottom: "8px" }}>Grunddaten</h3>
+      <div className="section">
+        <h3 className="section-title">Grunddaten</h3>
 
         <div style={{ marginBottom: "12px" }}>
           <label style={{ display: "block", marginBottom: "4px" }}>
@@ -66,8 +58,8 @@ function PotForm({ formData, handleFormChange, handleAddPot, formError }) {
           </select>
         </div>
       </div>
-      <div style={{ marginBottom: "16px" }}>
-        <h3 style={{ marginBottom: "8px" }}>Keimung</h3>
+      <div className="section">
+        <h3 sclassName="section-title">Keimung</h3>
 
         <div style={{ marginBottom: "12px" }}>
           <label style={{ display: "block", marginBottom: "4px" }}>
@@ -121,8 +113,8 @@ function PotForm({ formData, handleFormChange, handleAddPot, formError }) {
           />
         </div>
       </div>
-      <div style={{ marginBottom: "16px" }}>
-        <h3 style={{ marginBottom: "8px" }}>Aussaat</h3>
+      <div className="section">
+        <h3 className="section-title">Aussaat</h3>
 
         <div style={{ marginBottom: "12px" }}>
           <label style={{ display: "block", marginBottom: "4px" }}>
@@ -147,8 +139,8 @@ function PotForm({ formData, handleFormChange, handleAddPot, formError }) {
         </div>
       </div>
 
-      <div style={{ marginBottom: "16px" }}>
-        <h3 style={{ marginBottom: "8px" }}>Nach Draussen</h3>
+      <div className="section">
+        <h3 className="section-title">Nach Draussen</h3>
 
         <div style={{ marginBottom: "12px" }}>
           <label style={{ display: "block", marginBottom: "4px" }}>
@@ -187,14 +179,7 @@ function PotForm({ formData, handleFormChange, handleAddPot, formError }) {
         </div>
       </div>
 
-      <button
-        onClick={handleAddPot}
-        style={{
-          padding: "10px 18px",
-          fontSize: "16px",
-          cursor: "pointer",
-        }}
-      >
+      <button onClick={handleAddPot} className="button">
         Hinzufügen
       </button>
     </div>
