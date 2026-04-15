@@ -61,6 +61,13 @@ function App() {
       return;
     }
 
+    if (Number(formData.outdoorFromMonth) > Number(formData.outdoorToMonth)) {
+      setFormError(
+        "Der Zeitraum 'nach draußen' ist ungültig: Von-Monat darf nicht nach dem Bis-Monat liegen.",
+      );
+      return;
+    }
+
     setFormError("");
 
     const newPot = {
