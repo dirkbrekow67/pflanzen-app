@@ -1,5 +1,5 @@
 // 1. externe Bibliotheken
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // 2. interne Komponenten
 import PotCard from "./components/PotCard";
 import PotDetails from "./components/PotDetails";
@@ -10,7 +10,24 @@ import initialPots from "./data/pots.json";
 import "./App.css";
 
 function App() {
-  const [pots, setPots] = useState(initialPots);
+  const [pots, setPots] = useState(() => {
+    const savedPots = localStorage.getItem("pots");
+    if (savedPots) {
+      try {
+        return JSON.parse(savedPots);
+      } catch (error) {
+        console.error("Fehler beim Laden der gespeicherten Töpfe:", error);
+        return initialPots;
+      }
+    }
+    return initialPots;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("pots", JSON.stringify(pots));
+  }, [pots]);
+  const [editingPotId, setEditingPotId] = useState(null);
+
   const [selectedPot, setSelectedPot] = useState(null);
   const [formData, setFormData] = useState({
     plantName: "",
@@ -80,20 +97,39 @@ function App() {
 
     setFormError("");
 
-    const newPot = {
-      id: "TOPF-" + (pots.length + 1).toString().padStart(3, "0"),
+    const potData = {
       plantName: formData.plantName,
-      sowingDate: formData.sowingDate || new Date().toLocaleDateString(),
+      sowingDate: formData.sowingDate || new Date().toISOString().split("T")[0],
       sowingDepthCm: Number(formData.sowingDepthCm),
       germinationTempMin: Number(formData.germinationTempMin),
       germinationTempMax: Number(formData.germinationTempMax),
       germinationDaysMin: Number(formData.germinationDaysMin),
       germinationDaysMax: Number(formData.germinationDaysMax),
-      outdoorFromMonth: formData.outdoorFromMonth,
-      outdoorToMonth: formData.outdoorToMonth,
+      outdoorFromMonth: Number(formData.outdoorFromMonth),
+      outdoorToMonth: Number(formData.outdoorToMonth),
       lifecycle: formData.lifecycle,
     };
-    setPots([...pots, newPot]);
+
+    if (editingPotId) {
+      const updatedPots = pots.map((pot) =>
+        pot.id === editingPotId ? { ...pot, ...potData } : pot,
+      );
+
+      setPots(updatedPots);
+
+      const updatedSelectedPot = updatedPots.find(
+        (pot) => pot.id === editingPotId,
+      );
+      setSelectedPot(updatedSelectedPot);
+    } else {
+      const newPot = {
+        id: "TOPF-" + (pots.length + 1).toString().padStart(3, "0"),
+        ...potData,
+      };
+
+      setPots([...pots, newPot]);
+      setSelectedPot(newPot);
+    }
     setFormData({
       plantName: "",
       lifecycle: "annual",
@@ -106,6 +142,24 @@ function App() {
       outdoorFromMonth: 5,
       outdoorToMonth: 7,
     });
+    setEditingPotId(null);
+    setFormError("");
+  }
+
+  function handleEditPot(pot) {
+    setFormData({
+      plantName: pot.plantName,
+      lifecycle: pot.lifecycle,
+      germinationTempMin: pot.germinationTempMin,
+      germinationTempMax: pot.germinationTempMax,
+      germinationDaysMin: pot.germinationDaysMin,
+      germinationDaysMax: pot.germinationDaysMax,
+      sowingDepthCm: pot.sowingDepthCm,
+      sowingDate: pot.sowingDate,
+      outdoorFromMonth: pot.outdoorFromMonth,
+      outdoorToMonth: pot.outdoorToMonth,
+    });
+    setEditingPotId(pot.id);
     setFormError("");
   }
 
@@ -118,6 +172,7 @@ function App() {
         handleFormChange={handleFormChange}
         handleAddPot={handleAddPot}
         formError={formError}
+        editingPotId={editingPotId}
       />
       {pots.map((pot) => (
         <PotCard
@@ -130,7 +185,7 @@ function App() {
         />
       ))}
       <hr style={{ margin: "24px 0" }} />
-      <PotDetails pot={selectedPot} />
+      <PotDetails pot={selectedPot} onEditPot={handleEditPot} />
     </div>
   );
 }

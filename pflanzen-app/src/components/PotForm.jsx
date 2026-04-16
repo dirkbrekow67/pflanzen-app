@@ -13,7 +13,13 @@ const months = [
   { label: "Dezember", value: 12 },
 ];
 
-function PotForm({ formData, handleFormChange, handleAddPot, formError }) {
+function PotForm({
+  formData,
+  handleFormChange,
+  handleAddPot,
+  formError,
+  editingPotId,
+}) {
   return (
     <div className="card">
       <h2 style={{ marginTop: 0 }}>Neuen Topf hinzufügen</h2>
@@ -180,7 +186,7 @@ function PotForm({ formData, handleFormChange, handleAddPot, formError }) {
       </div>
 
       <button onClick={handleAddPot} className="button">
-        Hinzufügen
+        {editingPotId ? "Änderungen speichern" : "Hinzufügen"}
       </button>
     </div>
   );

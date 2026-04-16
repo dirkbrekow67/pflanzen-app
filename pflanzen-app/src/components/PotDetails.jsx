@@ -13,7 +13,7 @@ const monthLabels = {
   12: "Dezember",
 };
 
-function PotDetails({ pot }) {
+function PotDetails({ pot, onEditPot }) {
   if (!pot) {
     return (
       <div className="card-light">
@@ -66,6 +66,9 @@ function PotDetails({ pot }) {
         <strong>Nach draußen:</strong> {monthLabels[pot.outdoorFromMonth]} bis{" "}
         {monthLabels[pot.outdoorToMonth]}
       </p>
+      <button onClick={() => onEditPot(pot)} className="button">
+        Bearbeiten
+      </button>
     </div>
   );
 }
