@@ -1,3 +1,5 @@
+import { QRCode } from "react-qr-code";
+
 const monthLabels = {
   1: "Januar",
   2: "Februar",
@@ -22,6 +24,10 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
       </div>
     );
   }
+
+  // Nur wenn pot vorhanden ist:
+
+  const qrValue = `${window.location.origin}/pot/${pot.id}`;
   return (
     <div className="card-light">
       <h2 style={{ marginTop: 0 }}>Ausgewählter Topf</h2>
@@ -74,6 +80,26 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
           {monthLabels[pot.outdoorToMonth]}
         </p>
       </div>
+
+      <div className="section">
+        <h3 className="section-title">QR-Code</h3>
+
+        <div
+          style={{
+            background: "white",
+            padding: "12px",
+            display: "inline-block",
+            borderRadius: "8px",
+          }}
+        >
+          <QRCode value={qrValue} size={160} />
+        </div>
+
+        <p style={{ marginTop: "12px", wordBreak: "break-all" }}>
+          <strong>Zieladresse:</strong> {qrValue}
+        </p>
+      </div>
+
       <div className="section">
         {/* Button zum Laden der Topfdaten in das Formular */}
         <button onClick={() => onEditPot(pot)} className="button">
