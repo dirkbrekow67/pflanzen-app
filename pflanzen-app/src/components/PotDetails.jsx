@@ -1,4 +1,5 @@
 import { QRCode } from "react-qr-code";
+import { QR_BASE_URL } from "../utils/appConfig";
 
 const monthLabels = {
   1: "Januar",
@@ -27,7 +28,7 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
 
   // Nur wenn pot vorhanden ist:
 
-  const qrValue = `${window.location.origin}/pot/${pot.id}`;
+  const qrValue = `${QR_BASE_URL}/pot/${pot.id}`;
   return (
     <div className="card-light">
       <h2 style={{ marginTop: 0 }}>Ausgewählter Topf</h2>
