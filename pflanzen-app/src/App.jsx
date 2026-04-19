@@ -11,7 +11,7 @@ import {
   buildPotData,
   clearedPotData,
   emptyFormData,
-} from "./utils/potHelpers.js";
+} from "./utils/potHelpers";
 // 4. Styles (falls vorhanden)
 import "./App.css";
 
@@ -51,7 +51,7 @@ function App() {
 
   // Erstellt aus allen Töpfen die Liste, die zum aktuellen Filter passt
   const filteredPots = pots.filter((pot) => {
-    // Bei "all" werden ale Töpfe angezeigt
+    // Bei "all" werden alle Töpfe angezeigt
     if (statusFilter === "all") {
       return true;
     }
@@ -74,7 +74,7 @@ function App() {
     });
   }
 
-  // Leert einen vorhandenen Topf, ohne seine IDzu verändern
+  // Leert einen vorhandenen Topf, ohne seine ID zu verändern
   function handleClearPot(potId) {
     // die bestehende Topf-Liste wird durchlaufen
     const clearedPots = pots.map((pot) =>
@@ -95,7 +95,7 @@ function App() {
     // Falls gerade ein Bearbeiten-Modus aktiv war, wird er beendet
     setEditingPotId(null);
 
-    // Fehlermeldungen werden gelöscht
+    // Alteb Fehlermeldungen werden gelöscht
     setFormError("");
   }
 
@@ -146,7 +146,7 @@ function App() {
       );
       return;
     }
-    // Alte Fehlermeldung wird gelöscht
+    // Alte Fehlermeldungen werden gelöscht
     setFormError("");
 
     // Gemeinsame Formulardaten für Neuanlage und Bearbeiten vorbereiten
@@ -196,6 +196,7 @@ function App() {
   // Lädt die Daten des ausgewählten Topfs in das Formular und startet den Bearbeiten-Modus
   function handleEditPot(pot) {
     setFormData({
+      ...emptyFormData,
       plantName: pot.plantName,
       lifecycle: pot.lifecycle,
       germinationTempMin: pot.germinationTempMin,
