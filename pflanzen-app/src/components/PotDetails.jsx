@@ -13,7 +13,7 @@ const monthLabels = {
   12: "Dezember",
 };
 
-function PotDetails({ pot, onEditPot }) {
+function PotDetails({ pot, onEditPot, onClearPot }) {
   if (!pot) {
     return (
       <div className="card-light">
@@ -66,9 +66,21 @@ function PotDetails({ pot, onEditPot }) {
         <strong>Nach draußen:</strong> {monthLabels[pot.outdoorFromMonth]} bis{" "}
         {monthLabels[pot.outdoorToMonth]}
       </p>
-      <button onClick={() => onEditPot(pot)} className="button">
-        Bearbeiten
-      </button>
+      <div className="section">
+        {/* Button zum Laden der Topfdaten in das Formular */}
+        <button onClick={() => onEditPot(pot)} className="button">
+          Bearbeiten
+        </button>
+
+        {/* Button zum Leeren des Topfinhalts bei gleichbleibender ID */}
+        <button
+          onClick={() => onClearPot(pot.id)}
+          className="button"
+          style={{ marginLeft: "12px" }}
+        >
+          Topf leeren
+        </button>
+      </div>
     </div>
   );
 }
