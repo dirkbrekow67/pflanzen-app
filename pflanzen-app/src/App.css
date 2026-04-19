@@ -29,4 +29,26 @@
   padding: 10px 18px;
   font-size: 16px;
   cursor: pointer;
+  border: 1px solid green;
+  border-radius: 6px;
+  background-color: white;
+  color: green;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.button:hover {
+  background-color: #eef9ee;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-active {
+  background-color: darkgreen;
+  color: white;
+  border-color: darkgreen;
 }

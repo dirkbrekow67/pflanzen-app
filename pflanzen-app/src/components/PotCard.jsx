@@ -2,12 +2,20 @@ function PotCard({ id, plantName, sowingDate, status, onSelect, isSelected }) {
   return (
     <div
       onClick={onSelect}
+      className={`pot-status-${status}`}
       style={{
         border: isSelected ? "3px solid darkgreen" : "2px dashed green",
         padding: "12px",
         marginBottom: "12px",
         borderRadius: "8px",
-        backgroundColor: isSelected ? "#dff5df" : "#f9f9f9",
+        backgroundColor:
+          status === "empty"
+            ? isSelected
+              ? "#f3e8b5"
+              : "#fff8dc"
+            : isSelected
+              ? "#dff5df"
+              : "#f9f9f9",
         cursor: "pointer",
       }}
     >

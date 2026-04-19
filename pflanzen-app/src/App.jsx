@@ -47,6 +47,21 @@ function App() {
   });
   const [formError, setFormError] = useState("");
 
+  // Merkt, welche Töpfe aktuell angezeigt werden sollen: alle, belegte oder leere
+  const [statusFilter, setStatusFilter] = useState("all");
+
+  // Erstellt aus allen Töpfen die Liste, die zum aktuellen Filter passt
+  const filteredPots = pots.filter((pot) => {
+    // Bei "all" werden ale Töpfe angezeigt
+    if (statusFilter === "all") {
+      return true;
+    }
+    // Fehlender Status wird wie "active" behandelt
+    const effectiveStatus = pot.status || "active";
+    // Bei "active" oder "empty" werden nur passende Töpfe angezeigt
+    return effectiveStatus === statusFilter;
+  });
+
   // Topf wird ausgewählt und in Detailansicht angezeigt
   function handleSelectedPot(pot) {
     setSelectedPot(pot);
@@ -60,7 +75,7 @@ function App() {
     });
   }
 
-  // Leert einenvorhandenen Topf, ohne seine IDzu verändern
+  // Leert einen vorhandenen Topf, ohne seine IDzu verändern
   function handleClearPot(potId) {
     // die bestehende Topf-Liste wird durchlaufen
     const clearedPots = pots.map((pot) =>
@@ -211,7 +226,7 @@ function App() {
       outdoorFromMonth: 5,
       outdoorToMonth: 7,
     });
-    // Formular nach erfolgreichem Speichern wieder auf Standardwerte zurücksetzen
+    // Bearbeiten-Modus beenden, damit das Formular wieder im Neuanlage-Modus ist
     setEditingPotId(null);
     setFormError("");
   }
@@ -251,7 +266,36 @@ function App() {
         formError={formError}
         editingPotId={editingPotId}
       />
-      {pots.map((pot) => (
+      <div className="filter-bar">
+        {/* Zeigt alle Töpfe an */}
+        <button
+          className={`button ${statusFilter === "all" ? "filter-active" : ""}`}
+          onClick={() => setStatusFilter("all")}
+        >
+          Alle
+        </button>
+
+        {/* Zeigt nur belegte Töpfe an */}
+        <button
+          className={`button ${statusFilter === "active" ? "filter-active" : ""}`}
+          onClick={() => setStatusFilter("active")}
+        >
+          Belegt
+        </button>
+
+        {/* Zeigt nur leere Töpfe an */}
+        <button
+          className={`button ${statusFilter === "empty" ? "filter-active" : ""}`}
+          onClick={() => setStatusFilter("empty")}
+        >
+          Leer
+        </button>
+      </div>
+      {filteredPots.length === 0 && (
+        <p>Für den aktuellen Filter sind keine Töpfe vorhanden.</p>
+      )}
+
+      {filteredPots.map((pot) => (
         <PotCard
           key={pot.id}
           id={pot.id}
