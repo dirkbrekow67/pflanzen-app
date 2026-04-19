@@ -18,7 +18,7 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
 
   return (
     <div className="container">
-      <h1>Pflanzen App 🌱</h1>
+      <h1>{selectedPot ? `Topf ${selectedPot.id}` : "Topfdetails"}</h1>
 
       <div style={{ marginBottom: "20px" }}>
         <Link to="/" className="button-link">
@@ -27,7 +27,14 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
       </div>
 
       {!selectedPot ? (
-        <p>Der angeforderte Topf wurde nicht gefunden.</p>
+        <div className="card-light">
+          <h2>Topf nicht gefunden</h2>
+          <p>Der angeforderte Topf existiert nicht oder wurde entfernt.</p>
+
+          <Link to="/" className="button-link">
+            Zur Übersicht
+          </Link>
+        </div>
       ) : (
         <PotDetails
           pot={selectedPot}

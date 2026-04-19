@@ -77,7 +77,7 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
       <div className="section">
         {/* Button zum Laden der Topfdaten in das Formular */}
         <button onClick={() => onEditPot(pot)} className="button">
-          Bearbeiten
+          {pot.status === "empty" ? "Neu belegen" : "Bearbeiten"}
         </button>
 
         {/* Button zum Leeren des Topfinhalts bei gleichbleibender ID */}
