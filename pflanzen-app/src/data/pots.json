@@ -10,7 +10,9 @@
     "germinationDaysMax": 20,
     "outdoorFromMonth": 5,
     "outdoorToMonth": 8,
-    "lifecycle": "perennial"
+    "lifecycle": "perennial",
+    "_comment": "Status zeigt, ob Topf leer oder belegt ist",
+    "status": "active"
   },
   {
     "id": "TOPF-002",
@@ -23,7 +25,9 @@
     "germinationDaysMax": 20,
     "outdoorFromMonth": 4,
     "outdoorToMonth": 6,
-    "lifecycle": "annual"
+    "lifecycle": "annual",
+    "_comment": "Status zeigt, ob Topf leer oder belegt ist",
+    "status": "active"
   },
   {
     "id": "TOPF-003",
@@ -36,6 +40,8 @@
     "germinationDaysMax": 28,
     "outdoorFromMonth": 3,
     "outdoorToMonth": 7,
-    "lifecycle": "biennial"
+    "lifecycle": "biennial",
+    "_comment": "Status zeigt, ob Topf leer oder belegt ist",
+    "status": "active"
   }
 ]

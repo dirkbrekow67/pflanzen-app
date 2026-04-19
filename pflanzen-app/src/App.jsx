@@ -79,6 +79,7 @@ function App() {
             outdoorFromMonth: 5,
             outdoorToMonth: 7,
             lifecycle: "annual",
+            status: "empty",
           }
         : pot,
     );
@@ -160,6 +161,7 @@ function App() {
       outdoorFromMonth: Number(formData.outdoorFromMonth),
       outdoorToMonth: Number(formData.outdoorToMonth),
       lifecycle: formData.lifecycle,
+      status: "active",
     };
 
     /*
@@ -255,6 +257,7 @@ function App() {
           id={pot.id}
           plantName={pot.plantName}
           sowingDate={pot.sowingDate}
+          status={pot.status}
           onSelect={() => handleSelectedPot(pot)}
           isSelected={selectedPot?.id === pot.id}
         />

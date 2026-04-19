@@ -41,6 +41,10 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
               ? "Zweijährig"
               : "Mehrjährig"}
         </p>
+        <p>
+          {/* Status zeigt an, ob der Topf aktuell genutzt oder leer ist */}
+          <strong>Status:</strong> {pot.status === "empty" ? "Leer" : "Belegt"}
+        </p>
       </div>
       <div className="section">
         <h3 className="section-title">Keimung</h3>
