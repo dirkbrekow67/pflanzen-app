@@ -57,7 +57,7 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
           {pot.germinationDaysMax} Tage
         </p>
       </div>
-      <div>
+      <div className="section">
         <h3 className="section-title">Aussaat</h3>
         <p>
           <strong>Aussaatdatum:</strong> {pot.sowingDate}
@@ -66,10 +66,14 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
           <strong>Aussaattiefe:</strong> {pot.sowingDepthCm} cm
         </p>
       </div>
-      <p>
-        <strong>Nach draußen:</strong> {monthLabels[pot.outdoorFromMonth]} bis{" "}
-        {monthLabels[pot.outdoorToMonth]}
-      </p>
+      <div className="section">
+        <h3 className="section-title">Nach draußen</h3>
+
+        <p>
+          <strong>Zeitraum:</strong> {monthLabels[pot.outdoorFromMonth]} bis{" "}
+          {monthLabels[pot.outdoorToMonth]}
+        </p>
+      </div>
       <div className="section">
         {/* Button zum Laden der Topfdaten in das Formular */}
         <button onClick={() => onEditPot(pot)} className="button">
@@ -77,13 +81,15 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
         </button>
 
         {/* Button zum Leeren des Topfinhalts bei gleichbleibender ID */}
-        <button
-          onClick={() => onClearPot(pot.id)}
-          className="button"
-          style={{ marginLeft: "12px" }}
-        >
-          Topf leeren
-        </button>
+        {pot.status !== "empty" && (
+          <button
+            onClick={() => onClearPot(pot.id)}
+            className="button"
+            style={{ marginLeft: "12px" }}
+          >
+            Topf leeren
+          </button>
+        )}
       </div>
     </div>
   );

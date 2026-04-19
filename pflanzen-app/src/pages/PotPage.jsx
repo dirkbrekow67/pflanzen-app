@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import PotDetails from "../components/PotDetails";
 
 function PotPage({ pots, handleEditPot, handleClearPot }) {
@@ -6,6 +6,15 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
 
   // Sucht anhand der URL den passenden Topf aus der Liste
   const selectedPot = pots.find((pot) => pot.id === potId);
+
+  const navigate = useNavigate();
+
+  // Lädt die Topfdaten ins Formular und wechselt zurück zur Übersichtsseite
+  function handleEditAndGoBack() {
+    if (!selectedPot) return;
+    handleEditPot(selectedPot);
+    navigate("/");
+  }
 
   return (
     <div className="container">
@@ -22,7 +31,7 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
       ) : (
         <PotDetails
           pot={selectedPot}
-          onEditPot={handleEditPot}
+          onEditPot={handleEditAndGoBack}
           onClearPot={handleClearPot}
         />
       )}

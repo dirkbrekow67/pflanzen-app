@@ -83,7 +83,7 @@ function App() {
     // Falls gerade ein Bearbeiten-Modus aktiv war, wird er beendet
     setEditingPotId(null);
 
-    // Alteb Fehlermeldungen werden gelöscht
+    // Alte Fehlermeldungen werden gelöscht
     setFormError("");
   }
 
