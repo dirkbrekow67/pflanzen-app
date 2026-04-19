@@ -1,9 +1,9 @@
 // 1. externe Bibliotheken
 import { useEffect, useState } from "react";
+import { Route, Routes } from "react-router-dom";
 // 2. interne Komponenten
-import PotCard from "./components/PotCard";
-import PotDetails from "./components/PotDetails";
-import PotForm from "./components/PotForm";
+import HomePage from "./pages/HomePage";
+import PotPage from "./pages/PotPage";
 // 3. Daten / Assets
 import initialPots from "./data/pots.json";
 import {
@@ -39,8 +39,6 @@ function App() {
   // Merkt den aktuellen Modus: null = neuer Topf, "TOPF-002" = Bearbeiten von TOPF-002
   const [editingPotId, setEditingPotId] = useState(null);
 
-  const [selectedPot, setSelectedPot] = useState(null);
-
   // Enthält die aktuellen Eingabewerte des Formulars
   const [formData, setFormData] = useState(emptyFormData);
 
@@ -60,11 +58,6 @@ function App() {
     // Bei "active" oder "empty" werden nur passende Töpfe angezeigt
     return effectiveStatus === statusFilter;
   });
-
-  // Topf wird ausgewählt und in Detailansicht angezeigt
-  function handleSelectedPot(pot) {
-    setSelectedPot(pot);
-  }
 
   // Daten werden in das Formular eingegeben und in formData gespeichert
   function handleFormChange(field, value) {
@@ -86,11 +79,6 @@ function App() {
 
     // Die aktualisierte Liste wird im State gespeichert
     setPots(clearedPots);
-
-    // Der geleerte Topf wird erneut aus der neuen Liste geholt,
-    // damit die Detailansicht sofort den aktuellen Stand zeigt.
-    const clearedSelectedPot = clearedPots.find((pot) => pot.id === potId);
-    setSelectedPot(clearedSelectedPot);
 
     // Falls gerade ein Bearbeiten-Modus aktiv war, wird er beendet
     setEditingPotId(null);
@@ -167,12 +155,6 @@ function App() {
 
       // Die aktualisierte Topf-Liste wird im State gespeichert
       setPots(updatedPots);
-      // Den gerade bearbeiteten Topf erneut aus der aktualisierten Liste holen
-      const updatedSelectedPot = updatedPots.find(
-        (pot) => pot.id === editingPotId,
-      );
-      // Die Detailansicht auf den neu aktualisierten Topf setzen
-      setSelectedPot(updatedSelectedPot);
     } else {
       // Wenn kein Bearbeiten aktiv ist, wird ein neuer Topf angelegt
       const newPot = {
@@ -182,8 +164,6 @@ function App() {
       };
       // Der neue Topf wird an die bestehende Topf-Liste angehängt
       setPots([...pots, newPot]);
-      // Der neu angelegte Topf wird direkt ausgewählt und in der Detailansicht angezeigt
-      setSelectedPot(newPot);
     }
     // Formular nach erfolgreichem Speichern wieder auf Standardwerte zurücksetzen
     setFormData(emptyFormData);
@@ -219,63 +199,33 @@ function App() {
   }
 
   return (
-    <div className="container">
-      <h1>Pflanzen App 🌱</h1>
-      <p>Meine ersten Töpfe</p>
-      <PotForm
-        formData={formData}
-        handleFormChange={handleFormChange}
-        handleAddPot={handleAddPot}
-        formError={formError}
-        editingPotId={editingPotId}
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <HomePage
+            formData={formData}
+            handleFormChange={handleFormChange}
+            handleAddPot={handleAddPot}
+            formError={formError}
+            editingPotId={editingPotId}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            filteredPots={filteredPots}
+          />
+        }
       />
-      <div className="filter-bar">
-        {/* Zeigt alle Töpfe an */}
-        <button
-          className={`button ${statusFilter === "all" ? "filter-active" : ""}`}
-          onClick={() => setStatusFilter("all")}
-        >
-          Alle
-        </button>
-
-        {/* Zeigt nur belegte Töpfe an */}
-        <button
-          className={`button ${statusFilter === "active" ? "filter-active" : ""}`}
-          onClick={() => setStatusFilter("active")}
-        >
-          Belegt
-        </button>
-
-        {/* Zeigt nur leere Töpfe an */}
-        <button
-          className={`button ${statusFilter === "empty" ? "filter-active" : ""}`}
-          onClick={() => setStatusFilter("empty")}
-        >
-          Leer
-        </button>
-      </div>
-      {filteredPots.length === 0 && (
-        <p>Für den aktuellen Filter sind keine Töpfe vorhanden.</p>
-      )}
-
-      {filteredPots.map((pot) => (
-        <PotCard
-          key={pot.id}
-          id={pot.id}
-          plantName={pot.plantName}
-          sowingDate={pot.sowingDate}
-          status={pot.status}
-          onSelect={() => handleSelectedPot(pot)}
-          isSelected={selectedPot?.id === pot.id}
-        />
-      ))}
-      <hr style={{ margin: "24px 0" }} />
-      <PotDetails
-        pot={selectedPot}
-        onEditPot={handleEditPot}
-        onClearPot={handleClearPot}
+      <Route
+        path="/pot/:potId"
+        element={
+          <PotPage
+            pots={pots}
+            handleEditPot={handleEditPot}
+            handleClearPot={handleClearPot}
+          />
+        }
       />
-    </div>
+    </Routes>
   );
 }
 
