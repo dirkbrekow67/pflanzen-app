@@ -59,6 +59,8 @@ function App() {
     return effectiveStatus === statusFilter;
   });
 
+  const [selectedLabelIds, setSelectedLabelIds] = useState([]);
+
   // Daten werden in das Formular eingegeben und in formData gespeichert
   function handleFormChange(field, value) {
     setFormData({
@@ -85,6 +87,15 @@ function App() {
 
     // Alte Fehlermeldungen werden gelöscht
     setFormError("");
+  }
+
+  // Fügt eine Topf-ID zur Etikettenauswahl hinzu oder entfernt sie wieder
+  function handleToggleLabelSelection(potId) {
+    setSelectedLabelIds((prevSelectedLabelIds) =>
+      prevSelectedLabelIds.includes(potId)
+        ? prevSelectedLabelIds.filter((id) => id !== potId)
+        : [...prevSelectedLabelIds, potId],
+    );
   }
 
   // Speichert Formular-Daten: entweder als neuer Topf oder als Änderung an einem bestehenden Topf
@@ -212,6 +223,8 @@ function App() {
             statusFilter={statusFilter}
             setStatusFilter={setStatusFilter}
             filteredPots={filteredPots}
+            selectedLabelIds={selectedLabelIds}
+            handleToggleLabelSelection={handleToggleLabelSelection}
           />
         }
       />

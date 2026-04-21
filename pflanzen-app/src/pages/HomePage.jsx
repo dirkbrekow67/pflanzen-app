@@ -11,6 +11,8 @@ function HomePage({
   statusFilter,
   setStatusFilter,
   filteredPots,
+  selectedLabelIds,
+  handleToggleLabelSelection,
 }) {
   return (
     <div className="container">
@@ -46,26 +48,53 @@ function HomePage({
         >
           Leer
         </button>
+        <button className="button" disabled={selectedLabelIds.length === 0}>
+          Etiketten drucken
+        </button>
+        {selectedLabelIds.length === 0 && (
+          <p>
+            Bitte zuerst mindestens einen Topf für den Etikettendruck auswählen.
+          </p>
+        )}
       </div>
 
       {filteredPots.length === 0 && (
         <p>Für den aktuellen Filter sind keine Töpfe vorhanden.</p>
       )}
+      <p>
+        Für Etikettendruck ausgewählt:{" "}
+        <strong>{selectedLabelIds.length}</strong>
+      </p>
 
       {filteredPots.map((pot) => (
-        <Link
-          key={pot.id}
-          to={`/pot/${pot.id}`}
-          style={{ textDecoration: "none", color: "inherit" }}
-        >
-          <PotCard
-            id={pot.id}
-            plantName={pot.plantName}
-            sowingDate={pot.sowingDate}
-            status={pot.status}
-            isSelected={false}
-          />
-        </Link>
+        <div key={pot.id} className="label-selected-row">
+          <label className="label-selected-checkbox">
+            {" "}
+            <input
+              type="checkbox"
+              checked={selectedLabelIds.includes(pot.id)}
+              onChange={() => handleToggleLabelSelection(pot.id)}
+            />
+            Etikett auswählen
+          </label>
+
+          <Link
+            to={`/pot/${pot.id}`}
+            style={{
+              textDecoration: "none",
+              color: "inherit",
+              display: "block",
+            }}
+          >
+            <PotCard
+              id={pot.id}
+              plantName={pot.plantName}
+              sowingDate={pot.sowingDate}
+              status={pot.status}
+              isSelected={false}
+            />
+          </Link>
+        </div>
       ))}
     </div>
   );

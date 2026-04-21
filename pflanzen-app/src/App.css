@@ -68,3 +68,15 @@
 .button-link:hover {
   background-color: #eef9ee;
 }
+
+.label-select-row {
+  margin-bottom: 16px;
+}
+
+.label-select-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
