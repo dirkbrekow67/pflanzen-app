@@ -4,6 +4,7 @@ import { Route, Routes } from "react-router-dom";
 // 2. interne Komponenten
 import HomePage from "./pages/HomePage";
 import PotPage from "./pages/PotPage";
+import LabelPrintPage from "./pages/LabelPrintPage";
 // 3. Daten / Assets
 import initialPots from "./data/pots.json";
 import {
@@ -236,6 +237,12 @@ function App() {
             handleEditPot={handleEditPot}
             handleClearPot={handleClearPot}
           />
+        }
+      />
+      <Route
+        path="/labels/print"
+        element={
+          <LabelPrintPage pots={pots} selectedLabelIds={selectedLabelIds} />
         }
       />
     </Routes>

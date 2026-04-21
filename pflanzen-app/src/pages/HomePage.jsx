@@ -48,27 +48,36 @@ function HomePage({
         >
           Leer
         </button>
-        <button className="button" disabled={selectedLabelIds.length === 0}>
-          Etiketten drucken
-        </button>
-        {selectedLabelIds.length === 0 && (
-          <p>
-            Bitte zuerst mindestens einen Topf für den Etikettendruck auswählen.
-          </p>
-        )}
       </div>
-
-      {filteredPots.length === 0 && (
-        <p>Für den aktuellen Filter sind keine Töpfe vorhanden.</p>
-      )}
       <p>
         Für Etikettendruck ausgewählt:{" "}
         <strong>{selectedLabelIds.length}</strong>
       </p>
+      <Link
+        to="labels/print"
+        className={`button-link ${selectedLabelIds.length === 0 ? "button-link-disabled" : ""}`}
+        onClick={(event) => {
+          if (selectedLabelIds.length === 0) {
+            event.preventDefault();
+          }
+        }}
+      >
+        Etiketten drucken
+      </Link>
+
+      {selectedLabelIds.length === 0 && (
+        <p>
+          Bitte zuerst mindestens einen Topf für den Etikettendruck auswählen.
+        </p>
+      )}
+
+      {filteredPots.length === 0 && (
+        <p>Für den aktuellen Filter sind keine Töpfe vorhanden.</p>
+      )}
 
       {filteredPots.map((pot) => (
-        <div key={pot.id} className="label-selected-row">
-          <label className="label-selected-checkbox">
+        <div key={pot.id} className="label-select-row">
+          <label className="label-select-checkbox">
             {" "}
             <input
               type="checkbox"

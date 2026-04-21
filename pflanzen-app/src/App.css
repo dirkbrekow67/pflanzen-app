@@ -80,3 +80,72 @@
   margin-bottom: 8px;
   font-size: 14px;
 }
+
+.button-link-disabled {
+  opacity: 0.5;
+  pointer-events: auto;
+}
+
+.label-page {
+  padding: 20px;
+}
+
+.label-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.label-sheet {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.compact-label {
+  width: 3.8cm;
+  min-height: 4.6cm;
+  padding: 0.2cm;
+  border: 1px solid #000;
+  box-sizing: border-box;
+  background: white;
+  text-align: center;
+  page-break-inside: avoid;
+}
+
+.compact-label-id {
+  font-size: 12pt;
+  font-weight: bold;
+  margin-bottom: 0.2cm;
+}
+
+.compact-label-qr {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.compact-label-qr svg {
+  width: 3cm !important;
+  height: 3cm !important;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+  }
+
+  .label-page {
+    padding: 0;
+    margin: 0;
+  }
+
+  .label-sheet {
+    gap: 0.2cm;
+  }
+}
