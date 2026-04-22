@@ -98,20 +98,26 @@
 }
 
 .label-sheet {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.3cm;
+  align-items: start;
 }
 
 .compact-label {
-  width: 3.8cm;
-  min-height: 4.6cm;
+  width: 4cm;
+  height: 5cm;
   padding: 0.2cm;
   border: 1px solid #000;
   box-sizing: border-box;
   background: white;
   text-align: center;
   page-break-inside: avoid;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .compact-label-id {
@@ -138,14 +144,21 @@
 
   body {
     background: white;
+    margin: 0;
+    padding: 0;
   }
-
+  .container,
   .label-page {
     padding: 0;
     margin: 0;
   }
 
   .label-sheet {
-    gap: 0.2cm;
+    gap: 0.2cm
   }
+  .compact-label {
+    break-inside: avoid;
+  }
+
+
 }
