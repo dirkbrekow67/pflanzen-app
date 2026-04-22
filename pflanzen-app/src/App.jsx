@@ -138,6 +138,13 @@ function App() {
       setFormError("Aussaattiefe darf nicht negativ sein!");
       return;
     }
+    // Prüfung: Der Aussaatzeitraum laut Packung muss logisch sein
+    if (Number(formData.sowingFromMonth) > Number(formData.sowingToMonth)) {
+      setFormError(
+        "Der Aussaatzeitraum ist ungültig: Von-Monat darf nicht nach dem Bis-Monat liegen.",
+      );
+      return;
+    }
 
     // Prüfung: Der Startmonat für "nach draußen" darf nicht nach dem Endmonat liegen
     if (Number(formData.outdoorFromMonth) > Number(formData.outdoorToMonth)) {
@@ -191,6 +198,8 @@ function App() {
       ...emptyFormData,
       plantName: pot.plantName,
       lifecycle: pot.lifecycle,
+      sowingFromMonth: pot.sowingFromMonth,
+      sowingToMonth: pot.sowingToMonth,
       germinationTempMin: pot.germinationTempMin,
       germinationTempMax: pot.germinationTempMax,
       germinationDaysMin: pot.germinationDaysMin,

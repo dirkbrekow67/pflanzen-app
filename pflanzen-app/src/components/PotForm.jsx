@@ -144,6 +144,41 @@ function PotForm({
           />
         </div>
       </div>
+      <div style={{ marginBottom: "12px" }}>
+        <label style={{ display: "block", marginBottom: "4px" }}>
+          Aussaat laut Packung von
+        </label>
+        <select
+          value={formData.sowingFromMonth}
+          onChange={(e) =>
+            handleFormChange("sowingFromMonth", Number(e.target.value))
+          }
+        >
+          {months.map((month) => (
+            <option key={month.value} value={month.value}>
+              {month.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div style={{ marginBottom: "12px" }}>
+        <label style={{ display: "block", marginBottom: "4px" }}>
+          Aussaat laut Packung bis
+        </label>
+        <select
+          value={formData.sowingToMonth}
+          onChange={(e) =>
+            handleFormChange("sowingToMonth", Number(e.target.value))
+          }
+        >
+          {months.map((month) => (
+            <option key={month.value} value={month.value}>
+              {month.label}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <div className="section">
         <h3 className="section-title">Nach Draussen</h3>

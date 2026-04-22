@@ -72,6 +72,11 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
         <p>
           <strong>Aussaattiefe:</strong> {pot.sowingDepthCm} cm
         </p>
+        <p>
+          <strong>Aussaat laut Packung:</strong>{" "}
+          {monthLabels[pot.sowingFromMonth]} bis{" "}
+          {monthLabels[pot.sowingToMonth]}
+        </p>
       </div>
       <div className="section">
         <h3 className="section-title">Nach draußen</h3>

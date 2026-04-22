@@ -1,6 +1,10 @@
+
+
 export const emptyFormData = {
   plantName: "",
   lifecycle: "annual",
+  sowingFromMonth: 3,
+  sowingToMonth: 5,
   germinationTempMin: 10,
   germinationTempMax: 20,
   germinationDaysMin: 10,
@@ -14,6 +18,8 @@ export const emptyFormData = {
 export const clearedPotData = {
   plantName: "",
   sowingDate: "",
+  sowingFromMonth: 3,
+  sowingToMonth: 5,
   sowingDepthCm: 1,
   germinationTempMin: 10,
   germinationTempMax: 20,
@@ -39,6 +45,8 @@ export function buildPotData(formData) {
     plantName: formData.plantName,
     sowingDate: formData.sowingDate || new Date().toISOString().split("T")[0],
     sowingDepthCm: Number(formData.sowingDepthCm),
+    sowingFromMonth: Number(formData.sowingFromMonth),
+    sowingToMonth: Number(formData.sowingToMonth),
     germinationTempMin: Number(formData.germinationTempMin),
     germinationTempMax: Number(formData.germinationTempMax),
     germinationDaysMin: Number(formData.germinationDaysMin),
