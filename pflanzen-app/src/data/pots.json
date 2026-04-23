@@ -1,6 +1,7 @@
 [
   {
     "id": "TOPF-001",
+    "seedProfileId": "SEED-001",
     "plantName": "Estragon",
     "sowingDate": "12.04.2026",
     "sowingDepthCm": 1,
@@ -18,6 +19,7 @@
   },
   {
     "id": "TOPF-002",
+    "seedProfileId": "SEED-002",
     "plantName": "Dill",
     "sowingDate": "10.04.2026",
     "sowingDepthCm": 1,
@@ -35,6 +37,7 @@
   },
   {
     "id": "TOPF-003",
+    "seedProfileId": "SEED-003",
     "plantName": "Petersilie",
     "sowingDate": "08.04.2026",
     "sowingDepthCm": 1,

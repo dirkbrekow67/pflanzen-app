@@ -52,6 +52,10 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
           {/* Status zeigt an, ob der Topf aktuell genutzt oder leer ist */}
           <strong>Status:</strong> {pot.status === "empty" ? "Leer" : "Belegt"}
         </p>
+        <p>
+          <strong>Samenprofil:</strong>{" "}
+          {pot.seedProfileId ? pot.seedProfileId : "Kein Profil zugewiesen"}
+        </p>
       </div>
       <div className="section">
         <h3 className="section-title">Keimung</h3>

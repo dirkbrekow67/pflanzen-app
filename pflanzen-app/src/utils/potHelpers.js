@@ -13,6 +13,7 @@ export const emptyFormData = {
   sowingDate: "",
   outdoorFromMonth: 5,
   outdoorToMonth: 7,
+  seedProfileId: "",
 };
 
 export const clearedPotData = {
@@ -29,6 +30,7 @@ export const clearedPotData = {
   outdoorToMonth: 7,
   lifecycle: "annual",
   status: "empty",
+  seedProfileId: "",
 };
 
 // Ergänzt bei älteren Töpfen einen fehlenden Status
@@ -55,5 +57,6 @@ export function buildPotData(formData) {
     outdoorToMonth: Number(formData.outdoorToMonth),
     lifecycle: formData.lifecycle,
     status: "active",
+    seedProfileId: formData.seedProfileId || "",
   };
 }

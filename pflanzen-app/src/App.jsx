@@ -214,6 +214,7 @@ function App() {
       sowingDate: pot.sowingDate,
       outdoorFromMonth: pot.outdoorFromMonth,
       outdoorToMonth: pot.outdoorToMonth,
+      seedProfileId: pot.seedProfileId || "",
     });
     /*
       Die ID des ausgewählten Topfs wird gespeichert.
@@ -249,6 +250,7 @@ function App() {
       sowingToMonth: selectedSeedProfile.sowingToMonth,
       outdoorFromMonth: selectedSeedProfile.outdoorFromMonth,
       outdoorToMonth: selectedSeedProfile.outdoorToMonth,
+      seedProfileId: selectedSeedProfile.id,
     });
 
     setFormError("");
