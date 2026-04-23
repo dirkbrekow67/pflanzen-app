@@ -18,7 +18,11 @@ function HomePage({
     <div className="container">
       <h1>Pflanzen App 🌱</h1>
       <p>Meine ersten Töpfe</p>
-
+      <div style={{ marginBottom: "16px" }}>
+        <Link to="/seeds" className="button-link">
+          Samenbibliothek öffnen
+        </Link>
+      </div>
       <PotForm
         formData={formData}
         handleFormChange={handleFormChange}

@@ -5,8 +5,10 @@ import { Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import PotPage from "./pages/PotPage";
 import LabelPrintPage from "./pages/LabelPrintPage";
+import SeedLibraryPage from "./pages/SeedLibraryPage";
 // 3. Daten / Assets
 import initialPots from "./data/pots.json";
+
 import {
   addMissingStatus,
   buildPotData,
@@ -254,6 +256,7 @@ function App() {
           <LabelPrintPage pots={pots} selectedLabelIds={selectedLabelIds} />
         }
       />
+      <Route path="/seeds" element={<SeedLibraryPage />} />
     </Routes>
   );
 }
