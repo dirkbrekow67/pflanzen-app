@@ -17,20 +17,8 @@ export const emptyFormData = {
 };
 
 export const clearedPotData = {
-  plantName: "",
   sowingDate: "",
-  sowingFromMonth: 3,
-  sowingToMonth: 5,
-  sowingDepthCm: 1,
-  germinationTempMin: 10,
-  germinationTempMax: 20,
-  germinationDaysMin: 10,
-  germinationDaysMax: 20,
-  outdoorFromMonth: 5,
-  outdoorToMonth: 7,
-  lifecycle: "annual",
   status: "empty",
-  seedProfileId: "",
 };
 
 // Ergänzt bei älteren Töpfen einen fehlenden Status

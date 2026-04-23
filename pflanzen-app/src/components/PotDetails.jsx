@@ -123,7 +123,7 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
             className="button"
             style={{ marginLeft: "12px" }}
           >
-            Topf leeren
+            Topf freigeben
           </button>
         )}
       </div>
