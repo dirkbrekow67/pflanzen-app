@@ -13,11 +13,43 @@ function HomePage({
   filteredPots,
   selectedLabelIds,
   handleToggleLabelSelection,
+  seedProfiles,
+  selectedSeedProfileId,
+  setSelectedSeedProfileId,
+  handleApplySeedProfile,
 }) {
   return (
     <div className="container">
       <h1>Pflanzen App 🌱</h1>
       <p>Meine ersten Töpfe</p>
+      <div className="card" style={{ marginBottom: "20px" }}>
+        <h2 style={{ marginTop: 0 }}>Samenprofil laden</h2>
+        <p>
+          Wähle ein Profil aus der Samenbibliothek und übernimm die Stammdaten
+          ins Formular.
+        </p>
+
+        <div style={{ marginBottom: "12px" }}>
+          <label style={{ display: "block", marginBottom: "4px" }}>
+            Samenprofil
+          </label>
+          <select
+            value={selectedSeedProfileId}
+            onChange={(e) => setSelectedSeedProfileId(e.target.value)}
+          >
+            <option value="">Bitte auswählen</option>
+            {seedProfiles.map((profile) => (
+              <option key={profile.id} value={profile.id}>
+                {profile.plantName}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <button onClick={handleApplySeedProfile} className="button">
+          Profil ins Formular übernehmen
+        </button>
+      </div>
       <div style={{ marginBottom: "16px" }}>
         <Link to="/seeds" className="button-link">
           Samenbibliothek öffnen

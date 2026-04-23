@@ -8,6 +8,7 @@ import LabelPrintPage from "./pages/LabelPrintPage";
 import SeedLibraryPage from "./pages/SeedLibraryPage";
 // 3. Daten / Assets
 import initialPots from "./data/pots.json";
+import seedProfiles from "./data/seedProfiles.json";
 
 import {
   addMissingStatus,
@@ -63,6 +64,9 @@ function App() {
   });
 
   const [selectedLabelIds, setSelectedLabelIds] = useState([]);
+
+  // Merkt, welches Samenprofil aktuell zum Vorausfüllen ausgewählt wurde
+  const [selectedSeedProfileId, setSelectedSeedProfileId] = useState("");
 
   // Daten werden in das Formular eingegeben und in formData gespeichert
   function handleFormChange(field, value) {
@@ -221,6 +225,35 @@ function App() {
     setFormError("");
   }
 
+  // Übernimmt die Stammdaten eines Samenprofils in das Formular
+  function handleApplySeedProfile() {
+    const selectedSeedProfile = seedProfiles.find(
+      (profile) => profile.id === selectedSeedProfileId,
+    );
+
+    if (!selectedSeedProfile) {
+      setFormError("Bitte zuerst ein Samenprofil auswählen.");
+      return;
+    }
+
+    setFormData({
+      ...formData,
+      plantName: selectedSeedProfile.plantName,
+      lifecycle: selectedSeedProfile.lifecycle,
+      germinationTempMin: selectedSeedProfile.germinationTempMin,
+      germinationTempMax: selectedSeedProfile.germinationTempMax,
+      germinationDaysMin: selectedSeedProfile.germinationDaysMin,
+      germinationDaysMax: selectedSeedProfile.germinationDaysMax,
+      sowingDepthCm: selectedSeedProfile.sowingDepthCm,
+      sowingFromMonth: selectedSeedProfile.sowingFromMonth,
+      sowingToMonth: selectedSeedProfile.sowingToMonth,
+      outdoorFromMonth: selectedSeedProfile.outdoorFromMonth,
+      outdoorToMonth: selectedSeedProfile.outdoorToMonth,
+    });
+
+    setFormError("");
+  }
+
   return (
     <Routes>
       <Route
@@ -237,6 +270,10 @@ function App() {
             filteredPots={filteredPots}
             selectedLabelIds={selectedLabelIds}
             handleToggleLabelSelection={handleToggleLabelSelection}
+            seedProfiles={seedProfiles}
+            selectedSeedProfileId={selectedSeedProfileId}
+            setSelectedSeedProfileId={setSelectedSeedProfileId}
+            handleApplySeedProfile={handleApplySeedProfile}
           />
         }
       />
