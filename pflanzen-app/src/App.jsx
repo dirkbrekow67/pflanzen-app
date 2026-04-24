@@ -68,6 +68,8 @@ function App() {
   // Merkt, welches Samenprofil aktuell zum Vorausfüllen ausgewählt wurde
   const [selectedSeedProfileId, setSelectedSeedProfileId] = useState("");
 
+  const [emptyPotCount, setEmptyPotCount] = useState(1);
+
   // Daten werden in das Formular eingegeben und in formData gespeichert
   function handleFormChange(field, value) {
     setFormData({
@@ -276,6 +278,40 @@ function App() {
 
     URL.revokeObjectURL(url);
   }
+  function handleAddEmptyPots() {
+    const count = Number(emptyPotCount);
+
+    if (!Number.isInteger(count) || count < 1) {
+      setFormError("Bitte eine gültige Anzahl neuer Leertöpfe eingeben.");
+      return;
+    }
+
+    const newEmptyPots = Array.from({ length: count }, (_, index) => {
+      const nextNumber = pots.length + index + 1;
+
+      return {
+        id: "TOPF-" + nextNumber.toString().padStart(3, "0"),
+        status: "empty",
+        plantName: "",
+        sowingDate: "",
+        lifecycle: "annual",
+        sowingFromMonth: 3,
+        sowingToMonth: 5,
+        germinationTempMin: 10,
+        germinationTempMax: 20,
+        germinationDaysMin: 7,
+        germinationDaysMax: 14,
+        sowingDepthCm: 1,
+        outdoorFromMonth: 5,
+        outdoorToMonth: 7,
+        seedProfileId: "",
+      };
+    });
+
+    setPots([...pots, ...newEmptyPots]);
+    setEmptyPotCount(1);
+    setFormError("");
+  }
   return (
     <Routes>
       <Route
@@ -297,6 +333,9 @@ function App() {
             setSelectedSeedProfileId={setSelectedSeedProfileId}
             handleApplySeedProfile={handleApplySeedProfile}
             handleExportPots={handleExportPots}
+            emptyPotCount={emptyPotCount}
+            setEmptyPotCount={setEmptyPotCount}
+            handleAddEmptyPots={handleAddEmptyPots}
           />
         }
       />

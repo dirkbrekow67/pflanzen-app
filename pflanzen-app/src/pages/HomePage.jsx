@@ -18,6 +18,9 @@ function HomePage({
   setSelectedSeedProfileId,
   handleApplySeedProfile,
   handleExportPots,
+  emptyPotCount,
+  setEmptyPotCount,
+  handleAddEmptyPots,
 }) {
   return (
     <div className="container">
@@ -33,6 +36,29 @@ function HomePage({
             Samenbibliothek öffnen
           </Link>
         </div>
+      </section>
+      <section className="card">
+        <h2 style={{ marginTop: 0 }}>Leertöpfe vorbereiten</h2>
+        <p>
+          Erzeuge mehrere freie Töpfe, um dafür QR-Codes zu drucken und die
+          Töpfe später zu belegen.
+        </p>
+
+        <div style={{ marginBottom: "12px" }}>
+          <label style={{ display: "block", marginBottom: "4px" }}>
+            Anzahl neuer Leertöpfe
+          </label>
+          <input
+            type="number"
+            min="1"
+            value={emptyPotCount}
+            onChange={(e) => setEmptyPotCount(e.target.value)}
+          />
+        </div>
+
+        <button onClick={handleAddEmptyPots} className="button">
+          Leertöpfe anlegen
+        </button>
       </section>
 
       <section className="card">
