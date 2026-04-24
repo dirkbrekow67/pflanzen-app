@@ -255,7 +255,27 @@ function App() {
 
     setFormError("");
   }
+  function handleExportPots() {
+    const jsonString = JSON.stringify(pots, null, 2);
 
+    const blob = new Blob([jsonString], {
+      type: "application/json",
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const today = new Date().toISOString().split("T")[0];
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `pots-backup-${today}.json`;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+  }
   return (
     <Routes>
       <Route
@@ -276,6 +296,7 @@ function App() {
             selectedSeedProfileId={selectedSeedProfileId}
             setSelectedSeedProfileId={setSelectedSeedProfileId}
             handleApplySeedProfile={handleApplySeedProfile}
+            handleExportPots={handleExportPots}
           />
         }
       />

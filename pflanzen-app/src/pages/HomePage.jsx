@@ -17,11 +17,17 @@ function HomePage({
   selectedSeedProfileId,
   setSelectedSeedProfileId,
   handleApplySeedProfile,
+  handleExportPots,
 }) {
   return (
     <div className="container">
       <h1>Pflanzen App 🌱</h1>
       <p>Meine ersten Töpfe</p>
+      <div style={{ marginBottom: "20px" }}>
+        <button onClick={handleExportPots} className="button">
+          Topfdaten exportieren
+        </button>
+      </div>
       <div className="card" style={{ marginBottom: "20px" }}>
         <h2 style={{ marginTop: 0 }}>Samenprofil laden</h2>
         <p>
