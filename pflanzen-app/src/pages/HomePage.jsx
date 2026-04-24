@@ -21,6 +21,9 @@ function HomePage({
   emptyPotCount,
   setEmptyPotCount,
   handleAddEmptyPots,
+  newSeedProfile,
+  handleSeedProfileChange,
+  handleAddSeedProfile,
 }) {
   return (
     <div className="container">
@@ -93,6 +96,27 @@ function HomePage({
           </button>
         </div>
 
+        <div className="section">
+          <h3 className="section-title">Neues Samenprofil anlegen</h3>
+
+          <div style={{ marginBottom: "12px" }}>
+            <label style={{ display: "block", marginBottom: "4px" }}>
+              Pflanzenname
+            </label>
+            <input
+              type="text"
+              value={newSeedProfile.plantName}
+              onChange={(e) =>
+                handleSeedProfileChange("plantName", e.target.value)
+              }
+            />
+          </div>
+
+          <button onClick={handleAddSeedProfile} className="button">
+            Samenprofil speichern
+          </button>
+        </div>
+
         <PotForm
           formData={formData}
           handleFormChange={handleFormChange}
@@ -108,7 +132,7 @@ function HomePage({
           <strong>{selectedLabelIds.length}</strong>
         </p>
         <Link
-          to="labels/print"
+          to="/labels/print"
           className={`button-link ${selectedLabelIds.length === 0 ? "button-link-disabled" : ""}`}
           onClick={(event) => {
             if (selectedLabelIds.length === 0) {

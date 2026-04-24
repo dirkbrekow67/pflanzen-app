@@ -35,11 +35,6 @@ function App() {
     return addMissingStatus(initialPots);
   });
 
-  // Immer wenn sich pots ändert, werden die aktuellen Daten im localStorage gespeichert
-  useEffect(() => {
-    localStorage.setItem("pots", JSON.stringify(pots));
-  }, [pots]);
-
   // Merkt den aktuellen Modus: null = neuer Topf, "TOPF-002" = Bearbeiten von TOPF-002
   const [editingPotId, setEditingPotId] = useState(null);
 
@@ -69,6 +64,44 @@ function App() {
   const [selectedSeedProfileId, setSelectedSeedProfileId] = useState("");
 
   const [emptyPotCount, setEmptyPotCount] = useState(1);
+
+  const [customSeedProfiles, setCustomSeedProfiles] = useState(() => {
+    const savedSeedProfiles = localStorage.getItem("seedProfiles");
+
+    if (savedSeedProfiles) {
+      try {
+        return JSON.parse(savedSeedProfiles);
+      } catch (error) {
+        console.error("Fehler beim Laden der Samenprofile:", error);
+        return seedProfiles;
+      }
+    }
+
+    return seedProfiles;
+  });
+
+  const [newSeedProfile, setNewSeedProfile] = useState({
+    plantName: "",
+    lifecycle: "annual",
+    sowingFromMonth: 3,
+    sowingToMonth: 5,
+    germinationTempMin: 10,
+    germinationTempMax: 20,
+    germinationDaysMin: 7,
+    germinationDaysMax: 14,
+    sowingDepthCm: 1,
+    outdoorFromMonth: 5,
+    outdoorToMonth: 7,
+  });
+
+  // Immer wenn sich pots ändert, werden die aktuellen Daten im localStorage gespeichert
+  useEffect(() => {
+    localStorage.setItem("pots", JSON.stringify(pots));
+  }, [pots]);
+
+  useEffect(() => {
+    localStorage.setItem("seedProfiles", JSON.stringify(customSeedProfiles));
+  }, [customSeedProfiles]);
 
   // Daten werden in das Formular eingegeben und in formData gespeichert
   function handleFormChange(field, value) {
@@ -230,7 +263,7 @@ function App() {
 
   // Übernimmt die Stammdaten eines Samenprofils in das Formular
   function handleApplySeedProfile() {
-    const selectedSeedProfile = seedProfiles.find(
+    const selectedSeedProfile = customSeedProfiles.find(
       (profile) => profile.id === selectedSeedProfileId,
     );
 
@@ -312,6 +345,92 @@ function App() {
     setEmptyPotCount(1);
     setFormError("");
   }
+  function handleSeedProfileChange(field, value) {
+    setNewSeedProfile({
+      ...newSeedProfile,
+      [field]: value,
+    });
+  }
+  function handleAddSeedProfile() {
+    if (!newSeedProfile.plantName.trim()) {
+      setFormError("Bitte einen Pflanzennamen für das Samenprofil eingeben.");
+      return;
+    }
+
+    if (
+      Number(newSeedProfile.sowingFromMonth) >
+      Number(newSeedProfile.sowingToMonth)
+    ) {
+      setFormError("Der Aussaatzeitraum des Samenprofils ist ungültig.");
+      return;
+    }
+
+    if (
+      Number(newSeedProfile.germinationTempMin) >
+      Number(newSeedProfile.germinationTempMax)
+    ) {
+      setFormError("Die Keimtemperatur des Samenprofils ist ungültig.");
+      return;
+    }
+
+    if (
+      Number(newSeedProfile.germinationDaysMin) >
+      Number(newSeedProfile.germinationDaysMax)
+    ) {
+      setFormError("Die Keimdauer des Samenprofils ist ungültig.");
+      return;
+    }
+
+    if (Number(newSeedProfile.sowingDepthCm) < 0) {
+      setFormError(
+        "Die Aussaattiefe des Samenprofils darf nicht negativ sein.",
+      );
+      return;
+    }
+
+    if (
+      Number(newSeedProfile.outdoorFromMonth) >
+      Number(newSeedProfile.outdoorToMonth)
+    ) {
+      setFormError(
+        "Der Zeitraum 'nach draußen' des Samenprofils ist ungültig.",
+      );
+      return;
+    }
+
+    const newProfile = {
+      id: "SEED-" + (customSeedProfiles.length + 1).toString().padStart(3, "0"),
+      plantName: newSeedProfile.plantName,
+      lifecycle: newSeedProfile.lifecycle,
+      sowingFromMonth: Number(newSeedProfile.sowingFromMonth),
+      sowingToMonth: Number(newSeedProfile.sowingToMonth),
+      germinationTempMin: Number(newSeedProfile.germinationTempMin),
+      germinationTempMax: Number(newSeedProfile.germinationTempMax),
+      germinationDaysMin: Number(newSeedProfile.germinationDaysMin),
+      germinationDaysMax: Number(newSeedProfile.germinationDaysMax),
+      sowingDepthCm: Number(newSeedProfile.sowingDepthCm),
+      outdoorFromMonth: Number(newSeedProfile.outdoorFromMonth),
+      outdoorToMonth: Number(newSeedProfile.outdoorToMonth),
+    };
+
+    setCustomSeedProfiles([...customSeedProfiles, newProfile]);
+
+    setNewSeedProfile({
+      plantName: "",
+      lifecycle: "annual",
+      sowingFromMonth: 3,
+      sowingToMonth: 5,
+      germinationTempMin: 10,
+      germinationTempMax: 20,
+      germinationDaysMin: 7,
+      germinationDaysMax: 14,
+      sowingDepthCm: 1,
+      outdoorFromMonth: 5,
+      outdoorToMonth: 7,
+    });
+
+    setFormError("");
+  }
   return (
     <Routes>
       <Route
@@ -336,6 +455,9 @@ function App() {
             emptyPotCount={emptyPotCount}
             setEmptyPotCount={setEmptyPotCount}
             handleAddEmptyPots={handleAddEmptyPots}
+            newSeedProfile={newSeedProfile}
+            handleSeedProfileChange={handleSeedProfileChange}
+            handleAddSeedProfile={handleAddSeedProfile}
           />
         }
       />
