@@ -82,6 +82,10 @@ function App() {
 
   const [newSeedProfile, setNewSeedProfile] = useState({
     plantName: "",
+    variety: "",
+    manufacturer: "",
+    experience: "",
+    profileStatus: "testen",
     lifecycle: "annual",
     sowingFromMonth: 3,
     sowingToMonth: 5,
@@ -411,6 +415,10 @@ function App() {
       sowingDepthCm: Number(newSeedProfile.sowingDepthCm),
       outdoorFromMonth: Number(newSeedProfile.outdoorFromMonth),
       outdoorToMonth: Number(newSeedProfile.outdoorToMonth),
+      variety: newSeedProfile.variety,
+      manufacturer: newSeedProfile.manufacturer,
+      experience: newSeedProfile.experience,
+      profileStatus: newSeedProfile.profileStatus,
     };
 
     setCustomSeedProfiles([...customSeedProfiles, newProfile]);
@@ -427,6 +435,10 @@ function App() {
       sowingDepthCm: 1,
       outdoorFromMonth: 5,
       outdoorToMonth: 7,
+      variety: "",
+      manufacturer: "",
+      experience: "",
+      profileStatus: "testen",
     });
 
     setFormError("");
@@ -447,7 +459,7 @@ function App() {
             filteredPots={filteredPots}
             selectedLabelIds={selectedLabelIds}
             handleToggleLabelSelection={handleToggleLabelSelection}
-            seedProfiles={seedProfiles}
+            seedProfiles={customSeedProfiles}
             selectedSeedProfileId={selectedSeedProfileId}
             setSelectedSeedProfileId={setSelectedSeedProfileId}
             handleApplySeedProfile={handleApplySeedProfile}
@@ -455,9 +467,6 @@ function App() {
             emptyPotCount={emptyPotCount}
             setEmptyPotCount={setEmptyPotCount}
             handleAddEmptyPots={handleAddEmptyPots}
-            newSeedProfile={newSeedProfile}
-            handleSeedProfileChange={handleSeedProfileChange}
-            handleAddSeedProfile={handleAddSeedProfile}
           />
         }
       />
@@ -477,7 +486,17 @@ function App() {
           <LabelPrintPage pots={pots} selectedLabelIds={selectedLabelIds} />
         }
       />
-      <Route path="/seeds" element={<SeedLibraryPage />} />
+      <Route
+        path="/seeds"
+        element={
+          <SeedLibraryPage
+            seedProfiles={customSeedProfiles}
+            newSeedProfile={newSeedProfile}
+            handleSeedProfileChange={handleSeedProfileChange}
+            handleAddSeedProfile={handleAddSeedProfile}
+          />
+        }
+      />
     </Routes>
   );
 }

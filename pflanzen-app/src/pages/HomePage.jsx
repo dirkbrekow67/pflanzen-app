@@ -21,9 +21,6 @@ function HomePage({
   emptyPotCount,
   setEmptyPotCount,
   handleAddEmptyPots,
-  newSeedProfile,
-  handleSeedProfileChange,
-  handleAddSeedProfile,
 }) {
   return (
     <div className="container">
@@ -86,6 +83,8 @@ function HomePage({
               {seedProfiles.map((profile) => (
                 <option key={profile.id} value={profile.id}>
                   {profile.plantName}
+                  {profile.variety ? ` – ${profile.variety}` : ""}
+                  {profile.manufacturer ? ` – ${profile.manufacturer}` : ""}
                 </option>
               ))}
             </select>
@@ -93,27 +92,6 @@ function HomePage({
 
           <button onClick={handleApplySeedProfile} className="button">
             Profil ins Formular übernehmen
-          </button>
-        </div>
-
-        <div className="section">
-          <h3 className="section-title">Neues Samenprofil anlegen</h3>
-
-          <div style={{ marginBottom: "12px" }}>
-            <label style={{ display: "block", marginBottom: "4px" }}>
-              Pflanzenname
-            </label>
-            <input
-              type="text"
-              value={newSeedProfile.plantName}
-              onChange={(e) =>
-                handleSeedProfileChange("plantName", e.target.value)
-              }
-            />
-          </div>
-
-          <button onClick={handleAddSeedProfile} className="button">
-            Samenprofil speichern
           </button>
         </div>
 
