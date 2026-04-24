@@ -38,7 +38,13 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
           <strong>ID:</strong> {pot.id}
         </p>
         <p>
-          <strong>Pflanze:</strong> {pot.plantName}
+          <strong>Status:</strong> {pot.status === "empty" ? "Frei" : "Belegt"}
+        </p>
+        <p>
+          <strong>
+            {pot.status === "empty" ? "Letztes Profil:" : "Pflanze:"}
+          </strong>{" "}
+          {pot.plantName || "-"}
         </p>
         <p>
           <strong>Lebensdauer:</strong>{" "}
@@ -49,12 +55,12 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
               : "Mehrjährig"}
         </p>
         <p>
-          {/* Status zeigt an, ob der Topf aktuell genutzt oder leer ist */}
-          <strong>Status:</strong> {pot.status === "empty" ? "Leer" : "Belegt"}
-        </p>
-        <p>
-          <strong>Samenprofil:</strong>{" "}
-          {pot.seedProfileId ? pot.seedProfileId : "Kein Profil zugewiesen"}
+          <strong>
+            {pot.status === "empty" ? "Letztes Samenprofil:" : "Samenprofil:"}
+          </strong>{" "}
+          {pot.seedProfileId
+            ? `${pot.plantName || "-"} (${pot.seedProfileId})`
+            : "Kein Profil zugewiesen"}
         </p>
       </div>
       <div className="section">
