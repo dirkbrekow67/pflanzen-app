@@ -342,9 +342,9 @@ app.get("/api/reminders", (req, res) => {
           potId: pot.id,
           plantName: pot.plantName,
           type: "repot-check",
-          message: "Jungpflanzen trennen / Umtopfen prüfen",
-          explanation:
-            "Wenn mehrere Samen im selben Topf gekeimt sind, stehen die Jungpflanzen irgendwann zu eng. Dann sollten kräftige Pflanzen in eigene Töpfe umgesetzt werden, damit Wurzeln und Blätter genug Platz bekommen.",
+          message: "Wuchs prüfen – ggf. vereinzeln oder umtopfen",
+explanation:
+  "Prüfe, ob die Pflanzen im Topf genügend Platz haben. Wenn mehrere Jungpflanzen sehr dicht stehen, können sie vorsichtig vereinzelt oder in größere bzw. eigene Töpfe umgesetzt werden. Bei Kräutern kann ein dichterer Wuchs je nach Art auch gewünscht sein.",
           daysSinceSowing,
         });
       }
