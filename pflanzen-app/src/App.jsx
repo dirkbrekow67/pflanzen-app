@@ -96,6 +96,7 @@ function App() {
     sowingDepthCm: 1,
     outdoorFromMonth: 5,
     outdoorToMonth: 7,
+    profileNotes: "",
   });
 
   const [editingSeedProfileId, setEditingSeedProfileId] = useState(null);
@@ -253,6 +254,7 @@ function App() {
       germinationDaysMax: pot.germinationDaysMax,
       sowingDepthCm: pot.sowingDepthCm,
       sowingDate: pot.sowingDate,
+      resowingDate: pot.resowingDate || "",
       outdoorFromMonth: pot.outdoorFromMonth,
       outdoorToMonth: pot.outdoorToMonth,
       seedProfileId: pot.seedProfileId || "",
@@ -420,6 +422,7 @@ function App() {
       manufacturer: newSeedProfile.manufacturer,
       experience: newSeedProfile.experience,
       profileStatus: newSeedProfile.profileStatus,
+      profileNotes: newSeedProfile.profileNotes,
     };
 
     if (editingSeedProfileId) {
@@ -455,6 +458,7 @@ function App() {
       manufacturer: "",
       experience: "",
       profileStatus: "testen",
+      profileNotes: "",
     });
 
     setFormError("");
@@ -477,6 +481,7 @@ function App() {
       sowingDepthCm: profile.sowingDepthCm,
       outdoorFromMonth: profile.outdoorFromMonth,
       outdoorToMonth: profile.outdoorToMonth,
+      profileNotes: profile.profileNotes || "",
     });
 
     setEditingSeedProfileId(profile.id);

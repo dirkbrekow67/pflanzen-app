@@ -83,7 +83,18 @@ function SeedLibraryPage({
             }
           />
         </div>
+        <div style={{ marginBottom: "12px" }}>
+          <label style={{ display: "block", marginBottom: "4px" }}>
+            Bemerkungen / Eigenschaften
+          </label>
 
+          <textarea
+            value={newSeedProfile.profileNotes}
+            onChange={(e) =>
+              handleSeedProfileChange("profileNotes", e.target.value)
+            }
+          />
+        </div>
         <div style={{ marginBottom: "12px" }}>
           <label style={{ display: "block", marginBottom: "4px" }}>
             Status
@@ -97,7 +108,7 @@ function SeedLibraryPage({
             <option value="testen">Testen</option>
             <option value="wiederverwenden">Wiederverwenden</option>
             <option value="keimt-schlecht">Keimt schlecht</option>
-            <option value="nicht-brauchbar">Nicht brauchbar</option>
+            <option value="nicht-brauchbar">Unbrauchbar</option>
           </select>
         </div>
         <div style={{ marginBottom: "12px" }}>
@@ -303,7 +314,9 @@ function SeedLibraryPage({
           <p>
             <strong>Erfahrung:</strong> {profile.experience || "-"}
           </p>
-
+          <p>
+            <strong>Bemerkungen:</strong> {profile.profileNotes || "-"}
+          </p>
           <p>
             <strong>ID:</strong> {profile.id}
           </p>
