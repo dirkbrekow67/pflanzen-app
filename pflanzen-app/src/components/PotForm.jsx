@@ -229,7 +229,19 @@ function PotForm({
           </select>
         </div>
       </div>
+      <div className="section">
+        <h3 className="section-title">Beobachtungen</h3>
 
+        <div style={{ marginBottom: "12px" }}>
+          <label style={{ display: "block", marginBottom: "4px" }}>
+            Topfnotizen / Beobachtungen
+          </label>
+          <textarea
+            value={formData.potNotes}
+            onChange={(e) => handleFormChange("potNotes", e.target.value)}
+          />
+        </div>
+      </div>
       <button onClick={handleAddPot} className="button">
         {editingPotId ? "Änderungen speichern" : "Hinzufügen"}
       </button>

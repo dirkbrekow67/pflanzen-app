@@ -258,6 +258,7 @@ function App() {
       outdoorFromMonth: pot.outdoorFromMonth,
       outdoorToMonth: pot.outdoorToMonth,
       seedProfileId: pot.seedProfileId || "",
+      potNotes: pot.potNotes || "",
     });
     /*
       Die ID des ausgewählten Topfs wird gespeichert.

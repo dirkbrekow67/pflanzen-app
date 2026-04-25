@@ -101,6 +101,12 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
           {monthLabels[pot.outdoorToMonth]}
         </p>
       </div>
+      <div className="section">
+        <h3 className="section-title">Beobachtungen</h3>
+        <p>
+          <strong>Topfnotizen:</strong> {pot.potNotes || "-"}
+        </p>
+      </div>
 
       <div className="section">
         <h3 className="section-title">QR-Code</h3>
