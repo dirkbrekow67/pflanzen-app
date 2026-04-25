@@ -89,7 +89,162 @@ function SeedLibraryPage({
             <option value="nicht-brauchbar">Nicht brauchbar</option>
           </select>
         </div>
+        <div style={{ marginBottom: "12px" }}>
+          <label style={{ display: "block", marginBottom: "4px" }}>
+            Lebenszyklus
+          </label>
+          <select
+            value={newSeedProfile.lifecycle}
+            onChange={(e) =>
+              handleSeedProfileChange("lifecycle", e.target.value)
+            }
+          >
+            <option value="annual">Einjährig</option>
+            <option value="biennial">Zweijährig</option>
+            <option value="perennial">Mehrjährig</option>
+          </select>
+        </div>
 
+        <div style={{ marginBottom: "12px" }}>
+          <label style={{ display: "block", marginBottom: "4px" }}>
+            Aussaat laut Packung von
+          </label>
+          <select
+            value={newSeedProfile.sowingFromMonth}
+            onChange={(e) =>
+              handleSeedProfileChange("sowingFromMonth", Number(e.target.value))
+            }
+          >
+            {Object.entries(monthLabels).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ marginBottom: "12px" }}>
+          <label style={{ display: "block", marginBottom: "4px" }}>
+            Aussaat laut Packung bis
+          </label>
+          <select
+            value={newSeedProfile.sowingToMonth}
+            onChange={(e) =>
+              handleSeedProfileChange("sowingToMonth", Number(e.target.value))
+            }
+          >
+            {Object.entries(monthLabels).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ marginBottom: "12px" }}>
+          <label style={{ display: "block", marginBottom: "4px" }}>
+            Keimtemperatur min (°C)
+          </label>
+          <input
+            type="number"
+            value={newSeedProfile.germinationTempMin}
+            onChange={(e) =>
+              handleSeedProfileChange("germinationTempMin", e.target.value)
+            }
+          />
+        </div>
+
+        <div style={{ marginBottom: "12px" }}>
+          <label style={{ display: "block", marginBottom: "4px" }}>
+            Keimtemperatur max (°C)
+          </label>
+          <input
+            type="number"
+            value={newSeedProfile.germinationTempMax}
+            onChange={(e) =>
+              handleSeedProfileChange("germinationTempMax", e.target.value)
+            }
+          />
+        </div>
+
+        <div style={{ marginBottom: "12px" }}>
+          <label style={{ display: "block", marginBottom: "4px" }}>
+            Keimdauer min (Tage)
+          </label>
+          <input
+            type="number"
+            value={newSeedProfile.germinationDaysMin}
+            onChange={(e) =>
+              handleSeedProfileChange("germinationDaysMin", e.target.value)
+            }
+          />
+        </div>
+
+        <div style={{ marginBottom: "12px" }}>
+          <label style={{ display: "block", marginBottom: "4px" }}>
+            Keimdauer max (Tage)
+          </label>
+          <input
+            type="number"
+            value={newSeedProfile.germinationDaysMax}
+            onChange={(e) =>
+              handleSeedProfileChange("germinationDaysMax", e.target.value)
+            }
+          />
+        </div>
+
+        <div style={{ marginBottom: "12px" }}>
+          <label style={{ display: "block", marginBottom: "4px" }}>
+            Aussaattiefe (cm)
+          </label>
+          <input
+            type="number"
+            step="0.1"
+            value={newSeedProfile.sowingDepthCm}
+            onChange={(e) =>
+              handleSeedProfileChange("sowingDepthCm", e.target.value)
+            }
+          />
+        </div>
+
+        <div style={{ marginBottom: "12px" }}>
+          <label style={{ display: "block", marginBottom: "4px" }}>
+            Nach draußen stellen von
+          </label>
+          <select
+            value={newSeedProfile.outdoorFromMonth}
+            onChange={(e) =>
+              handleSeedProfileChange(
+                "outdoorFromMonth",
+                Number(e.target.value),
+              )
+            }
+          >
+            {Object.entries(monthLabels).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ marginBottom: "12px" }}>
+          <label style={{ display: "block", marginBottom: "4px" }}>
+            Nach draußen stellen bis
+          </label>
+          <select
+            value={newSeedProfile.outdoorToMonth}
+            onChange={(e) =>
+              handleSeedProfileChange("outdoorToMonth", Number(e.target.value))
+            }
+          >
+            {Object.entries(monthLabels).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
         <button onClick={handleAddSeedProfile} className="button">
           Samenprofil speichern
         </button>
