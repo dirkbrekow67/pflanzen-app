@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const monthLabels = {
   1: "Januar",
   2: "Februar",
@@ -24,6 +26,13 @@ function SeedLibraryPage({
   return (
     <div className="container">
       <h1>Samenbibliothek 🌿</h1>
+
+      <div style={{ marginBottom: "16px" }}>
+        <Link to="/" className="button-link">
+          ← Zur Hauptseite
+        </Link>
+      </div>
+
       <p>Gespeicherte Pflanzen-Stammdaten</p>
       <div className="card">
         <h2 style={{ marginTop: 0 }}>Neues Samenprofil anlegen</h2>
