@@ -20,20 +20,17 @@ import {
 import "./App.css";
 
 function App() {
+  useEffect(() => {
+    fetch("http://localhost:3001/api/health")
+      .then((res) => res.json())
+      .then((data) => console.log("Backend:", data))
+      .catch((err) => console.error("Backend Fehler:", err));
+  }, []);
+
+  const [pots, setPots] = useState([]);
+
   //Laden der Töpfe aus localStorage
   // Falls ältere Datensätze noch keinen Status haben, wird dieser ergänzt.
-  const [pots, setPots] = useState(() => {
-    const savedPots = localStorage.getItem("pots");
-    if (savedPots) {
-      try {
-        return addMissingStatus(JSON.parse(savedPots));
-      } catch (error) {
-        console.error("Fehler beim Laden der gespeicherten Töpfe:", error);
-        return addMissingStatus(initialPots);
-      }
-    }
-    return addMissingStatus(initialPots);
-  });
 
   // Merkt den aktuellen Modus: null = neuer Topf, "TOPF-002" = Bearbeiten von TOPF-002
   const [editingPotId, setEditingPotId] = useState(null);
@@ -102,10 +99,10 @@ function App() {
   const [editingSeedProfileId, setEditingSeedProfileId] = useState(null);
 
   // Immer wenn sich pots ändert, werden die aktuellen Daten im localStorage gespeichert
-  useEffect(() => {
+  /*useEffect(() => {
     localStorage.setItem("pots", JSON.stringify(pots));
   }, [pots]);
-
+  */
   useEffect(() => {
     localStorage.setItem("seedProfiles", JSON.stringify(customSeedProfiles));
   }, [customSeedProfiles]);
@@ -146,6 +143,26 @@ function App() {
         : [...prevSelectedLabelIds, potId],
     );
   }
+  function getNextPotId() {
+    const highestNumber = pots.reduce((highest, pot) => {
+      const numberPart = Number(pot.id.replace("TOPF-", ""));
+
+      return numberPart > highest ? numberPart : highest;
+    }, 0);
+
+    return "TOPF-" + (highestNumber + 1).toString().padStart(3, "0");
+  }
+  function loadPots() {
+    fetch("http://localhost:3001/api/pots")
+      .then((res) => res.json())
+      .then((data) => {
+        setPots(addMissingStatus(data));
+      })
+      .catch((err) => console.error("Fehler beim Laden:", err));
+  }
+  useEffect(() => {
+    loadPots();
+  }, []);
 
   // Speichert Formular-Daten: entweder als neuer Topf oder als Änderung an einem bestehenden Topf
   function handleAddPot() {
@@ -226,11 +243,27 @@ function App() {
       // Wenn kein Bearbeiten aktiv ist, wird ein neuer Topf angelegt
       const newPot = {
         // Neuer Topf mit freier Nummer wird angelegt
-        id: "TOPF-" + (pots.length + 1).toString().padStart(3, "0"),
+        id: getNextPotId(),
         ...potData,
       };
       // Der neue Topf wird an die bestehende Topf-Liste angehängt
-      setPots([...pots, newPot]);
+      fetch("http://localhost:3001/api/pots", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newPot),
+      })
+        .then((res) => res.json())
+        .then(() => {
+          loadPots();
+        })
+        .catch((err) => {
+          console.error("Fehler beim Speichern des Topfs:", err);
+          setFormError(
+            "Topf konnte nicht in der Datenbank gespeichert werden.",
+          );
+        });
     }
     // Formular nach erfolgreichem Speichern wieder auf Standardwerte zurücksetzen
     setFormData(emptyFormData);
@@ -329,7 +362,12 @@ function App() {
     }
 
     const newEmptyPots = Array.from({ length: count }, (_, index) => {
-      const nextNumber = pots.length + index + 1;
+      const highestNumber = pots.reduce((highest, pot) => {
+        const numberPart = Number(pot.id.replace("TOPF-", ""));
+        return numberPart > highest ? numberPart : highest;
+      }, 0);
+
+      const nextNumber = highestNumber + index + 1;
 
       return {
         id: "TOPF-" + nextNumber.toString().padStart(3, "0"),
@@ -347,12 +385,31 @@ function App() {
         outdoorFromMonth: 5,
         outdoorToMonth: 7,
         seedProfileId: "",
+        resowingDate: "",
+        potNotes: "",
       };
     });
 
-    setPots([...pots, ...newEmptyPots]);
-    setEmptyPotCount(1);
-    setFormError("");
+    Promise.all(
+      newEmptyPots.map((pot) =>
+        fetch("http://localhost:3001/api/pots", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(pot),
+        }),
+      ),
+    )
+      .then(() => {
+        loadPots();
+        setEmptyPotCount(1);
+        setFormError("");
+      })
+      .catch((err) => {
+        console.error("Fehler beim Speichern der Leertöpfe:", err);
+        setFormError("Leertöpfe konnten nicht gespeichert werden.");
+      });
   }
   function handleSeedProfileChange(field, value) {
     setNewSeedProfile({
