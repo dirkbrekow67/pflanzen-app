@@ -153,6 +153,20 @@
   border: 2px dashed #999;
   background-color: #f4f4f4;
 }
+h2 {
+  color: "green";
+}
+
+.reminder-box {
+  border: 2px solid #d89b00;
+  background-color: #fff8e1;
+}
+
+.reminder-item {
+  padding: 8px;
+  border-left: 4px solid #d89b00;
+  background-color: #ffffff;
+}
 
 @media print {
   .no-print {

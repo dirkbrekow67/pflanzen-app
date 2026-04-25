@@ -99,6 +99,8 @@ function App() {
 
   const [editingSeedProfileId, setEditingSeedProfileId] = useState(null);
 
+  const [reminders, setReminders] = useState([]);
+
   // Immer wenn sich pots ändert, werden die aktuellen Daten im localStorage gespeichert
   /*useEffect(() => {
     localStorage.setItem("pots", JSON.stringify(pots));
@@ -192,8 +194,15 @@ function App() {
       })
       .catch((err) => console.error("Fehler beim Laden:", err));
   }
+  function loadReminders() {
+    fetch("http://localhost:3001/api/reminders")
+      .then((res) => res.json())
+      .then((data) => setReminders(data))
+      .catch((err) => console.error("Erinnerungen Fehler:", err));
+  }
   useEffect(() => {
     loadPots();
+    loadReminders();
   }, []);
 
   // Speichert Formular-Daten: entweder als neuer Topf oder als Änderung an einem bestehenden Topf
@@ -607,6 +616,7 @@ function App() {
             emptyPotCount={emptyPotCount}
             setEmptyPotCount={setEmptyPotCount}
             handleAddEmptyPots={handleAddEmptyPots}
+            reminders={reminders}
           />
         }
       />

@@ -21,10 +21,42 @@ function HomePage({
   emptyPotCount,
   setEmptyPotCount,
   handleAddEmptyPots,
+  reminders,
 }) {
   return (
     <div className="container">
       <h1>Pflanzen App 🌱</h1>
+      {reminders?.length > 0 && (
+        <div className="card-light reminder-box">
+          <h2>🔔 Hinweise</h2>
+
+          {reminders.map((item, index) => (
+            <div key={index} className="reminder-item">
+              <p>
+                <strong>{item.potId}</strong> – {item.plantName}: {item.message}
+              </p>
+
+              <p>
+                <small>Seit Aussaat: {item.daysSinceSowing} Tage</small>
+              </p>
+
+              {item.germinationDaysMax && (
+                <p>
+                  <small>
+                    Maximale Keimdauer: {item.germinationDaysMax} Tage
+                  </small>
+                </p>
+              )}
+
+              {item.explanation && (
+                <p>
+                  <small>{item.explanation}</small>
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
       <p>Meine ersten Töpfe</p>
       <section className="card">
         <h2 style={{ marginTop: 0 }}>Aktionen</h2>

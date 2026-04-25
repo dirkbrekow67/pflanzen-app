@@ -310,6 +310,55 @@ app.get("/api/statistics", (req, res) => {
   }
 });
 
+app.get("/api/reminders", (req, res) => {
+  try {
+    const pots = db.prepare("SELECT * FROM pots WHERE status != 'empty'").all();
+    const today = new Date();
+
+    const reminders = [];
+
+    pots.forEach((pot) => {
+      if (!pot.sowingDate) return;
+
+      const sowingDate = new Date(pot.sowingDate);
+      const daysSinceSowing =
+        Math.round((today - sowingDate) / (1000 * 60 * 60 * 24)) + 1;
+
+      if (pot.germinationDaysMax && daysSinceSowing > pot.germinationDaysMax) {
+        reminders.push({
+          potId: pot.id,
+          plantName: pot.plantName,
+          type: "germination-check",
+          message: "Keimdauer überschritten – Topf kontrollieren",
+          explanation:
+            "Die maximale Keimdauer laut Samenprofil ist überschritten. Prüfe, ob Keimlinge sichtbar sind und ob Feuchtigkeit, Temperatur und Standort passen.",
+          daysSinceSowing,
+          germinationDaysMax: pot.germinationDaysMax,
+        });
+      }
+
+      if (daysSinceSowing >= 21) {
+        reminders.push({
+          potId: pot.id,
+          plantName: pot.plantName,
+          type: "repot-check",
+          message: "Jungpflanzen trennen / Umtopfen prüfen",
+          explanation:
+            "Wenn mehrere Samen im selben Topf gekeimt sind, stehen die Jungpflanzen irgendwann zu eng. Dann sollten kräftige Pflanzen in eigene Töpfe umgesetzt werden, damit Wurzeln und Blätter genug Platz bekommen.",
+          daysSinceSowing,
+        });
+      }
+    });
+
+    res.json(reminders);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Erinnerungen konnten nicht geladen werden",
+    });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server läuft auf Port ${PORT}`);
 });
