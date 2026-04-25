@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage";
 import PotPage from "./pages/PotPage";
 import LabelPrintPage from "./pages/LabelPrintPage";
 import SeedLibraryPage from "./pages/SeedLibraryPage";
+import StatisticsPage from "./pages/StatisticsPage";
 // 3. Daten / Assets
 import initialPots from "./data/pots.json";
 import seedProfiles from "./data/seedProfiles.json";
@@ -117,22 +118,53 @@ function App() {
 
   // Leert einen vorhandenen Topf, ohne seine ID zu verändern
   function handleClearPot(potId) {
-    // die bestehende Topf-Liste wird durchlaufen
-    const clearedPots = pots.map((pot) =>
-      // Wenn die ID passt, bleiben ID und Topf erhalten,
-      // aber die Inhaltlichen Felder werden auf Standardwerte zurückgesetzt
+    const potToClear = pots.find((pot) => pot.id === potId);
+    const endReason =
+      prompt(
+        "Beendigungsgrund eingeben:\ngeerntet / fehlgeschlagen / umgetopft / entsorgt / freigegeben",
+        "freigegeben",
+      ) || "freigegeben";
 
-      pot.id === potId ? { ...pot, ...clearedPotData } : pot,
-    );
+    if (!potToClear) return;
 
-    // Die aktualisierte Liste wird im State gespeichert
-    setPots(clearedPots);
-
-    // Falls gerade ein Bearbeiten-Modus aktiv war, wird er beendet
-    setEditingPotId(null);
-
-    // Alte Fehlermeldungen werden gelöscht
-    setFormError("");
+    fetch("http://localhost:3001/api/pot-history", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        potId: potToClear.id,
+        plantName: potToClear.plantName,
+        seedProfileId: potToClear.seedProfileId || "",
+        sowingDate: potToClear.sowingDate || "",
+        resowingDate: potToClear.resowingDate || "",
+        potNotes: potToClear.potNotes || "",
+        startedAt: potToClear.sowingDate || "",
+        endedAt: new Date().toISOString().split("T")[0],
+        endReason,
+      }),
+    })
+      .then(() => {
+        return fetch(`http://localhost:3001/api/pots/${potId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: potId,
+            ...clearedPotData,
+          }),
+        });
+      })
+      .then(() => {
+        loadPots();
+        setEditingPotId(null);
+        setFormError("");
+      })
+      .catch((err) => {
+        console.error("Fehler beim Freigeben:", err);
+        setFormError("Topf konnte nicht freigegeben werden.");
+      });
   }
 
   // Fügt eine Topf-ID zur Etikettenauswahl hinzu oder entfernt sie wieder
@@ -607,6 +639,7 @@ function App() {
           />
         }
       />
+      <Route path="/statistics" element={<StatisticsPage />} />
     </Routes>
   );
 }

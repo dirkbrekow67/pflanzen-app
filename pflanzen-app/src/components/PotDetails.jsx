@@ -31,7 +31,7 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
   const qrValue = `${QR_BASE_URL}/pot/${pot.id}`;
   return (
     <div className="card-light">
-      <h2 style={{ marginTop: 0 }}>Ausgewählter Topf</h2>
+      <h2 style={{ marginTop: 0, color: "green" }}>Ausgewählter Topf</h2>
       <div className="section">
         <h3 className="section-title">Grunddaten</h3>
         <p>

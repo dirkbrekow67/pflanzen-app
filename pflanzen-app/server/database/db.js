@@ -24,6 +24,22 @@ CREATE TABLE IF NOT EXISTS pots (
 );
 `);
 
+db.exec(`
+CREATE TABLE IF NOT EXISTS pot_history (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  potId TEXT,
+  plantName TEXT,
+  seedProfileId TEXT,
+  sowingDate TEXT,
+  resowingDate TEXT,
+  potNotes TEXT,
+  startedAt TEXT,
+  endedAt TEXT,
+  endReason TEXT,
+  createdAt TEXT DEFAULT CURRENT_TIMESTAMP
+);
+`);
+
 console.log("SQLite verbunden");
 
 export default db;

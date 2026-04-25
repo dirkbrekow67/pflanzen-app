@@ -35,6 +35,9 @@ function HomePage({
           <Link to="/seeds" className="button-link">
             Samenbibliothek öffnen
           </Link>
+          <Link to="/statistics" className="button-link">
+            Auswertung öffnen
+          </Link>
         </div>
       </section>
       <section className="card">

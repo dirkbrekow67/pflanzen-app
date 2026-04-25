@@ -27,8 +27,10 @@ function PotCard({ id, plantName, sowingDate, status, onSelect, isSelected }) {
       >
         {id}
       </h2>
-      <p>Pflanze: {plantName}</p>
-      <p>Aussaatdatum: {sowingDate}</p>
+      <p>
+        {status === "empty" ? "Letzte Sorte" : "Pflanze"}: {plantName || "-"}
+      </p>
+      <p>Aussaatdatum: {sowingDate || "-"}</p>
       {/* Zeigt an, ob der Topf aktuell leer oder belegt ist */}
       <p>Status: {status === "empty" ? "Leer" : "Belegt"}</p>
       {isSelected && (

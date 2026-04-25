@@ -1,0 +1,51 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+
+function StatisticsPage() {
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    fetch("http://localhost:3001/api/statistics")
+      .then((res) => res.json())
+      .then((data) => setStats(data))
+      .catch((err) => console.error("Statistik Fehler:", err));
+  }, []);
+
+  return (
+    <div className="container">
+      <h1>📊 Auswertung</h1>
+
+      <div style={{ marginBottom: "16px" }}>
+        <Link to="/" className="button-link">
+          ← Zur Hauptseite
+        </Link>
+      </div>
+
+      {!stats ? (
+        <p>Daten werden geladen...</p>
+      ) : (
+        <>
+          <div className="card-light">
+            <h2 style={{ color: "green" }}>Bestand</h2>
+            <p>Aktive Töpfe: {stats.activePots}</p>
+            <p>Freie Töpfe: {stats.emptyPots}</p>
+          </div>
+
+          <div className="card-light">
+            <h2 style={{ color: "green" }}>Historie</h2>
+            <p>Gesamt Einträge: {stats.historyCount}</p>
+            <p>Geerntet: {stats.harvestedCount}</p>
+            <p>Fehlgeschlagen: {stats.failedCount}</p>
+          </div>
+
+          <div className="card-light">
+            <h2 style={{ color: "green" }}>Durchschnitt</h2>
+            <p>Standzeit: {stats.averageDuration} Tage</p>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+export default StatisticsPage;
