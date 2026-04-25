@@ -350,7 +350,22 @@ explanation:
       }
     });
 
-    res.json(reminders);
+    const priorityOrder = {
+  "germination-check": 1,
+  "repot-check": 2,
+};
+
+reminders.sort((a, b) => {
+  const priorityA = priorityOrder[a.type] || 99;
+  const priorityB = priorityOrder[b.type] || 99;
+
+  if (priorityA !== priorityB) {
+    return priorityA - priorityB;
+  }
+
+  return b.daysSinceSowing - a.daysSinceSowing;
+});
+res.json(reminders);
   } catch (error) {
     console.error(error);
     res.status(500).json({
