@@ -98,6 +98,8 @@ function App() {
     outdoorToMonth: 7,
   });
 
+  const [editingSeedProfileId, setEditingSeedProfileId] = useState(null);
+
   // Immer wenn sich pots ändert, werden die aktuellen Daten im localStorage gespeichert
   useEffect(() => {
     localStorage.setItem("pots", JSON.stringify(pots));
@@ -402,8 +404,7 @@ function App() {
       return;
     }
 
-    const newProfile = {
-      id: "SEED-" + (customSeedProfiles.length + 1).toString().padStart(3, "0"),
+    const profileData = {
       plantName: newSeedProfile.plantName,
       lifecycle: newSeedProfile.lifecycle,
       sowingFromMonth: Number(newSeedProfile.sowingFromMonth),
@@ -421,8 +422,23 @@ function App() {
       profileStatus: newSeedProfile.profileStatus,
     };
 
-    setCustomSeedProfiles([...customSeedProfiles, newProfile]);
+    if (editingSeedProfileId) {
+      const updatedProfiles = customSeedProfiles.map((profile) =>
+        profile.id === editingSeedProfileId
+          ? { ...profile, ...profileData }
+          : profile,
+      );
 
+      setCustomSeedProfiles(updatedProfiles);
+    } else {
+      const newProfile = {
+        id:
+          "SEED-" + (customSeedProfiles.length + 1).toString().padStart(3, "0"),
+        ...profileData,
+      };
+
+      setCustomSeedProfiles([...customSeedProfiles, newProfile]);
+    }
     setNewSeedProfile({
       plantName: "",
       lifecycle: "annual",
@@ -442,6 +458,28 @@ function App() {
     });
 
     setFormError("");
+    setEditingSeedProfileId(null);
+  }
+  function handleEditSeedProfile(profile) {
+    setNewSeedProfile({
+      plantName: profile.plantName,
+      variety: profile.variety || "",
+      manufacturer: profile.manufacturer || "",
+      experience: profile.experience || "",
+      profileStatus: profile.profileStatus || "testen",
+      lifecycle: profile.lifecycle,
+      sowingFromMonth: profile.sowingFromMonth,
+      sowingToMonth: profile.sowingToMonth,
+      germinationTempMin: profile.germinationTempMin,
+      germinationTempMax: profile.germinationTempMax,
+      germinationDaysMin: profile.germinationDaysMin,
+      germinationDaysMax: profile.germinationDaysMax,
+      sowingDepthCm: profile.sowingDepthCm,
+      outdoorFromMonth: profile.outdoorFromMonth,
+      outdoorToMonth: profile.outdoorToMonth,
+    });
+
+    setEditingSeedProfileId(profile.id);
   }
   return (
     <Routes>
@@ -494,6 +532,8 @@ function App() {
             newSeedProfile={newSeedProfile}
             handleSeedProfileChange={handleSeedProfileChange}
             handleAddSeedProfile={handleAddSeedProfile}
+            editingSeedProfileId={editingSeedProfileId}
+            handleEditSeedProfile={handleEditSeedProfile}
           />
         }
       />

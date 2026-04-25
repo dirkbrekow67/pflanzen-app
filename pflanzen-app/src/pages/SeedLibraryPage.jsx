@@ -18,6 +18,8 @@ function SeedLibraryPage({
   newSeedProfile,
   handleSeedProfileChange,
   handleAddSeedProfile,
+  editingSeedProfileId,
+  handleEditSeedProfile,
 }) {
   return (
     <div className="container">
@@ -246,7 +248,9 @@ function SeedLibraryPage({
           </select>
         </div>
         <button onClick={handleAddSeedProfile} className="button">
-          Samenprofil speichern
+          {editingSeedProfileId
+            ? "Änderung speichern"
+            : "Samenprofil speichern"}
         </button>
       </div>
 
@@ -309,6 +313,14 @@ function SeedLibraryPage({
             {monthLabels[profile.outdoorFromMonth]} bis{" "}
             {monthLabels[profile.outdoorToMonth]}
           </p>
+          <div style={{ marginTop: "12px" }}>
+            <button
+              onClick={() => handleEditSeedProfile(profile)}
+              className="button"
+            >
+              Bearbeiten
+            </button>
+          </div>
         </div>
       ))}
     </div>
