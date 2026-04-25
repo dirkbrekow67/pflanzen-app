@@ -14,10 +14,12 @@ export const emptyFormData = {
   outdoorFromMonth: 5,
   outdoorToMonth: 7,
   seedProfileId: "",
+  resowingDate: "",
 };
 
 export const clearedPotData = {
   sowingDate: "",
+  resowingDate: "",
   status: "empty",
 };
 
@@ -46,5 +48,6 @@ export function buildPotData(formData) {
     lifecycle: formData.lifecycle,
     status: "active",
     seedProfileId: formData.seedProfileId || "",
+    resowingDate: formData.resowingDate,
   };
 }

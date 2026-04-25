@@ -80,6 +80,11 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
           <strong>Aussaatdatum:</strong> {pot.sowingDate}
         </p>
         <p>
+          <p>
+            <strong>Nachgesät am:</strong> {pot.resowingDate || "-"}
+          </p>
+        </p>
+        <p>
           <strong>Aussaattiefe:</strong> {pot.sowingDepthCm} cm
         </p>
         <p>
