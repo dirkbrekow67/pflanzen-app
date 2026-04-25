@@ -228,17 +228,24 @@ function App() {
       Dann wird kein neuer Topf angelegt, sondern ein vorhandener Topf aktualisiert.
     */
     if (editingPotId) {
-      /*
-      Die vorhandene Topf-Liste wird mit map() durchlaufen.
-      Trifft die ID auf editingPotId, werden die alten Daten dieses Topfs durch potData ersetzt.
-      Alle anderen Töpfe bleiben unverändert.
-      */
-      const updatedPots = pots.map((pot) =>
-        pot.id === editingPotId ? { ...pot, ...potData } : pot,
-      );
-
-      // Die aktualisierte Topf-Liste wird im State gespeichert
-      setPots(updatedPots);
+      fetch(`http://localhost:3001/api/pots/${editingPotId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: editingPotId,
+          ...potData,
+        }),
+      })
+        .then((res) => res.json())
+        .then(() => {
+          loadPots();
+        })
+        .catch((err) => {
+          console.error("Fehler beim Aktualisieren:", err);
+          setFormError("Topf konnte nicht aktualisiert werden.");
+        });
     } else {
       // Wenn kein Bearbeiten aktiv ist, wird ein neuer Topf angelegt
       const newPot = {

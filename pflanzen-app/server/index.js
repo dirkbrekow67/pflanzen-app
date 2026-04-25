@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import db from "./database/db.js";
 
-
 const app = express();
 const PORT = 3001;
 
@@ -25,13 +24,27 @@ app.get("/api/pots", (req, res) => {
     res.status(500).json({ error: "Fehler beim Laden der Töpfe" });
   }
 });
+
 app.post("/api/pots", (req, res) => {
   try {
     const {
       id,
       plantName,
       status,
-      sowingDate
+      sowingDate,
+      resowingDate,
+      lifecycle,
+      sowingFromMonth,
+      sowingToMonth,
+      germinationTempMin,
+      germinationTempMax,
+      germinationDaysMin,
+      germinationDaysMax,
+      sowingDepthCm,
+      outdoorFromMonth,
+      outdoorToMonth,
+      seedProfileId,
+      potNotes,
     } = req.body;
 
     const stmt = db.prepare(`
@@ -39,16 +52,42 @@ app.post("/api/pots", (req, res) => {
         id,
         plantName,
         status,
-        sowingDate
+        sowingDate,
+        resowingDate,
+        lifecycle,
+        sowingFromMonth,
+        sowingToMonth,
+        germinationTempMin,
+        germinationTempMax,
+        germinationDaysMin,
+        germinationDaysMax,
+        sowingDepthCm,
+        outdoorFromMonth,
+        outdoorToMonth,
+        seedProfileId,
+        potNotes
       )
-      VALUES (?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     stmt.run(
       id,
       plantName,
       status,
-      sowingDate
+      sowingDate,
+      resowingDate,
+      lifecycle,
+      sowingFromMonth,
+      sowingToMonth,
+      germinationTempMin,
+      germinationTempMax,
+      germinationDaysMin,
+      germinationDaysMax,
+      sowingDepthCm,
+      outdoorFromMonth,
+      outdoorToMonth,
+      seedProfileId,
+      potNotes
     );
 
     res.json({
@@ -59,6 +98,77 @@ app.post("/api/pots", (req, res) => {
     console.error(error);
     res.status(500).json({
       error: "Speichern fehlgeschlagen",
+    });
+  }
+});
+
+app.put("/api/pots/:id", (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const {
+      plantName,
+      status,
+      sowingDate,
+      resowingDate,
+      lifecycle,
+      sowingFromMonth,
+      sowingToMonth,
+      germinationTempMin,
+      germinationTempMax,
+      germinationDaysMin,
+      germinationDaysMax,
+      sowingDepthCm,
+      outdoorFromMonth,
+      outdoorToMonth,
+      seedProfileId,
+      potNotes,
+    } = req.body;
+
+    db.prepare(`
+      UPDATE pots
+      SET plantName = ?,
+          status = ?,
+          sowingDate = ?,
+          resowingDate = ?,
+          lifecycle = ?,
+          sowingFromMonth = ?,
+          sowingToMonth = ?,
+          germinationTempMin = ?,
+          germinationTempMax = ?,
+          germinationDaysMin = ?,
+          germinationDaysMax = ?,
+          sowingDepthCm = ?,
+          outdoorFromMonth = ?,
+          outdoorToMonth = ?,
+          seedProfileId = ?,
+          potNotes = ?
+      WHERE id = ?
+    `).run(
+      plantName,
+      status,
+      sowingDate,
+      resowingDate,
+      lifecycle,
+      sowingFromMonth,
+      sowingToMonth,
+      germinationTempMin,
+      germinationTempMax,
+      germinationDaysMin,
+      germinationDaysMax,
+      sowingDepthCm,
+      outdoorFromMonth,
+      outdoorToMonth,
+      seedProfileId,
+      potNotes,
+      id
+    );
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Aktualisieren fehlgeschlagen",
     });
   }
 });

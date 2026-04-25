@@ -7,7 +7,20 @@ CREATE TABLE IF NOT EXISTS pots (
   id TEXT PRIMARY KEY,
   plantName TEXT,
   status TEXT,
-  sowingDate TEXT
+  sowingDate TEXT,
+  resowingDate TEXT,
+  lifecycle TEXT,
+  sowingFromMonth INTEGER,
+  sowingToMonth INTEGER,
+  germinationTempMin INTEGER,
+  germinationTempMax INTEGER,
+  germinationDaysMin INTEGER,
+  germinationDaysMax INTEGER,
+  sowingDepthCm REAL,
+  outdoorFromMonth INTEGER,
+  outdoorToMonth INTEGER,
+  seedProfileId TEXT,
+  potNotes TEXT
 );
 `);
 
