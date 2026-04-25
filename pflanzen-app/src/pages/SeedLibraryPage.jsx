@@ -257,8 +257,21 @@ function SeedLibraryPage({
       <h2>Vorhandene Samenprofile</h2>
 
       {seedProfiles.map((profile) => (
-        <div key={profile.id} className="card-light">
-          <h2 style={{ marginTop: 0 }}>
+        <div
+          key={profile.id}
+          className={`card-light ${
+            profile.profileStatus === "nicht-brauchbar"
+              ? "profile-inactive"
+              : ""
+          }`}
+        >
+          <h2
+            style={{
+              marginTop: 0,
+              color: "#111",
+              fontWeight: "700",
+            }}
+          >
             {profile.plantName}
             {profile.variety ? ` – ${profile.variety}` : ""}
           </h2>
@@ -268,7 +281,14 @@ function SeedLibraryPage({
           </p>
 
           <p>
-            <strong>Status:</strong> {profile.profileStatus || "testen"}
+            <strong>Status:</strong>{" "}
+            {profile.profileStatus === "nicht-brauchbar"
+              ? "Unbrauchbar"
+              : profile.profileStatus === "keimt-schlecht"
+                ? "Keimt schlecht"
+                : profile.profileStatus === "wiederverwenden"
+                  ? "Wiederverwenden"
+                  : "Testen"}
           </p>
 
           <p>

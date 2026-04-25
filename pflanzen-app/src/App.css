@@ -11,10 +11,11 @@
 }
 
 .card-light {
-  border: 1px solid #ccc;
+  border: 1px solid #cfcfcf;
   border-radius: 8px;
   padding: 16px;
-  background-color: #fafafa;
+  background-color: #ffffff;
+  color: #111111;
 }
 
 .section {
@@ -136,6 +137,22 @@
   width: 3cm !important;
   height: 3cm !important;
 }
+.card input,
+.card select,
+.card textarea {
+  width: 100%;
+  max-width: 420px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.card textarea {
+  min-height: 80px;
+}
+.profile-inactive {
+  border: 2px dashed #999;
+  background-color: #f4f4f4;
+}
 
 @media print {
   .no-print {
@@ -154,19 +171,13 @@
   }
 
   .label-sheet {
-    gap: 0.2cm
+    gap: 0.2cm;
   }
   .compact-label {
     break-inside: avoid;
   }
 
-  input,
-select,
-textarea {
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-}
+
 
 
 }
