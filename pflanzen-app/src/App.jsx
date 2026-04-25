@@ -8,8 +8,6 @@ import LabelPrintPage from "./pages/LabelPrintPage";
 import SeedLibraryPage from "./pages/SeedLibraryPage";
 import StatisticsPage from "./pages/StatisticsPage";
 // 3. Daten / Assets
-import initialPots from "./data/pots.json";
-import seedProfiles from "./data/seedProfiles.json";
 
 import {
   addMissingStatus,
@@ -63,20 +61,7 @@ function App() {
 
   const [emptyPotCount, setEmptyPotCount] = useState(1);
 
-  const [customSeedProfiles, setCustomSeedProfiles] = useState(() => {
-    const savedSeedProfiles = localStorage.getItem("seedProfiles");
-
-    if (savedSeedProfiles) {
-      try {
-        return JSON.parse(savedSeedProfiles);
-      } catch (error) {
-        console.error("Fehler beim Laden der Samenprofile:", error);
-        return seedProfiles;
-      }
-    }
-
-    return seedProfiles;
-  });
+  const [customSeedProfiles, setCustomSeedProfiles] = useState([]);
 
   const [newSeedProfile, setNewSeedProfile] = useState({
     plantName: "",
@@ -106,9 +91,11 @@ function App() {
     localStorage.setItem("pots", JSON.stringify(pots));
   }, [pots]);
   */
+  /*
   useEffect(() => {
     localStorage.setItem("seedProfiles", JSON.stringify(customSeedProfiles));
   }, [customSeedProfiles]);
+  */
 
   // Daten werden in das Formular eingegeben und in formData gespeichert
   function handleFormChange(field, value) {
@@ -200,9 +187,18 @@ function App() {
       .then((data) => setReminders(data))
       .catch((err) => console.error("Erinnerungen Fehler:", err));
   }
+  function loadSeedProfiles() {
+    fetch("http://localhost:3001/api/seed-profiles")
+      .then((res) => res.json())
+      .then((data) => setCustomSeedProfiles(data))
+      .catch((err) =>
+        console.error("Fehler beim Laden der Samenprofile:", err),
+      );
+  }
   useEffect(() => {
     loadPots();
     loadReminders();
+    loadSeedProfiles();
   }, []);
 
   // Speichert Formular-Daten: entweder als neuer Topf oder als Änderung an einem bestehenden Topf
@@ -465,6 +461,14 @@ function App() {
       [field]: value,
     });
   }
+  function getNextSeedProfileId() {
+    const highestNumber = customSeedProfiles.reduce((highest, profile) => {
+      const numberPart = Number(profile.id.replace("SEED-", ""));
+      return numberPart > highest ? numberPart : highest;
+    }, 0);
+
+    return "SEED-" + (highestNumber + 1).toString().padStart(3, "0");
+  }
   function handleAddSeedProfile() {
     if (!newSeedProfile.plantName.trim()) {
       setFormError("Bitte einen Pflanzennamen für das Samenprofil eingeben.");
@@ -532,21 +536,45 @@ function App() {
     };
 
     if (editingSeedProfileId) {
-      const updatedProfiles = customSeedProfiles.map((profile) =>
-        profile.id === editingSeedProfileId
-          ? { ...profile, ...profileData }
-          : profile,
-      );
-
-      setCustomSeedProfiles(updatedProfiles);
+      fetch(`http://localhost:3001/api/seed-profiles/${editingSeedProfileId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: editingSeedProfileId,
+          ...profileData,
+        }),
+      })
+        .then((res) => res.json())
+        .then(() => {
+          loadSeedProfiles();
+        })
+        .catch((err) => {
+          console.error("Fehler beim Aktualisieren des Samenprofils:", err);
+          setFormError("Samenprofil konnte nicht aktualisiert werden.");
+        });
     } else {
       const newProfile = {
-        id:
-          "SEED-" + (customSeedProfiles.length + 1).toString().padStart(3, "0"),
+        id: getNextSeedProfileId(),
         ...profileData,
       };
 
-      setCustomSeedProfiles([...customSeedProfiles, newProfile]);
+      fetch("http://localhost:3001/api/seed-profiles", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newProfile),
+      })
+        .then((res) => res.json())
+        .then(() => {
+          loadSeedProfiles();
+        })
+        .catch((err) => {
+          console.error("Fehler beim Speichern des Samenprofils:", err);
+          setFormError("Samenprofil konnte nicht gespeichert werden.");
+        });
     }
     setNewSeedProfile({
       plantName: "",

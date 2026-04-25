@@ -40,6 +40,28 @@ CREATE TABLE IF NOT EXISTS pot_history (
 );
 `);
 
+db.exec(`
+CREATE TABLE IF NOT EXISTS seed_profiles (
+  id TEXT PRIMARY KEY,
+  plantName TEXT,
+  variety TEXT,
+  manufacturer TEXT,
+  experience TEXT,
+  profileNotes TEXT,
+  profileStatus TEXT,
+  lifecycle TEXT,
+  sowingFromMonth INTEGER,
+  sowingToMonth INTEGER,
+  germinationTempMin INTEGER,
+  germinationTempMax INTEGER,
+  germinationDaysMin INTEGER,
+  germinationDaysMax INTEGER,
+  sowingDepthCm REAL,
+  outdoorFromMonth INTEGER,
+  outdoorToMonth INTEGER
+);
+`);
+
 console.log("SQLite verbunden");
 
 export default db;
