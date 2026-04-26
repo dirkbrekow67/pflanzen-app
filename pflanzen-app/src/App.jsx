@@ -132,6 +132,65 @@ function App() {
     setShowReleaseDialog(true);
   }
 
+  function confirmClearPot() {
+    const potToClear = pots.find((pot) => pot.id === potToReleaseId);
+
+    if (!potToClear) return;
+
+    let finalReason = releaseReason;
+
+    if (releaseReason === "sonstiges") {
+      finalReason = releaseReasonNote.trim()
+        ? `Sonstiges: ${releaseReasonNote}`
+        : "Sonstiges";
+    }
+
+    fetch("http://localhost:3001/api/pot-history", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        potId: potToClear.id,
+        plantName: potToClear.plantName,
+        seedProfileId: potToClear.seedProfileId || "",
+        sowingDate: potToClear.sowingDate || "",
+        resowingDate: potToClear.resowingDate || "",
+        potNotes: potToClear.potNotes || "",
+        startedAt: potToClear.sowingDate || "",
+        endedAt: new Date().toISOString().split("T")[0],
+        endReason: finalReason,
+      }),
+    })
+      .then(() => {
+        return fetch(`http://localhost:3001/api/pots/${potToReleaseId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: potToReleaseId,
+            ...clearedPotData,
+          }),
+        });
+      })
+      .then(() => {
+        loadPots();
+        loadReminders();
+
+        setShowReleaseDialog(false);
+        setPotToReleaseId(null);
+        setReleaseReason("freigegeben");
+        setReleaseReasonNote("");
+        setEditingPotId(null);
+        setFormError("");
+      })
+      .catch((err) => {
+        console.error("Fehler beim Freigeben:", err);
+        setFormError("Topf konnte nicht freigegeben werden.");
+      });
+  }
+
   // Fügt eine Topf-ID zur Etikettenauswahl hinzu oder entfernt sie wieder
   function handleToggleLabelSelection(potId) {
     setSelectedLabelIds((prevSelectedLabelIds) =>
@@ -657,7 +716,9 @@ function App() {
             </div>
           )}
           <div className="filter-bar">
-            <button className="button">Freigabe bestätigen</button>
+            <button className="button" onClick={confirmClearPot}>
+              Freigabe bestätigen
+            </button>
 
             <button
               className="button"
