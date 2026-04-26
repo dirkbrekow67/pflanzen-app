@@ -54,7 +54,11 @@ function StatisticsPage() {
                   className="card-light history-card"
                 >
                   <p>
-                    <strong>{item.seedProfileId}</strong>
+                    <strong>
+                      {item.plantName || item.seedProfileId}
+                      {item.variety ? ` – ${item.variety}` : ""}
+                      {item.manufacturer ? ` – ${item.manufacturer}` : ""}
+                    </strong>
                   </p>
 
                   <p>Durchgänge: {item.total}</p>

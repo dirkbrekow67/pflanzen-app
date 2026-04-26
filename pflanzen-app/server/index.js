@@ -299,11 +299,23 @@ app.get("/api/statistics", (req, res) => {
 
         const profileResults = db
   .prepare(`
-    SELECT seedProfileId, endReason, COUNT(*) AS count
-    FROM pot_history
-    WHERE seedProfileId IS NOT NULL AND seedProfileId != ''
-    GROUP BY seedProfileId, endReason
-    ORDER BY seedProfileId
+    SELECT 
+      h.seedProfileId,
+      s.plantName,
+      s.variety,
+      s.manufacturer,
+      h.endReason,
+      COUNT(*) AS count
+    FROM pot_history h
+    LEFT JOIN seed_profiles s ON h.seedProfileId = s.id
+    WHERE h.seedProfileId IS NOT NULL AND h.seedProfileId != ''
+    GROUP BY 
+      h.seedProfileId,
+      s.plantName,
+      s.variety,
+      s.manufacturer,
+      h.endReason
+    ORDER BY s.plantName, s.variety, s.manufacturer
   `)
   .all();
 
@@ -312,12 +324,15 @@ app.get("/api/statistics", (req, res) => {
 profileResults.forEach((item) => {
   if (!profileSummaryMap[item.seedProfileId]) {
     profileSummaryMap[item.seedProfileId] = {
-      seedProfileId: item.seedProfileId,
-      total: 0,
-      successful: 0,
-      failed: 0,
-      other: 0,
-    };
+  seedProfileId: item.seedProfileId,
+  plantName: item.plantName || "",
+  variety: item.variety || "",
+  manufacturer: item.manufacturer || "",
+  total: 0,
+  successful: 0,
+  failed: 0,
+  other: 0,
+};
   }
 
   profileSummaryMap[item.seedProfileId].total += item.count;
@@ -336,6 +351,7 @@ const profileSummary = Object.values(profileSummaryMap).map((item) => ({
   successRate:
     item.total > 0 ? Math.round((item.successful / item.total) * 100) : 0,
 }));
+
 
     res.json({
       activePots: activePots.count,
