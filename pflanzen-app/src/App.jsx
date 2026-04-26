@@ -100,6 +100,11 @@ function App() {
     return {};
   });
 
+  const [releaseReason, setReleaseReason] = useState("freigegeben");
+  const [releaseReasonNote, setReleaseReasonNote] = useState("");
+  const [showReleaseDialog, setShowReleaseDialog] = useState(false);
+  const [potToReleaseId, setPotToReleaseId] = useState(null);
+
   // Immer wenn sich pots ändert, werden die aktuellen Daten im localStorage gespeichert
   /*useEffect(() => {
     localStorage.setItem("pots", JSON.stringify(pots));
@@ -121,57 +126,10 @@ function App() {
 
   // Leert einen vorhandenen Topf, ohne seine ID zu verändern
   function handleClearPot(potId) {
-    const potToClear = pots.find((pot) => pot.id === potId);
-
-    if (!potToClear) return;
-
-    const endReason =
-      prompt(
-        "Beendigungsgrund eingeben:\ngeerntet / fehlgeschlagen / umgetopft / entsorgt / freigegeben",
-        "freigegeben",
-      ) || "freigegeben";
-
-    if (endReason === null) return;
-
-    fetch("http://localhost:3001/api/pot-history", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        potId: potToClear.id,
-        plantName: potToClear.plantName,
-        seedProfileId: potToClear.seedProfileId || "",
-        sowingDate: potToClear.sowingDate || "",
-        resowingDate: potToClear.resowingDate || "",
-        potNotes: potToClear.potNotes || "",
-        startedAt: potToClear.sowingDate || "",
-        endedAt: new Date().toISOString().split("T")[0],
-        endReason,
-      }),
-    })
-      .then(() => {
-        return fetch(`http://localhost:3001/api/pots/${potId}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id: potId,
-            ...clearedPotData,
-          }),
-        });
-      })
-      .then(() => {
-        loadPots();
-        loadReminders();
-        setEditingPotId(null);
-        setFormError("");
-      })
-      .catch((err) => {
-        console.error("Fehler beim Freigeben:", err);
-        setFormError("Topf konnte nicht freigegeben werden.");
-      });
+    setPotToReleaseId(potId);
+    setReleaseReason("freigegeben");
+    setReleaseReasonNote("");
+    setShowReleaseDialog(true);
   }
 
   // Fügt eine Topf-ID zur Etikettenauswahl hinzu oder entfernt sie wieder
