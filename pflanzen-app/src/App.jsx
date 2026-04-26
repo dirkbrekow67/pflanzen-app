@@ -143,13 +143,9 @@ function App() {
 
     if (!potToClear) return;
 
-    let finalReason = releaseReason;
-
-    if (releaseReason === "sonstiges") {
-      finalReason = releaseReasonNote.trim()
-        ? `Sonstiges: ${releaseReasonNote}`
-        : "Sonstiges";
-    }
+    const finalReason = releaseReason;
+    const finalReasonNote =
+      releaseReason === "sonstiges" ? releaseReasonNote.trim() : "";
 
     fetch("http://localhost:3001/api/pot-history", {
       method: "POST",
@@ -166,6 +162,7 @@ function App() {
         startedAt: potToClear.sowingDate || "",
         endedAt: new Date().toISOString().split("T")[0],
         endReason: finalReason,
+        endReasonNote: finalReasonNote,
       }),
     })
       .then(() => {

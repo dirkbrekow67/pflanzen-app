@@ -83,7 +83,10 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
 
               <p>Standzeit: {days ? `${days} Tage` : "-"}</p>
 
-              <p>Grund: {entry.endReason || "-"}</p>
+              <p>
+                Grund: {entry.endReason}
+                {entry.endReasonNote && <span> ({entry.endReasonNote})</span>}
+              </p>
             </div>
           );
         })

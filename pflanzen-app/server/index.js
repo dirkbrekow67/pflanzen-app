@@ -176,16 +176,17 @@ app.put("/api/pots/:id", (req, res) => {
 app.post("/api/pot-history", (req, res) => {
   try {
     const {
-      potId,
-      plantName,
-      seedProfileId,
-      sowingDate,
-      resowingDate,
-      potNotes,
-      startedAt,
-      endedAt,
-      endReason,
-    } = req.body;
+  potId,
+  plantName,
+  seedProfileId,
+  sowingDate,
+  resowingDate,
+  potNotes,
+  startedAt,
+  endedAt,
+  endReason,
+  endReasonNote,
+} = req.body;
 
     const stmt = db.prepare(`
       INSERT INTO pot_history (
@@ -197,9 +198,10 @@ app.post("/api/pot-history", (req, res) => {
         potNotes,
         startedAt,
         endedAt,
-        endReason
+        endReason,
+        endReasonNote
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     stmt.run(
@@ -211,7 +213,8 @@ app.post("/api/pot-history", (req, res) => {
       potNotes,
       startedAt,
       endedAt,
-      endReason
+      endReason,
+      endReasonNote
     );
 
     res.json({

@@ -36,9 +36,17 @@ CREATE TABLE IF NOT EXISTS pot_history (
   startedAt TEXT,
   endedAt TEXT,
   endReason TEXT,
+  endReasonNote TEXT,
   createdAt TEXT DEFAULT CURRENT_TIMESTAMP
 );
 `);
+
+try {
+  db.prepare("ALTER TABLE pot_history ADD COLUMN endReasonNote TEXT").run();
+} catch {
+  // Spalte existiert bereits
+}
+
 
 db.exec(`
 CREATE TABLE IF NOT EXISTS seed_profiles (
