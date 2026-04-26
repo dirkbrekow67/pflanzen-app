@@ -691,52 +691,55 @@ function App() {
   return (
     <>
       {showReleaseDialog && (
-        <div className="card-light" style={{ marginBottom: "20px" }}>
-          <h2>Topf freigeben</h2>
-          <div style={{ marginBottom: "12px" }}>
-            <label style={{ display: "block", marginBottom: "4px" }}>
-              Beendigungsgrund
-            </label>
-            <select
-              value={releaseReason}
-              onChange={(e) => setReleaseReason(e.target.value)}
-            >
-              <option value="freigegeben">Freigegeben</option>
-              <option value="geerntet">Geerntet</option>
-              <option value="fehlgeschlagen">Fehlgeschlagen</option>
-              <option value="umgetopft">Umgetopft</option>
-              <option value="entsorgt">Entsorgt</option>
-              <option value="sonstiges">Sonstiges</option>
-            </select>
-          </div>
-          {releaseReason === "sonstiges" && (
+        <div className="modal-backdrop">
+          <div className="modal-card">
+            <h2>Topf freigeben</h2>
             <div style={{ marginBottom: "12px" }}>
               <label style={{ display: "block", marginBottom: "4px" }}>
-                Grund / Sonstiges
+                Beendigungsgrund
               </label>
-              <input
-                type="text"
-                value={releaseReasonNote}
-                onChange={(e) => setReleaseReasonNote(e.target.value)}
-              />
+              <select
+                value={releaseReason}
+                onChange={(e) => setReleaseReason(e.target.value)}
+              >
+                <option value="freigegeben">Freigegeben</option>
+                <option value="geerntet">Geerntet</option>
+                <option value="fehlgeschlagen">Fehlgeschlagen</option>
+                <option value="umgetopft">Umgetopft</option>
+                <option value="entsorgt">Entsorgt</option>
+                <option value="sonstiges">Sonstiges</option>
+              </select>
             </div>
-          )}
-          <div className="filter-bar">
-            <button className="button" onClick={confirmClearPot}>
-              Freigabe bestätigen
-            </button>
 
-            <button
-              className="button"
-              onClick={() => {
-                setShowReleaseDialog(false);
-                setPotToReleaseId(null);
-                setReleaseReason("freigegeben");
-                setReleaseReasonNote("");
-              }}
-            >
-              Abbrechen
-            </button>
+            {releaseReason === "sonstiges" && (
+              <div style={{ marginBottom: "12px" }}>
+                <label style={{ display: "block", marginBottom: "4px" }}>
+                  Grund / Sonstiges
+                </label>
+                <input
+                  type="text"
+                  value={releaseReasonNote}
+                  onChange={(e) => setReleaseReasonNote(e.target.value)}
+                />
+              </div>
+            )}
+            <div className="filter-bar">
+              <button className="button" onClick={confirmClearPot}>
+                Freigabe bestätigen
+              </button>
+
+              <button
+                className="button"
+                onClick={() => {
+                  setShowReleaseDialog(false);
+                  setPotToReleaseId(null);
+                  setReleaseReason("freigegeben");
+                  setReleaseReasonNote("");
+                }}
+              >
+                Abbrechen
+              </button>
+            </div>
           </div>
         </div>
       )}
