@@ -213,13 +213,13 @@ function App() {
         console.error("Fehler beim Laden der Samenprofile:", err),
       );
   }
-  function hideReminder(reminderKey) {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
+  function hideReminder(reminderKey, days = 1) {
+    const hideUntil = new Date();
+    hideUntil.setDate(hideUntil.getDate() + days);
 
     setHiddenReminders((prev) => ({
       ...prev,
-      [reminderKey]: tomorrow.toISOString(),
+      [reminderKey]: hideUntil.toISOString(),
     }));
   }
   const visibleReminders = reminders.filter((item) => {

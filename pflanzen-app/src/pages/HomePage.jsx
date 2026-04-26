@@ -54,12 +54,28 @@ function HomePage({
                   <small>{item.explanation}</small>
                 </p>
               )}
-              <button
-                className="button"
-                onClick={() => hideReminder(`${item.potId}-${item.type}`)}
-              >
-                Heute ausblenden
-              </button>
+              <div className="filter-bar">
+                <button
+                  className="button"
+                  onClick={() => hideReminder(`${item.potId}-${item.type}`, 1)}
+                >
+                  +1 Tag
+                </button>
+
+                <button
+                  className="button"
+                  onClick={() => hideReminder(`${item.potId}-${item.type}`, 3)}
+                >
+                  +3 Tage
+                </button>
+
+                <button
+                  className="button"
+                  onClick={() => hideReminder(`${item.potId}-${item.type}`, 7)}
+                >
+                  +7 Tage
+                </button>
+              </div>
             </div>
           ))}
         </div>
