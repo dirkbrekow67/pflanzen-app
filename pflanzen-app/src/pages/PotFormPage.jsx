@@ -1,0 +1,68 @@
+import { Link } from "react-router-dom";
+import PotForm from "../components/PotForm";
+
+function PotFormPage({
+  formData,
+  handleFormChange,
+  handleAddPot,
+  formError,
+  editingPotId,
+  seedProfiles,
+  selectedSeedProfileId,
+  setSelectedSeedProfileId,
+  handleApplySeedProfile,
+}) {
+  return (
+    <div className="container">
+      <h1>Topf belegen / bearbeiten</h1>
+
+      <div style={{ marginBottom: "16px" }}>
+        <Link to="/" className="button-link">
+          ← Zur Übersicht
+        </Link>
+      </div>
+
+      <section className="card">
+        <h2 style={{ marginTop: 0 }}>Samenprofil laden</h2>
+        <p>
+          Wähle ein Profil aus der Samenbibliothek und übernimm die Stammdaten
+          ins Formular.
+        </p>
+
+        <div style={{ marginBottom: "12px" }}>
+          <label style={{ display: "block", marginBottom: "4px" }}>
+            Samenprofil
+          </label>
+
+          <select
+            value={selectedSeedProfileId}
+            onChange={(e) => setSelectedSeedProfileId(e.target.value)}
+          >
+            <option value="">Bitte auswählen</option>
+            {seedProfiles.map((profile) => (
+              <option key={profile.id} value={profile.id}>
+                {profile.plantName}
+                {profile.variety ? ` – ${profile.variety}` : ""}
+                {profile.manufacturer ? ` – ${profile.manufacturer}` : ""}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <button onClick={handleApplySeedProfile} className="button">
+          Profil ins Formular übernehmen
+        </button>
+      </section>
+
+      <PotForm
+        formData={formData}
+        handleFormChange={handleFormChange}
+        handleAddPot={handleAddPot}
+        formError={formError}
+        editingPotId={editingPotId}
+      />
+    </div>
+  );
+}
+
+export default PotFormPage;

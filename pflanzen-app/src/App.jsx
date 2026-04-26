@@ -7,6 +7,7 @@ import PotPage from "./pages/PotPage";
 import LabelPrintPage from "./pages/LabelPrintPage";
 import SeedLibraryPage from "./pages/SeedLibraryPage";
 import StatisticsPage from "./pages/StatisticsPage";
+import PotFormPage from "./pages/PotFormPage";
 // 3. Daten / Assets
 
 import {
@@ -800,6 +801,22 @@ function App() {
           }
         />
         <Route path="/statistics" element={<StatisticsPage />} />
+        <Route
+          path="/pots/new"
+          element={
+            <PotFormPage
+              formData={formData}
+              handleFormChange={handleFormChange}
+              handleAddPot={handleAddPot}
+              formError={formError}
+              editingPotId={editingPotId}
+              seedProfiles={customSeedProfiles}
+              selectedSeedProfileId={selectedSeedProfileId}
+              setSelectedSeedProfileId={setSelectedSeedProfileId}
+              handleApplySeedProfile={handleApplySeedProfile}
+            />
+          }
+        />
       </Routes>
     </>
   );

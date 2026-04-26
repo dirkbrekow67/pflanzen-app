@@ -3,20 +3,11 @@ import PotCard from "../components/PotCard";
 import PotForm from "../components/PotForm";
 
 function HomePage({
-  formData,
-  handleFormChange,
-  handleAddPot,
-  formError,
-  editingPotId,
   statusFilter,
   setStatusFilter,
   filteredPots,
   selectedLabelIds,
   handleToggleLabelSelection,
-  seedProfiles,
-  selectedSeedProfileId,
-  setSelectedSeedProfileId,
-  handleApplySeedProfile,
   handleExportPots,
   emptyPotCount,
   setEmptyPotCount,
