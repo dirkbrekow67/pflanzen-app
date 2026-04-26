@@ -42,6 +42,30 @@ function StatisticsPage() {
             <h2 style={{ color: "green" }}>Durchschnitt</h2>
             <p>Standzeit: {stats.averageDuration} Tage</p>
           </div>
+          <div className="card-light">
+            <h2>Ergebnisse je Samenprofil</h2>
+
+            {!stats.profileSummary || stats.profileSummary.length === 0 ? (
+              <p>Noch keine auswertbaren Samenprofil-Ergebnisse vorhanden.</p>
+            ) : (
+              stats.profileSummary.map((item) => (
+                <div
+                  key={item.seedProfileId}
+                  className="card-light history-card"
+                >
+                  <p>
+                    <strong>{item.seedProfileId}</strong>
+                  </p>
+
+                  <p>Durchgänge: {item.total}</p>
+                  <p>Erfolgreich/geerntet: {item.successful}</p>
+                  <p>Fehlgeschlagen: {item.failed}</p>
+                  <p>Sonstige Gründe: {item.other}</p>
+                  <p>Erfolgsquote: {item.successRate} %</p>
+                </div>
+              ))
+            )}
+          </div>
         </>
       )}
     </div>

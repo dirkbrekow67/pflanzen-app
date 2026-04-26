@@ -297,6 +297,46 @@ app.get("/api/statistics", (req, res) => {
           )
         : 0;
 
+        const profileResults = db
+  .prepare(`
+    SELECT seedProfileId, endReason, COUNT(*) AS count
+    FROM pot_history
+    WHERE seedProfileId IS NOT NULL AND seedProfileId != ''
+    GROUP BY seedProfileId, endReason
+    ORDER BY seedProfileId
+  `)
+  .all();
+
+  const profileSummaryMap = {};
+
+profileResults.forEach((item) => {
+  if (!profileSummaryMap[item.seedProfileId]) {
+    profileSummaryMap[item.seedProfileId] = {
+      seedProfileId: item.seedProfileId,
+      total: 0,
+      successful: 0,
+      failed: 0,
+      other: 0,
+    };
+  }
+
+  profileSummaryMap[item.seedProfileId].total += item.count;
+
+  if (item.endReason === "geerntet") {
+    profileSummaryMap[item.seedProfileId].successful += item.count;
+  } else if (item.endReason === "fehlgeschlagen") {
+    profileSummaryMap[item.seedProfileId].failed += item.count;
+  } else {
+    profileSummaryMap[item.seedProfileId].other += item.count;
+  }
+});
+
+const profileSummary = Object.values(profileSummaryMap).map((item) => ({
+  ...item,
+  successRate:
+    item.total > 0 ? Math.round((item.successful / item.total) * 100) : 0,
+}));
+
     res.json({
       activePots: activePots.count,
       emptyPots: emptyPots.count,
@@ -304,6 +344,8 @@ app.get("/api/statistics", (req, res) => {
       harvestedCount: harvestedCount.count,
       failedCount: failedCount.count,
       averageDuration,
+      profileResults,
+      profileSummary,
     });
   } catch (error) {
     console.error(error);
