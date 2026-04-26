@@ -230,6 +230,9 @@ function App() {
 
     return new Date() >= new Date(hiddenUntil);
   });
+  function resetHiddenReminders() {
+    setHiddenReminders({});
+  }
   useEffect(() => {
     loadPots();
     loadReminders();
@@ -688,6 +691,7 @@ function App() {
             handleAddEmptyPots={handleAddEmptyPots}
             reminders={visibleReminders}
             hideReminder={hideReminder}
+            resetHiddenReminders={resetHiddenReminders}
           />
         }
       />

@@ -23,6 +23,7 @@ function HomePage({
   handleAddEmptyPots,
   reminders,
   hideReminder,
+  resetHiddenReminders,
 }) {
   return (
     <div className="container">
@@ -93,6 +94,9 @@ function HomePage({
           <Link to="/statistics" className="button-link">
             Auswertung öffnen
           </Link>
+          <button onClick={resetHiddenReminders} className="button">
+            Ausgeblendete Hinweise wieder anzeigen
+          </button>
         </div>
       </section>
       <section className="card">
