@@ -15,7 +15,7 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
       .then((res) => res.json())
       .then((data) => setHistory(data))
       .catch((err) => console.error("Historie Fehler:", err));
-  }, [potId]);
+  }, [potId, pots]);
 
   // Lädt die Topfdaten ins Formular und wechselt zurück zur Übersichtsseite
   function handleEditAndGoBack() {

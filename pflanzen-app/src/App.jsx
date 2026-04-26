@@ -130,6 +130,12 @@ function App() {
     setReleaseReason("freigegeben");
     setReleaseReasonNote("");
     setShowReleaseDialog(true);
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }, 0);
   }
 
   function confirmClearPot() {
@@ -169,7 +175,7 @@ function App() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            id: potToReleaseId,
+            ...potToClear,
             ...clearedPotData,
           }),
         });
