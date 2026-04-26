@@ -624,66 +624,117 @@ function App() {
     setEditingSeedProfileId(profile.id);
   }
   return (
-    <Routes>
-      <Route
-        path="/"
-        element={
-          <HomePage
-            formData={formData}
-            handleFormChange={handleFormChange}
-            handleAddPot={handleAddPot}
-            formError={formError}
-            editingPotId={editingPotId}
-            statusFilter={statusFilter}
-            setStatusFilter={setStatusFilter}
-            filteredPots={filteredPots}
-            selectedLabelIds={selectedLabelIds}
-            handleToggleLabelSelection={handleToggleLabelSelection}
-            seedProfiles={customSeedProfiles}
-            selectedSeedProfileId={selectedSeedProfileId}
-            setSelectedSeedProfileId={setSelectedSeedProfileId}
-            handleApplySeedProfile={handleApplySeedProfile}
-            handleExportPots={handleExportPots}
-            emptyPotCount={emptyPotCount}
-            setEmptyPotCount={setEmptyPotCount}
-            handleAddEmptyPots={handleAddEmptyPots}
-            reminders={visibleReminders}
-            hideReminder={hideReminder}
-            resetHiddenReminders={resetHiddenReminders}
-          />
-        }
-      />
-      <Route
-        path="/pot/:potId"
-        element={
-          <PotPage
-            pots={pots}
-            handleEditPot={handleEditPot}
-            handleClearPot={handleClearPot}
-          />
-        }
-      />
-      <Route
-        path="/labels/print"
-        element={
-          <LabelPrintPage pots={pots} selectedLabelIds={selectedLabelIds} />
-        }
-      />
-      <Route
-        path="/seeds"
-        element={
-          <SeedLibraryPage
-            seedProfiles={customSeedProfiles}
-            newSeedProfile={newSeedProfile}
-            handleSeedProfileChange={handleSeedProfileChange}
-            handleAddSeedProfile={handleAddSeedProfile}
-            editingSeedProfileId={editingSeedProfileId}
-            handleEditSeedProfile={handleEditSeedProfile}
-          />
-        }
-      />
-      <Route path="/statistics" element={<StatisticsPage />} />
-    </Routes>
+    <>
+      {showReleaseDialog && (
+        <div className="card-light" style={{ marginBottom: "20px" }}>
+          <h2>Topf freigeben</h2>
+          <div style={{ marginBottom: "12px" }}>
+            <label style={{ display: "block", marginBottom: "4px" }}>
+              Beendigungsgrund
+            </label>
+            <select
+              value={releaseReason}
+              onChange={(e) => setReleaseReason(e.target.value)}
+            >
+              <option value="freigegeben">Freigegeben</option>
+              <option value="geerntet">Geerntet</option>
+              <option value="fehlgeschlagen">Fehlgeschlagen</option>
+              <option value="umgetopft">Umgetopft</option>
+              <option value="entsorgt">Entsorgt</option>
+              <option value="sonstiges">Sonstiges</option>
+            </select>
+          </div>
+          {releaseReason === "sonstiges" && (
+            <div style={{ marginBottom: "12px" }}>
+              <label style={{ display: "block", marginBottom: "4px" }}>
+                Grund / Sonstiges
+              </label>
+              <input
+                type="text"
+                value={releaseReasonNote}
+                onChange={(e) => setReleaseReasonNote(e.target.value)}
+              />
+            </div>
+          )}
+          <div className="filter-bar">
+            <button className="button">Freigabe bestätigen</button>
+
+            <button
+              className="button"
+              onClick={() => {
+                setShowReleaseDialog(false);
+                setPotToReleaseId(null);
+                setReleaseReason("freigegeben");
+                setReleaseReasonNote("");
+              }}
+            >
+              Abbrechen
+            </button>
+          </div>
+        </div>
+      )}
+
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <HomePage
+              formData={formData}
+              handleFormChange={handleFormChange}
+              handleAddPot={handleAddPot}
+              formError={formError}
+              editingPotId={editingPotId}
+              statusFilter={statusFilter}
+              setStatusFilter={setStatusFilter}
+              filteredPots={filteredPots}
+              selectedLabelIds={selectedLabelIds}
+              handleToggleLabelSelection={handleToggleLabelSelection}
+              seedProfiles={customSeedProfiles}
+              selectedSeedProfileId={selectedSeedProfileId}
+              setSelectedSeedProfileId={setSelectedSeedProfileId}
+              handleApplySeedProfile={handleApplySeedProfile}
+              handleExportPots={handleExportPots}
+              emptyPotCount={emptyPotCount}
+              setEmptyPotCount={setEmptyPotCount}
+              handleAddEmptyPots={handleAddEmptyPots}
+              reminders={visibleReminders}
+              hideReminder={hideReminder}
+              resetHiddenReminders={resetHiddenReminders}
+            />
+          }
+        />
+        <Route
+          path="/pot/:potId"
+          element={
+            <PotPage
+              pots={pots}
+              handleEditPot={handleEditPot}
+              handleClearPot={handleClearPot}
+            />
+          }
+        />
+        <Route
+          path="/labels/print"
+          element={
+            <LabelPrintPage pots={pots} selectedLabelIds={selectedLabelIds} />
+          }
+        />
+        <Route
+          path="/seeds"
+          element={
+            <SeedLibraryPage
+              seedProfiles={customSeedProfiles}
+              newSeedProfile={newSeedProfile}
+              handleSeedProfileChange={handleSeedProfileChange}
+              handleAddSeedProfile={handleAddSeedProfile}
+              editingSeedProfileId={editingSeedProfileId}
+              handleEditSeedProfile={handleEditSeedProfile}
+            />
+          }
+        />
+        <Route path="/statistics" element={<StatisticsPage />} />
+      </Routes>
+    </>
   );
 }
 
