@@ -86,7 +86,19 @@ function App() {
 
   const [reminders, setReminders] = useState([]);
 
-  const [hiddenReminders, setHiddenReminders] = useState([]);
+  const [hiddenReminders, setHiddenReminders] = useState(() => {
+    const saved = localStorage.getItem("hiddenReminders");
+
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return {};
+      }
+    }
+
+    return {};
+  });
 
   // Immer wenn sich pots ändert, werden die aktuellen Daten im localStorage gespeichert
   /*useEffect(() => {
@@ -202,17 +214,31 @@ function App() {
       );
   }
   function hideReminder(reminderKey) {
-    setHiddenReminders((prev) => [...prev, reminderKey]);
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    setHiddenReminders((prev) => ({
+      ...prev,
+      [reminderKey]: tomorrow.toISOString(),
+    }));
   }
   const visibleReminders = reminders.filter((item) => {
     const key = `${item.potId}-${item.type}`;
-    return !hiddenReminders.includes(key);
+    const hiddenUntil = hiddenReminders[key];
+
+    if (!hiddenUntil) return true;
+
+    return new Date() >= new Date(hiddenUntil);
   });
   useEffect(() => {
     loadPots();
     loadReminders();
     loadSeedProfiles();
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem("hiddenReminders", JSON.stringify(hiddenReminders));
+  }, [hiddenReminders]);
 
   // Speichert Formular-Daten: entweder als neuer Topf oder als Änderung an einem bestehenden Topf
   function handleAddPot() {
