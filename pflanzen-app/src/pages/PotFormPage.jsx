@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PotForm from "../components/PotForm";
 
 function PotFormPage({
@@ -12,6 +12,19 @@ function PotFormPage({
   setSelectedSeedProfileId,
   handleApplySeedProfile,
 }) {
+  const navigate = useNavigate();
+
+  async function handleSaveAndGoBack() {
+    const success = await handleAddPot();
+
+    if (success) {
+      navigate("/");
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+  }
   return (
     <div className="container">
       <h1>Topf belegen / bearbeiten</h1>
@@ -57,9 +70,9 @@ function PotFormPage({
       <PotForm
         formData={formData}
         handleFormChange={handleFormChange}
-        handleAddPot={handleAddPot}
         formError={formError}
         editingPotId={editingPotId}
+        handleAddPot={handleSaveAndGoBack}
       />
     </div>
   );

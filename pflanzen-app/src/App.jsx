@@ -265,7 +265,7 @@ function App() {
   }, [hiddenReminders]);
 
   // Speichert Formular-Daten: entweder als neuer Topf oder als Änderung an einem bestehenden Topf
-  function handleAddPot() {
+  async function handleAddPot() {
     const today = new Date().toISOString().split("T")[0];
 
     // Abfrage, ob Aussaatdatum in der Zukunft liegt, Zukunft momentan verboten
@@ -273,13 +273,13 @@ function App() {
       setFormError(
         "Das Aussaatdatum darf aktuell nicht in der Zukunft liegen.",
       );
-      return;
+      return false;
     }
 
     // Leerzeichen vor und nach dem Pflanzennamen löschen. Leerzeichen zwischen den Namen bleiben z. B. "Petersilie (glatt)"
     if (!formData.plantName.trim()) {
       setFormError("Bitte einen Pflanzennamen eingeben!");
-      return;
+      return false;
     }
 
     // Prüfung: Die minimale Keimtemperatur darf nicht größer sein als die maximale
@@ -287,7 +287,7 @@ function App() {
       Number(formData.germinationTempMin) > Number(formData.germinationTempMax)
     ) {
       setFormError("Keimtemperatur min darf nicht größer als max sein.");
-      return;
+      return false;
     }
 
     // Prüfung: Die minimale Keimdauer darf nicht größer sein als die maximale
@@ -295,20 +295,20 @@ function App() {
       Number(formData.germinationDaysMin) > Number(formData.germinationDaysMax)
     ) {
       setFormError("Keimdauer min darf nicht größer als max sein!");
-      return;
+      return false;
     }
 
     // Prüfung: Die Aussaattiefe darf nicht negativ sein
     if (Number(formData.sowingDepthCm) < 0) {
       setFormError("Aussaattiefe darf nicht negativ sein!");
-      return;
+      return false;
     }
     // Prüfung: Der Aussaatzeitraum laut Packung muss logisch sein
     if (Number(formData.sowingFromMonth) > Number(formData.sowingToMonth)) {
       setFormError(
         "Der Aussaatzeitraum ist ungültig: Von-Monat darf nicht nach dem Bis-Monat liegen.",
       );
-      return;
+      return false;
     }
 
     // Prüfung: Der Startmonat für "nach draußen" darf nicht nach dem Endmonat liegen
@@ -316,7 +316,7 @@ function App() {
       setFormError(
         "Der Zeitraum 'nach draußen' ist ungültig: Von-Monat darf nicht nach dem Bis-Monat liegen.",
       );
-      return;
+      return false;
     }
     // Alte Fehlermeldungen werden gelöscht
     setFormError("");
@@ -327,59 +327,57 @@ function App() {
       Wenn editingPotId gesetzt ist, befindet sich die App im Bearbeiten-Modus.
       Dann wird kein neuer Topf angelegt, sondern ein vorhandener Topf aktualisiert.
     */
-    if (editingPotId) {
-      fetch(`http://localhost:3001/api/pots/${editingPotId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: editingPotId,
-          ...potData,
-        }),
-      })
-        .then((res) => res.json())
-        .then(() => {
-          loadPots();
-          loadReminders();
-        })
-        .catch((err) => {
-          console.error("Fehler beim Aktualisieren:", err);
-          setFormError("Topf konnte nicht aktualisiert werden.");
-        });
-    } else {
-      // Wenn kein Bearbeiten aktiv ist, wird ein neuer Topf angelegt
-      const newPot = {
-        // Neuer Topf mit freier Nummer wird angelegt
-        id: getNextPotId(),
-        ...potData,
-      };
-      // Der neue Topf wird an die bestehende Topf-Liste angehängt
-      fetch("http://localhost:3001/api/pots", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newPot),
-      })
-        .then((res) => res.json())
-        .then(() => {
-          loadPots();
-          loadReminders();
-        })
-        .catch((err) => {
-          console.error("Fehler beim Speichern des Topfs:", err);
-          setFormError(
-            "Topf konnte nicht in der Datenbank gespeichert werden.",
-          );
-        });
-    }
-    // Formular nach erfolgreichem Speichern wieder auf Standardwerte zurücksetzen
-    setFormData(emptyFormData);
+    try {
+      if (editingPotId) {
+        const response = await fetch(
+          `http://localhost:3001/api/pots/${editingPotId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: editingPotId,
+              ...potData,
+            }),
+          },
+        );
 
-    // Bearbeiten-Modus beenden, damit das Formular wieder im Neuanlage-Modus ist
-    setEditingPotId(null);
-    setFormError("");
+        if (!response.ok) {
+          throw new Error("Aktualisieren fehlgeschlagen");
+        }
+      } else {
+        const newPot = {
+          id: getNextPotId(),
+          ...potData,
+        };
+
+        const response = await fetch("http://localhost:3001/api/pots", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newPot),
+        });
+
+        if (!response.ok) {
+          throw new Error("Speichern fehlgeschlagen");
+        }
+      }
+
+      loadPots();
+      loadReminders();
+
+      setFormData(emptyFormData);
+      setEditingPotId(null);
+      setFormError("");
+
+      return true;
+    } catch (err) {
+      console.error("Fehler beim Speichern/Aktualisieren des Topfs:", err);
+      setFormError("Topf konnte nicht gespeichert werden.");
+      return false;
+    }
   }
 
   // Lädt die Daten des ausgewählten Topfs in das Formular und startet den Bearbeiten-Modus
