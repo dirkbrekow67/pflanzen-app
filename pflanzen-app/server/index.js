@@ -352,6 +352,17 @@ const profileSummary = Object.values(profileSummaryMap).map((item) => ({
     item.total > 0 ? Math.round((item.successful / item.total) * 100) : 0,
 }));
 
+const topProfiles = [...profileSummary]
+  .filter((item) => item.total >= 2)
+  .sort((a, b) => {
+    if (b.successRate !== a.successRate) {
+      return b.successRate - a.successRate;
+    }
+
+    return b.total - a.total;
+  })
+  .slice(0, 5);
+
 
     res.json({
       activePots: activePots.count,
@@ -362,6 +373,7 @@ const profileSummary = Object.values(profileSummaryMap).map((item) => ({
       averageDuration,
       profileResults,
       profileSummary,
+      topProfiles,
     });
   } catch (error) {
     console.error(error);

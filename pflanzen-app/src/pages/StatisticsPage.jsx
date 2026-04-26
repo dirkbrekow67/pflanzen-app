@@ -70,6 +70,31 @@ function StatisticsPage() {
               ))
             )}
           </div>
+          <div className="card-light">
+            <h2>Top Samenprofile</h2>
+
+            {!stats.topProfiles || stats.topProfiles.length === 0 ? (
+              <p>Noch nicht genügend Daten für Top-Ergebnisse vorhanden.</p>
+            ) : (
+              stats.topProfiles.map((item) => (
+                <div
+                  key={item.seedProfileId}
+                  className="card-light history-card"
+                >
+                  <p>
+                    <strong>
+                      {item.plantName || item.seedProfileId}
+                      {item.variety ? ` – ${item.variety}` : ""}
+                      {item.manufacturer ? ` – ${item.manufacturer}` : ""}
+                    </strong>
+                  </p>
+
+                  <p>Erfolgsquote: {item.successRate} %</p>
+                  <p>Durchgänge: {item.total}</p>
+                </div>
+              ))
+            )}
+          </div>
         </>
       )}
     </div>
