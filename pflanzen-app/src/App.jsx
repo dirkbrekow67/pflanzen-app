@@ -86,6 +86,8 @@ function App() {
 
   const [reminders, setReminders] = useState([]);
 
+  const [hiddenReminders, setHiddenReminders] = useState([]);
+
   // Immer wenn sich pots ändert, werden die aktuellen Daten im localStorage gespeichert
   /*useEffect(() => {
     localStorage.setItem("pots", JSON.stringify(pots));
@@ -108,13 +110,16 @@ function App() {
   // Leert einen vorhandenen Topf, ohne seine ID zu verändern
   function handleClearPot(potId) {
     const potToClear = pots.find((pot) => pot.id === potId);
+
+    if (!potToClear) return;
+
     const endReason =
       prompt(
         "Beendigungsgrund eingeben:\ngeerntet / fehlgeschlagen / umgetopft / entsorgt / freigegeben",
         "freigegeben",
       ) || "freigegeben";
 
-    if (!potToClear) return;
+    if (endReason === null) return;
 
     fetch("http://localhost:3001/api/pot-history", {
       method: "POST",
@@ -147,6 +152,7 @@ function App() {
       })
       .then(() => {
         loadPots();
+        loadReminders();
         setEditingPotId(null);
         setFormError("");
       })
@@ -195,6 +201,13 @@ function App() {
         console.error("Fehler beim Laden der Samenprofile:", err),
       );
   }
+  function hideReminder(reminderKey) {
+    setHiddenReminders((prev) => [...prev, reminderKey]);
+  }
+  const visibleReminders = reminders.filter((item) => {
+    const key = `${item.potId}-${item.type}`;
+    return !hiddenReminders.includes(key);
+  });
   useEffect(() => {
     loadPots();
     loadReminders();
@@ -278,6 +291,7 @@ function App() {
         .then((res) => res.json())
         .then(() => {
           loadPots();
+          loadReminders();
         })
         .catch((err) => {
           console.error("Fehler beim Aktualisieren:", err);
@@ -301,6 +315,7 @@ function App() {
         .then((res) => res.json())
         .then(() => {
           loadPots();
+          loadReminders();
         })
         .catch((err) => {
           console.error("Fehler beim Speichern des Topfs:", err);
@@ -447,6 +462,7 @@ function App() {
     )
       .then(() => {
         loadPots();
+        loadReminders();
         setEmptyPotCount(1);
         setFormError("");
       })
@@ -644,7 +660,8 @@ function App() {
             emptyPotCount={emptyPotCount}
             setEmptyPotCount={setEmptyPotCount}
             handleAddEmptyPots={handleAddEmptyPots}
-            reminders={reminders}
+            reminders={visibleReminders}
+            hideReminder={hideReminder}
           />
         }
       />

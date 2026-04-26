@@ -22,6 +22,7 @@ function HomePage({
   setEmptyPotCount,
   handleAddEmptyPots,
   reminders,
+  hideReminder,
 }) {
   return (
     <div className="container">
@@ -53,6 +54,12 @@ function HomePage({
                   <small>{item.explanation}</small>
                 </p>
               )}
+              <button
+                className="button"
+                onClick={() => hideReminder(`${item.potId}-${item.type}`)}
+              >
+                Heute ausblenden
+              </button>
             </div>
           ))}
         </div>
@@ -194,7 +201,6 @@ function HomePage({
         {filteredPots.map((pot) => (
           <div key={pot.id} className="label-select-row">
             <label className="label-select-checkbox">
-              {" "}
               <input
                 type="checkbox"
                 checked={selectedLabelIds.includes(pot.id)}
