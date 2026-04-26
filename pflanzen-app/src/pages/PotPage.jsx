@@ -72,7 +72,7 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
           };
 
           return (
-            <div key={entry.id} className="card-light">
+            <div key={entry.id} className="card-light history-card">
               <p>
                 <strong>{entry.plantName || "-"}</strong>
               </p>
