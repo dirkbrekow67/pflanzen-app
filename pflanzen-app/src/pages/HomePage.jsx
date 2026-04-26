@@ -124,46 +124,13 @@ function HomePage({
       </section>
 
       <section className="card">
-        <h2 style={{ marginTop: 0 }}>Topf belegen / bearbeiten</h2>
+        <h2 style={{ marginTop: 0 }}>Topfverwaltung</h2>
 
-        <div className="section">
-          <h3 className="section-title">Samenprofil laden</h3>
-          <p>
-            Wähle ein Profil aus der Samenbibliothek und übernimm die Stammdaten
-            ins Formular.
-          </p>
+        <p>Neue Pflanze eintragen oder freien Topf belegen.</p>
 
-          <div style={{ marginBottom: "12px" }}>
-            <label style={{ display: "block", marginBottom: "4px" }}>
-              Samenprofil
-            </label>
-            <select
-              value={selectedSeedProfileId}
-              onChange={(e) => setSelectedSeedProfileId(e.target.value)}
-            >
-              <option value="">Bitte auswählen</option>
-              {seedProfiles.map((profile) => (
-                <option key={profile.id} value={profile.id}>
-                  {profile.plantName}
-                  {profile.variety ? ` – ${profile.variety}` : ""}
-                  {profile.manufacturer ? ` – ${profile.manufacturer}` : ""}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <button onClick={handleApplySeedProfile} className="button">
-            Profil ins Formular übernehmen
-          </button>
-        </div>
-
-        <PotForm
-          formData={formData}
-          handleFormChange={handleFormChange}
-          handleAddPot={handleAddPot}
-          formError={formError}
-          editingPotId={editingPotId}
-        />
+        <Link to="/pots/new" className="button-link">
+          Topf belegen / neu anlegen
+        </Link>
       </section>
       <section className="card">
         <h2 style={{ marginTop: 0 }}>Etiketten / QR-Codes</h2>
