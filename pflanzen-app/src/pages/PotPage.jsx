@@ -76,6 +76,11 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
               <p>
                 <strong>{entry.plantName || "-"}</strong>
               </p>
+              {entry.seedProfileId && (
+                <p>
+                  <small>Samenprofil: {entry.seedProfileId}</small>
+                </p>
+              )}
 
               <p>
                 {formatDate(entry.startedAt)} – {formatDate(entry.endedAt)}
@@ -87,6 +92,11 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
                 Grund: {entry.endReason}
                 {entry.endReasonNote && <span> ({entry.endReasonNote})</span>}
               </p>
+              {entry.potNotes && (
+                <p>
+                  <small>Notiz: {entry.potNotes}</small>
+                </p>
+              )}
             </div>
           );
         })
