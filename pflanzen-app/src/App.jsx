@@ -273,12 +273,20 @@ function App() {
       setFormError(
         "Das Aussaatdatum darf aktuell nicht in der Zukunft liegen.",
       );
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
       return false;
     }
 
     // Leerzeichen vor und nach dem Pflanzennamen löschen. Leerzeichen zwischen den Namen bleiben z. B. "Petersilie (glatt)"
     if (!formData.plantName.trim()) {
       setFormError("Bitte einen Pflanzennamen eingeben!");
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
       return false;
     }
 
@@ -287,6 +295,10 @@ function App() {
       Number(formData.germinationTempMin) > Number(formData.germinationTempMax)
     ) {
       setFormError("Keimtemperatur min darf nicht größer als max sein.");
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
       return false;
     }
 
@@ -295,12 +307,20 @@ function App() {
       Number(formData.germinationDaysMin) > Number(formData.germinationDaysMax)
     ) {
       setFormError("Keimdauer min darf nicht größer als max sein!");
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
       return false;
     }
 
     // Prüfung: Die Aussaattiefe darf nicht negativ sein
     if (Number(formData.sowingDepthCm) < 0) {
       setFormError("Aussaattiefe darf nicht negativ sein!");
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
       return false;
     }
     // Prüfung: Der Aussaatzeitraum laut Packung muss logisch sein
@@ -308,6 +328,10 @@ function App() {
       setFormError(
         "Der Aussaatzeitraum ist ungültig: Von-Monat darf nicht nach dem Bis-Monat liegen.",
       );
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
       return false;
     }
 
@@ -316,6 +340,10 @@ function App() {
       setFormError(
         "Der Zeitraum 'nach draußen' ist ungültig: Von-Monat darf nicht nach dem Bis-Monat liegen.",
       );
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
       return false;
     }
     // Alte Fehlermeldungen werden gelöscht
@@ -745,20 +773,11 @@ function App() {
           path="/"
           element={
             <HomePage
-              formData={formData}
-              handleFormChange={handleFormChange}
-              handleAddPot={handleAddPot}
-              formError={formError}
-              editingPotId={editingPotId}
               statusFilter={statusFilter}
               setStatusFilter={setStatusFilter}
               filteredPots={filteredPots}
               selectedLabelIds={selectedLabelIds}
               handleToggleLabelSelection={handleToggleLabelSelection}
-              seedProfiles={customSeedProfiles}
-              selectedSeedProfileId={selectedSeedProfileId}
-              setSelectedSeedProfileId={setSelectedSeedProfileId}
-              handleApplySeedProfile={handleApplySeedProfile}
               handleExportPots={handleExportPots}
               emptyPotCount={emptyPotCount}
               setEmptyPotCount={setEmptyPotCount}
