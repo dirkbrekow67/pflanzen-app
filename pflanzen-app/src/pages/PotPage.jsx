@@ -21,7 +21,7 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
   function handleEditAndGoBack() {
     if (!selectedPot) return;
     handleEditPot(selectedPot);
-    navigate("/");
+    navigate("/pots/new");
   }
 
   return (
