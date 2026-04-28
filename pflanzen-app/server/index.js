@@ -421,11 +421,32 @@ explanation:
           daysSinceSowing,
         });
       }
+      if (pot.outdoorFromMonth && pot.outdoorToMonth) {
+  const currentMonth = today.getMonth() + 1;
+
+  if (
+    currentMonth >= pot.outdoorFromMonth &&
+    currentMonth <= pot.outdoorToMonth
+  ) {
+    reminders.push({
+      potId: pot.id,
+      plantName: pot.plantName,
+      type: "outdoor-check",
+      message: "Nach draußen setzen prüfen",
+      explanation:
+        "Der empfohlene Zeitraum für das Auspflanzen hat begonnen. Prüfe, ob die Pflanze kräftig genug ist und die Temperaturen geeignet sind (kein Frost).",
+      daysSinceSowing,
+      outdoorFromMonth: pot.outdoorFromMonth,
+      outdoorToMonth: pot.outdoorToMonth,
+    });
+  }
+}
     });
 
     const priorityOrder = {
   "germination-check": 1,
   "repot-check": 2,
+  "outdoor-check": 3,
 };
 
 reminders.sort((a, b) => {
