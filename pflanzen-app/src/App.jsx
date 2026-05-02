@@ -10,6 +10,7 @@ import StatisticsPage from "./pages/StatisticsPage";
 import PotFormPage from "./pages/PotFormPage";
 import SeedFormPage from "./pages/SeedFormPage";
 // 3. Daten / Assets
+import { emptySeedProfile } from "./utils/seedHelpers";
 
 import {
   addMissingStatus,
@@ -65,24 +66,7 @@ function App() {
 
   const [customSeedProfiles, setCustomSeedProfiles] = useState([]);
 
-  const [newSeedProfile, setNewSeedProfile] = useState({
-    plantName: "",
-    variety: "",
-    manufacturer: "",
-    experience: "",
-    profileStatus: "testen",
-    lifecycle: "annual",
-    sowingFromMonth: 3,
-    sowingToMonth: 5,
-    germinationTempMin: 10,
-    germinationTempMax: 20,
-    germinationDaysMin: 7,
-    germinationDaysMax: 14,
-    sowingDepthCm: 1,
-    outdoorFromMonth: 5,
-    outdoorToMonth: 7,
-    profileNotes: "",
-  });
+  const [newSeedProfile, setNewSeedProfile] = useState(emptySeedProfile);
 
   const [editingSeedProfileId, setEditingSeedProfileId] = useState(null);
 
@@ -684,24 +668,7 @@ function App() {
           setFormError("Samenprofil konnte nicht gespeichert werden.");
         });
     }
-    setNewSeedProfile({
-      plantName: "",
-      lifecycle: "annual",
-      sowingFromMonth: 3,
-      sowingToMonth: 5,
-      germinationTempMin: 10,
-      germinationTempMax: 20,
-      germinationDaysMin: 7,
-      germinationDaysMax: 14,
-      sowingDepthCm: 1,
-      outdoorFromMonth: 5,
-      outdoorToMonth: 7,
-      variety: "",
-      manufacturer: "",
-      experience: "",
-      profileStatus: "testen",
-      profileNotes: "",
-    });
+    setNewSeedProfile(emptySeedProfile);
 
     setFormError("");
     setEditingSeedProfileId(null);
@@ -729,24 +696,7 @@ function App() {
     setEditingSeedProfileId(profile.id);
   }
   function handleCreateNewSeedProfile() {
-    setNewSeedProfile({
-      plantName: "",
-      lifecycle: "annual",
-      sowingFromMonth: 3,
-      sowingToMonth: 5,
-      germinationTempMin: 10,
-      germinationTempMax: 20,
-      germinationDaysMin: 7,
-      germinationDaysMax: 14,
-      sowingDepthCm: 1,
-      outdoorFromMonth: 5,
-      outdoorToMonth: 7,
-      variety: "",
-      manufacturer: "",
-      experience: "",
-      profileStatus: "testen",
-      profileNotes: "",
-    });
+    setNewSeedProfile(emptySeedProfile);
 
     setEditingSeedProfileId(null);
   }

@@ -1,0 +1,18 @@
+export const emptySeedProfile = {
+  plantName: "",
+  lifecycle: "annual",
+  sowingFromMonth: 3,
+  sowingToMonth: 5,
+  germinationTempMin: 10,
+  germinationTempMax: 20,
+  germinationDaysMin: 7,
+  germinationDaysMax: 14,
+  sowingDepthCm: 1,
+  outdoorFromMonth: 5,
+  outdoorToMonth: 7,
+  variety: "",
+  manufacturer: "",
+  experience: "",
+  profileStatus: "testen",
+  profileNotes: "",
+};
