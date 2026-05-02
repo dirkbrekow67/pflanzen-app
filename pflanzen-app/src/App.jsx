@@ -8,6 +8,7 @@ import LabelPrintPage from "./pages/LabelPrintPage";
 import SeedLibraryPage from "./pages/SeedLibraryPage";
 import StatisticsPage from "./pages/StatisticsPage";
 import PotFormPage from "./pages/PotFormPage";
+import SeedFormPage from "./pages/SeedFormPage";
 // 3. Daten / Assets
 
 import {
@@ -105,6 +106,21 @@ function App() {
   const [releaseReasonNote, setReleaseReasonNote] = useState("");
   const [showReleaseDialog, setShowReleaseDialog] = useState(false);
   const [potToReleaseId, setPotToReleaseId] = useState(null);
+  const [seedFilter, setSeedFilter] = useState("all");
+
+  const filteredSeedProfiles = customSeedProfiles.filter((profile) => {
+    if (seedFilter === "all") return true;
+
+    if (seedFilter === "active") {
+      return profile.profileStatus !== "nicht-brauchbar";
+    }
+
+    if (seedFilter === "inactive") {
+      return profile.profileStatus === "nicht-brauchbar";
+    }
+
+    return true;
+  });
 
   // Immer wenn sich pots ändert, werden die aktuellen Daten im localStorage gespeichert
   /*useEffect(() => {
@@ -712,6 +728,28 @@ function App() {
 
     setEditingSeedProfileId(profile.id);
   }
+  function handleCreateNewSeedProfile() {
+    setNewSeedProfile({
+      plantName: "",
+      lifecycle: "annual",
+      sowingFromMonth: 3,
+      sowingToMonth: 5,
+      germinationTempMin: 10,
+      germinationTempMax: 20,
+      germinationDaysMin: 7,
+      germinationDaysMax: 14,
+      sowingDepthCm: 1,
+      outdoorFromMonth: 5,
+      outdoorToMonth: 7,
+      variety: "",
+      manufacturer: "",
+      experience: "",
+      profileStatus: "testen",
+      profileNotes: "",
+    });
+
+    setEditingSeedProfileId(null);
+  }
   return (
     <>
       {showReleaseDialog && (
@@ -808,12 +846,11 @@ function App() {
           path="/seeds"
           element={
             <SeedLibraryPage
-              seedProfiles={customSeedProfiles}
-              newSeedProfile={newSeedProfile}
-              handleSeedProfileChange={handleSeedProfileChange}
-              handleAddSeedProfile={handleAddSeedProfile}
-              editingSeedProfileId={editingSeedProfileId}
+              seedProfiles={filteredSeedProfiles}
               handleEditSeedProfile={handleEditSeedProfile}
+              handleCreateNewSeedProfile={handleCreateNewSeedProfile}
+              setSeedFilter={setSeedFilter}
+              seedFilter={seedFilter}
             />
           }
         />
@@ -831,6 +868,17 @@ function App() {
               selectedSeedProfileId={selectedSeedProfileId}
               setSelectedSeedProfileId={setSelectedSeedProfileId}
               handleApplySeedProfile={handleApplySeedProfile}
+            />
+          }
+        />
+        <Route
+          path="/seeds/new"
+          element={
+            <SeedFormPage
+              newSeedProfile={newSeedProfile}
+              handleSeedProfileChange={handleSeedProfileChange}
+              handleAddSeedProfile={handleAddSeedProfile}
+              editingSeedProfileId={editingSeedProfileId}
             />
           }
         />

@@ -13,35 +13,49 @@ const months = [
   { label: "Dezember", value: 12 },
 ];
 
-function PotForm({
+function SeedForm({
   formData,
   handleFormChange,
-  handleAddPot,
+  handleSubmit,
+  editingId,
   formError,
-  editingPotId,
 }) {
   return (
     <div className="card">
-      <h2>Neuen Topf hinzufügen</h2>
+      <h2>{editingId ? "Samenprofil bearbeiten" : "Neues Samenprofil"}</h2>
+
       {formError && <p className="error-box">{formError}</p>}
+
+      {/* Grunddaten */}
       <div className="section">
         <h3 className="section-title">Grunddaten</h3>
 
         <div className="form-field">
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Pflanzenname
-          </label>
+          <label>Pflanzenname</label>
           <input
-            type="text"
             value={formData.plantName}
             onChange={(e) => handleFormChange("plantName", e.target.value)}
           />
         </div>
 
         <div className="form-field">
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Lebenszyklus
-          </label>
+          <label>Sorte</label>
+          <input
+            value={formData.variety}
+            onChange={(e) => handleFormChange("variety", e.target.value)}
+          />
+        </div>
+
+        <div className="form-field">
+          <label>Hersteller</label>
+          <input
+            value={formData.manufacturer}
+            onChange={(e) => handleFormChange("manufacturer", e.target.value)}
+          />
+        </div>
+
+        <div className="form-field">
+          <label>Lebenszyklus</label>
           <select
             value={formData.lifecycle}
             onChange={(e) => handleFormChange("lifecycle", e.target.value)}
@@ -52,6 +66,8 @@ function PotForm({
           </select>
         </div>
       </div>
+
+      {/* Keimung */}
       <div className="section">
         <h3 className="section-title">Keimung</h3>
 
@@ -99,6 +115,8 @@ function PotForm({
           />
         </div>
       </div>
+
+      {/* Aussaat */}
       <div className="section">
         <h3 className="section-title">Aussaat</h3>
 
@@ -112,22 +130,6 @@ function PotForm({
         </div>
 
         <div className="form-field">
-          <label>Aussaatdatum</label>
-          <input
-            type="date"
-            value={formData.sowingDate}
-            onChange={(e) => handleFormChange("sowingDate", e.target.value)}
-          />
-        </div>
-        <div className="form-field">
-          <label>Nachgesät am</label>
-          <input
-            type="date"
-            value={formData.resowingDate}
-            onChange={(e) => handleFormChange("resowingDate", e.target.value)}
-          />
-        </div>
-        <div className="form-field">
           <label>Aussaat laut Packung von</label>
           <select
             value={formData.sowingFromMonth}
@@ -135,9 +137,9 @@ function PotForm({
               handleFormChange("sowingFromMonth", Number(e.target.value))
             }
           >
-            {months.map((month) => (
-              <option key={month.value} value={month.value}>
-                {month.label}
+            {months.map((m) => (
+              <option key={m.value} value={m.value}>
+                {m.label}
               </option>
             ))}
           </select>
@@ -151,66 +153,91 @@ function PotForm({
               handleFormChange("sowingToMonth", Number(e.target.value))
             }
           >
-            {months.map((month) => (
-              <option key={month.value} value={month.value}>
-                {month.label}
+            {months.map((m) => (
+              <option key={m.value} value={m.value}>
+                {m.label}
               </option>
             ))}
           </select>
         </div>
       </div>
 
+      {/* Nach draußen */}
       <div className="section">
         <h3 className="section-title">Nach draussen</h3>
 
         <div className="form-field">
-          <label>Nach draussen stellen von</label>
+          <label>Von</label>
           <select
             value={formData.outdoorFromMonth}
             onChange={(e) =>
               handleFormChange("outdoorFromMonth", Number(e.target.value))
             }
           >
-            {months.map((month) => (
-              <option key={month.value} value={month.value}>
-                {month.label}
+            {months.map((m) => (
+              <option key={m.value} value={m.value}>
+                {m.label}
               </option>
             ))}
           </select>
         </div>
 
         <div className="form-field">
-          <label>Nach draussen stellen bis</label>
+          <label>Bis</label>
           <select
             value={formData.outdoorToMonth}
             onChange={(e) =>
               handleFormChange("outdoorToMonth", Number(e.target.value))
             }
           >
-            {months.map((month) => (
-              <option key={month.value} value={month.value}>
-                {month.label}
+            {months.map((m) => (
+              <option key={m.value} value={m.value}>
+                {m.label}
               </option>
             ))}
           </select>
         </div>
       </div>
+
+      {/* Bewertung */}
       <div className="section">
-        <h3 className="section-title">Beobachtungen</h3>
+        <h3 className="section-title">Bewertung</h3>
 
         <div className="form-field">
-          <label>Topfnotizen / Beobachtungen</label>
+          <label>Status</label>
+          <select
+            value={formData.profileStatus}
+            onChange={(e) => handleFormChange("profileStatus", e.target.value)}
+          >
+            <option value="testen">Testen</option>
+            <option value="wiederverwenden">Wiederverwenden</option>
+            <option value="keimt-schlecht">Keimt schlecht</option>
+            <option value="nicht-brauchbar">Nicht brauchbar</option>
+          </select>
+        </div>
+
+        <div className="form-field">
+          <label>Erfahrungen</label>
           <textarea
-            value={formData.potNotes}
-            onChange={(e) => handleFormChange("potNotes", e.target.value)}
+            value={formData.experience}
+            onChange={(e) => handleFormChange("experience", e.target.value)}
+          />
+        </div>
+
+        <div className="form-field">
+          <label>Bemerkungen</label>
+          <textarea
+            value={formData.profileNotes}
+            onChange={(e) => handleFormChange("profileNotes", e.target.value)}
           />
         </div>
       </div>
-      <button onClick={handleAddPot} className="button">
-        {editingPotId ? "Änderungen speichern" : "Hinzufügen"}
+
+      <button className="button" onClick={handleSubmit}>
+        {editingId ? "Speichern" : "Anlegen"}
       </button>
     </div>
   );
 }
 
-export default PotForm;
+export default SeedForm;

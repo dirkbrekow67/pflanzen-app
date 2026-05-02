@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const monthLabels = {
   1: "Januar",
@@ -17,12 +17,18 @@ const monthLabels = {
 
 function SeedLibraryPage({
   seedProfiles,
-  newSeedProfile,
-  handleSeedProfileChange,
-  handleAddSeedProfile,
-  editingSeedProfileId,
   handleEditSeedProfile,
+  handleCreateNewSeedProfile,
+  seedFilter,
+  setSeedFilter,
 }) {
+  const navigate = useNavigate();
+
+  function handleEditAndOpenForm(profile) {
+    handleEditSeedProfile(profile);
+    navigate("/seeds/new");
+  }
+
   return (
     <div className="container">
       <h1>Samenbibliothek 🌿</h1>
@@ -34,247 +40,39 @@ function SeedLibraryPage({
       </div>
 
       <p>Gespeicherte Pflanzen-Stammdaten</p>
-      <div className="card">
-        <h2 style={{ marginTop: 0 }}>Neues Samenprofil anlegen</h2>
+      <button
+        onClick={() => {
+          handleCreateNewSeedProfile();
+          navigate("/seeds/new");
+        }}
+        className="button"
+      >
+        Neues Samenprofil anlegen
+      </button>
+      <h2>Vorhandene Samenprofile</h2>
 
-        <div style={{ marginBottom: "12px" }}>
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Pflanzenname
-          </label>
-          <input
-            type="text"
-            value={newSeedProfile.plantName}
-            onChange={(e) =>
-              handleSeedProfileChange("plantName", e.target.value)
-            }
-          />
-        </div>
+      <div className="filter-bar">
+        <button
+          className={seedFilter === "all" ? "button active" : "button"}
+          onClick={() => setSeedFilter("all")}
+        >
+          Alle
+        </button>
 
-        <div style={{ marginBottom: "12px" }}>
-          <label style={{ display: "block", marginBottom: "4px" }}>Sorte</label>
-          <input
-            type="text"
-            value={newSeedProfile.variety}
-            onChange={(e) => handleSeedProfileChange("variety", e.target.value)}
-          />
-        </div>
+        <button
+          className={seedFilter === "active" ? "button active" : "button"}
+          onClick={() => setSeedFilter("active")}
+        >
+          Aktiv
+        </button>
 
-        <div style={{ marginBottom: "12px" }}>
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Hersteller
-          </label>
-          <input
-            type="text"
-            value={newSeedProfile.manufacturer}
-            onChange={(e) =>
-              handleSeedProfileChange("manufacturer", e.target.value)
-            }
-          />
-        </div>
-
-        <div style={{ marginBottom: "12px" }}>
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Erfahrung
-          </label>
-          <textarea
-            value={newSeedProfile.experience}
-            onChange={(e) =>
-              handleSeedProfileChange("experience", e.target.value)
-            }
-          />
-        </div>
-        <div style={{ marginBottom: "12px" }}>
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Bemerkungen / Eigenschaften
-          </label>
-
-          <textarea
-            value={newSeedProfile.profileNotes}
-            onChange={(e) =>
-              handleSeedProfileChange("profileNotes", e.target.value)
-            }
-          />
-        </div>
-        <div style={{ marginBottom: "12px" }}>
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Status
-          </label>
-          <select
-            value={newSeedProfile.profileStatus}
-            onChange={(e) =>
-              handleSeedProfileChange("profileStatus", e.target.value)
-            }
-          >
-            <option value="testen">Testen</option>
-            <option value="wiederverwenden">Wiederverwenden</option>
-            <option value="keimt-schlecht">Keimt schlecht</option>
-            <option value="nicht-brauchbar">Unbrauchbar</option>
-          </select>
-        </div>
-        <div style={{ marginBottom: "12px" }}>
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Lebenszyklus
-          </label>
-          <select
-            value={newSeedProfile.lifecycle}
-            onChange={(e) =>
-              handleSeedProfileChange("lifecycle", e.target.value)
-            }
-          >
-            <option value="annual">Einjährig</option>
-            <option value="biennial">Zweijährig</option>
-            <option value="perennial">Mehrjährig</option>
-          </select>
-        </div>
-
-        <div style={{ marginBottom: "12px" }}>
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Aussaat laut Packung von
-          </label>
-          <select
-            value={newSeedProfile.sowingFromMonth}
-            onChange={(e) =>
-              handleSeedProfileChange("sowingFromMonth", Number(e.target.value))
-            }
-          >
-            {Object.entries(monthLabels).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div style={{ marginBottom: "12px" }}>
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Aussaat laut Packung bis
-          </label>
-          <select
-            value={newSeedProfile.sowingToMonth}
-            onChange={(e) =>
-              handleSeedProfileChange("sowingToMonth", Number(e.target.value))
-            }
-          >
-            {Object.entries(monthLabels).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div style={{ marginBottom: "12px" }}>
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Keimtemperatur min (°C)
-          </label>
-          <input
-            type="number"
-            value={newSeedProfile.germinationTempMin}
-            onChange={(e) =>
-              handleSeedProfileChange("germinationTempMin", e.target.value)
-            }
-          />
-        </div>
-
-        <div style={{ marginBottom: "12px" }}>
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Keimtemperatur max (°C)
-          </label>
-          <input
-            type="number"
-            value={newSeedProfile.germinationTempMax}
-            onChange={(e) =>
-              handleSeedProfileChange("germinationTempMax", e.target.value)
-            }
-          />
-        </div>
-
-        <div style={{ marginBottom: "12px" }}>
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Keimdauer min (Tage)
-          </label>
-          <input
-            type="number"
-            value={newSeedProfile.germinationDaysMin}
-            onChange={(e) =>
-              handleSeedProfileChange("germinationDaysMin", e.target.value)
-            }
-          />
-        </div>
-
-        <div style={{ marginBottom: "12px" }}>
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Keimdauer max (Tage)
-          </label>
-          <input
-            type="number"
-            value={newSeedProfile.germinationDaysMax}
-            onChange={(e) =>
-              handleSeedProfileChange("germinationDaysMax", e.target.value)
-            }
-          />
-        </div>
-
-        <div style={{ marginBottom: "12px" }}>
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Aussaattiefe (cm)
-          </label>
-          <input
-            type="number"
-            step="0.1"
-            value={newSeedProfile.sowingDepthCm}
-            onChange={(e) =>
-              handleSeedProfileChange("sowingDepthCm", e.target.value)
-            }
-          />
-        </div>
-
-        <div style={{ marginBottom: "12px" }}>
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Nach draußen stellen von
-          </label>
-          <select
-            value={newSeedProfile.outdoorFromMonth}
-            onChange={(e) =>
-              handleSeedProfileChange(
-                "outdoorFromMonth",
-                Number(e.target.value),
-              )
-            }
-          >
-            {Object.entries(monthLabels).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div style={{ marginBottom: "12px" }}>
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Nach draußen stellen bis
-          </label>
-          <select
-            value={newSeedProfile.outdoorToMonth}
-            onChange={(e) =>
-              handleSeedProfileChange("outdoorToMonth", Number(e.target.value))
-            }
-          >
-            {Object.entries(monthLabels).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <button onClick={handleAddSeedProfile} className="button">
-          {editingSeedProfileId
-            ? "Änderung speichern"
-            : "Samenprofil speichern"}
+        <button
+          className={seedFilter === "inactive" ? "button active" : "button"}
+          onClick={() => setSeedFilter("inactive")}
+        >
+          Inaktiv
         </button>
       </div>
-
-      <h2>Vorhandene Samenprofile</h2>
 
       {seedProfiles.map((profile) => (
         <div
@@ -357,7 +155,7 @@ function SeedLibraryPage({
           </p>
           <div style={{ marginTop: "12px" }}>
             <button
-              onClick={() => handleEditSeedProfile(profile)}
+              onClick={() => handleEditAndOpenForm(profile)}
               className="button"
             >
               Bearbeiten
