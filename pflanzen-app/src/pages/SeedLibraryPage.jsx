@@ -39,21 +39,25 @@ function SeedLibraryPage({
 
       <div className="filter-bar">
         <button
-          className={seedFilter === "all" ? "button active" : "button"}
+          className={seedFilter === "all" ? "button filter-active" : "button"}
           onClick={() => setSeedFilter("all")}
         >
           Alle
         </button>
 
         <button
-          className={seedFilter === "active" ? "button active" : "button"}
+          className={
+            seedFilter === "active" ? "button filter-active" : "button"
+          }
           onClick={() => setSeedFilter("active")}
         >
           Aktiv
         </button>
 
         <button
-          className={seedFilter === "inactive" ? "button active" : "button"}
+          className={
+            seedFilter === "inactive" ? "button filter-active" : "button"
+          }
           onClick={() => setSeedFilter("inactive")}
         >
           Inaktiv

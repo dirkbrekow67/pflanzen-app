@@ -756,10 +756,8 @@ function App() {
         <div className="modal-backdrop">
           <div className="modal-card">
             <h2>Topf freigeben</h2>
-            <div style={{ marginBottom: "12px" }}>
-              <label style={{ display: "block", marginBottom: "4px" }}>
-                Beendigungsgrund
-              </label>
+            <div className="form-field">
+              <label>Beendigungsgrund</label>
               <select
                 value={releaseReason}
                 onChange={(e) => setReleaseReason(e.target.value)}
@@ -774,10 +772,8 @@ function App() {
             </div>
 
             {releaseReason === "sonstiges" && (
-              <div style={{ marginBottom: "12px" }}>
-                <label style={{ display: "block", marginBottom: "4px" }}>
-                  Grund / Sonstiges
-                </label>
+              <div className="form-field">
+                <label>Grund / Sonstiges</label>
                 <input
                   type="text"
                   value={releaseReasonNote}
@@ -879,6 +875,7 @@ function App() {
               handleSeedProfileChange={handleSeedProfileChange}
               handleAddSeedProfile={handleAddSeedProfile}
               editingSeedProfileId={editingSeedProfileId}
+              formError={formError}
             />
           }
         />
