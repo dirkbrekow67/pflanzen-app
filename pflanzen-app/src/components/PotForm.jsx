@@ -28,9 +28,7 @@ function PotForm({
         <h3 className="section-title">Grunddaten</h3>
 
         <div className="form-field">
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Pflanzenname
-          </label>
+          <label>Pflanzenname</label>
           <input
             type="text"
             value={formData.plantName}
@@ -39,9 +37,7 @@ function PotForm({
         </div>
 
         <div className="form-field">
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Lebenszyklus
-          </label>
+          <label>Lebenszyklus</label>
           <select
             value={formData.lifecycle}
             onChange={(e) => handleFormChange("lifecycle", e.target.value)}
@@ -161,10 +157,10 @@ function PotForm({
       </div>
 
       <div className="section">
-        <h3 className="section-title">Nach draussen</h3>
+        <h3 className="section-title">Nach draußen</h3>
 
         <div className="form-field">
-          <label>Nach draussen stellen von</label>
+          <label>Nach draußen stellen von</label>
           <select
             value={formData.outdoorFromMonth}
             onChange={(e) =>
@@ -180,7 +176,7 @@ function PotForm({
         </div>
 
         <div className="form-field">
-          <label>Nach draussen stellen bis</label>
+          <label>Nach draußen stellen bis</label>
           <select
             value={formData.outdoorToMonth}
             onChange={(e) =>

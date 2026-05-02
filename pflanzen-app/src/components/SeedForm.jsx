@@ -164,10 +164,10 @@ function SeedForm({
 
       {/* Nach draußen */}
       <div className="section">
-        <h3 className="section-title">Nach draussen</h3>
+        <h3 className="section-title">Nach draußen</h3>
 
         <div className="form-field">
-          <label>Von</label>
+          <label>Nach draußen stellen von</label>
           <select
             value={formData.outdoorFromMonth}
             onChange={(e) =>
@@ -183,7 +183,7 @@ function SeedForm({
         </div>
 
         <div className="form-field">
-          <label>Bis</label>
+          <label>Nach draußen stellen bis</label>
           <select
             value={formData.outdoorToMonth}
             onChange={(e) =>
