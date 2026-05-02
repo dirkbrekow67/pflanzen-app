@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { monthLabels } from "../constants/months";
+import { formatLifecycle, formatProfileStatus } from "../utils/formatHelpers";
 
 function SeedLibraryPage({
   seedProfiles,
@@ -84,13 +85,7 @@ function SeedLibraryPage({
 
           <p>
             <strong>Status:</strong>{" "}
-            {profile.profileStatus === "nicht-brauchbar"
-              ? "Unbrauchbar"
-              : profile.profileStatus === "keimt-schlecht"
-                ? "Keimt schlecht"
-                : profile.profileStatus === "wiederverwenden"
-                  ? "Wiederverwenden"
-                  : "Testen"}
+            {formatProfileStatus(profile.profileStatus)}
           </p>
 
           <p>
@@ -104,12 +99,7 @@ function SeedLibraryPage({
           </p>
 
           <p>
-            <strong>Lebenszyklus:</strong>{" "}
-            {profile.lifecycle === "annual"
-              ? "Einjährig"
-              : profile.lifecycle === "biennial"
-                ? "Zweijährig"
-                : "Mehrjährig"}
+            <strong>Lebenszyklus:</strong> {formatLifecycle(profile.lifecycle)}
           </p>
 
           <p>

@@ -1,6 +1,7 @@
 import { QRCode } from "react-qr-code";
 import { QR_BASE_URL } from "../utils/appConfig";
 import { monthLabels } from "../constants/months";
+import { formatLifecycle, formatPotStatus } from "../utils/formatHelpers";
 
 function PotDetails({ pot, onEditPot, onClearPot }) {
   if (!pot) {
@@ -24,7 +25,7 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
           <strong>ID:</strong> {pot.id}
         </p>
         <p>
-          <strong>Status:</strong> {pot.status === "empty" ? "Frei" : "Belegt"}
+          <strong>Status:</strong> {formatPotStatus(pot.status)}
         </p>
         <p>
           <strong>
@@ -33,12 +34,7 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
           {pot.plantName || "-"}
         </p>
         <p>
-          <strong>Lebensdauer:</strong>{" "}
-          {pot.lifecycle === "annual"
-            ? "Einjährig"
-            : pot.lifecycle === "biennial"
-              ? "Zweijährig"
-              : "Mehrjährig"}
+          <strong>Lebensdauer:</strong> {formatLifecycle(pot.lifecycle)}
         </p>
         <p>
           <strong>
