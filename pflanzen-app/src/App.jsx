@@ -554,21 +554,12 @@ function App() {
   }
   function handleEditSeedProfile(profile) {
     setNewSeedProfile({
-      plantName: profile.plantName,
+      ...emptySeedProfile,
+      ...profile,
       variety: profile.variety || "",
       manufacturer: profile.manufacturer || "",
       experience: profile.experience || "",
       profileStatus: profile.profileStatus || "testen",
-      lifecycle: profile.lifecycle,
-      sowingFromMonth: profile.sowingFromMonth,
-      sowingToMonth: profile.sowingToMonth,
-      germinationTempMin: profile.germinationTempMin,
-      germinationTempMax: profile.germinationTempMax,
-      germinationDaysMin: profile.germinationDaysMin,
-      germinationDaysMax: profile.germinationDaysMax,
-      sowingDepthCm: profile.sowingDepthCm,
-      outdoorFromMonth: profile.outdoorFromMonth,
-      outdoorToMonth: profile.outdoorToMonth,
       profileNotes: profile.profileNotes || "",
     });
 
