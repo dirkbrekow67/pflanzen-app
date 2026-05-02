@@ -54,3 +54,37 @@ export function buildPotData(formData) {
     potNotes: formData.potNotes,
   };
 }
+
+export function validatePotForm(formData) {
+  const today = new Date().toISOString().split("T")[0];
+
+  if (formData.sowingDate && formData.sowingDate > today) {
+    return "Das Aussaatdatum darf aktuell nicht in der Zukunft liegen.";
+  }
+
+  if (!formData.plantName.trim()) {
+    return "Bitte einen Pflanzennamen eingeben!";
+  }
+
+  if (Number(formData.germinationTempMin) > Number(formData.germinationTempMax)) {
+    return "Keimtemperatur min darf nicht größer als max sein.";
+  }
+
+  if (Number(formData.germinationDaysMin) > Number(formData.germinationDaysMax)) {
+    return "Keimdauer min darf nicht größer als max sein!";
+  }
+
+  if (Number(formData.sowingDepthCm) < 0) {
+    return "Aussaattiefe darf nicht negativ sein!";
+  }
+
+  if (Number(formData.sowingFromMonth) > Number(formData.sowingToMonth)) {
+    return "Der Aussaatzeitraum ist ungültig: Von-Monat darf nicht nach dem Bis-Monat liegen.";
+  }
+
+  if (Number(formData.outdoorFromMonth) > Number(formData.outdoorToMonth)) {
+    return "Der Zeitraum 'nach draußen' ist ungültig: Von-Monat darf nicht nach dem Bis-Monat liegen.";
+  }
+
+  return "";
+}

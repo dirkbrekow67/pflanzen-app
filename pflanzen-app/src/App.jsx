@@ -21,6 +21,7 @@ import {
   buildPotData,
   clearedPotData,
   emptyFormData,
+  validatePotForm,
 } from "./utils/potHelpers";
 // 4. Styles (falls vorhanden)
 import "./App.css";
@@ -270,13 +271,10 @@ function App() {
 
   // Speichert Formular-Daten: entweder als neuer Topf oder als Änderung an einem bestehenden Topf
   async function handleAddPot() {
-    const today = new Date().toISOString().split("T")[0];
+    const validationError = validatePotForm(formData);
 
-    // Abfrage, ob Aussaatdatum in der Zukunft liegt, Zukunft momentan verboten
-    if (formData.sowingDate && formData.sowingDate > today) {
-      setFormError(
-        "Das Aussaatdatum darf aktuell nicht in der Zukunft liegen.",
-      );
+    if (validationError) {
+      setFormError(validationError);
       window.scrollTo({
         top: 0,
         behavior: "smooth",
@@ -284,73 +282,6 @@ function App() {
       return false;
     }
 
-    // Leerzeichen vor und nach dem Pflanzennamen löschen. Leerzeichen zwischen den Namen bleiben z. B. "Petersilie (glatt)"
-    if (!formData.plantName.trim()) {
-      setFormError("Bitte einen Pflanzennamen eingeben!");
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-      return false;
-    }
-
-    // Prüfung: Die minimale Keimtemperatur darf nicht größer sein als die maximale
-    if (
-      Number(formData.germinationTempMin) > Number(formData.germinationTempMax)
-    ) {
-      setFormError("Keimtemperatur min darf nicht größer als max sein.");
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-      return false;
-    }
-
-    // Prüfung: Die minimale Keimdauer darf nicht größer sein als die maximale
-    if (
-      Number(formData.germinationDaysMin) > Number(formData.germinationDaysMax)
-    ) {
-      setFormError("Keimdauer min darf nicht größer als max sein!");
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-      return false;
-    }
-
-    // Prüfung: Die Aussaattiefe darf nicht negativ sein
-    if (Number(formData.sowingDepthCm) < 0) {
-      setFormError("Aussaattiefe darf nicht negativ sein!");
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-      return false;
-    }
-    // Prüfung: Der Aussaatzeitraum laut Packung muss logisch sein
-    if (Number(formData.sowingFromMonth) > Number(formData.sowingToMonth)) {
-      setFormError(
-        "Der Aussaatzeitraum ist ungültig: Von-Monat darf nicht nach dem Bis-Monat liegen.",
-      );
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-      return false;
-    }
-
-    // Prüfung: Der Startmonat für "nach draußen" darf nicht nach dem Endmonat liegen
-    if (Number(formData.outdoorFromMonth) > Number(formData.outdoorToMonth)) {
-      setFormError(
-        "Der Zeitraum 'nach draußen' ist ungültig: Von-Monat darf nicht nach dem Bis-Monat liegen.",
-      );
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-      return false;
-    }
-    // Alte Fehlermeldungen werden gelöscht
     setFormError("");
 
     // Gemeinsame Formulardaten für Neuanlage und Bearbeiten vorbereiten
