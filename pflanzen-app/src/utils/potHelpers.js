@@ -88,3 +88,12 @@ export function validatePotForm(formData) {
 
   return "";
 }
+
+
+export function buildEmptyPot(id) {
+  return {
+    id,
+    ...emptyFormData,
+    status: "empty",
+  };
+}

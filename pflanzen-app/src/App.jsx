@@ -19,6 +19,7 @@ import {
 import {
   addMissingStatus,
   buildPotData,
+  buildEmptyPot,
   clearedPotData,
   emptyFormData,
   validatePotForm,
@@ -423,25 +424,7 @@ function App() {
 
       const nextNumber = highestNumber + index + 1;
 
-      return {
-        id: "TOPF-" + nextNumber.toString().padStart(3, "0"),
-        status: "empty",
-        plantName: "",
-        sowingDate: "",
-        lifecycle: "annual",
-        sowingFromMonth: 3,
-        sowingToMonth: 5,
-        germinationTempMin: 10,
-        germinationTempMax: 20,
-        germinationDaysMin: 7,
-        germinationDaysMax: 14,
-        sowingDepthCm: 1,
-        outdoorFromMonth: 5,
-        outdoorToMonth: 7,
-        seedProfileId: "",
-        resowingDate: "",
-        potNotes: "",
-      };
+      return buildEmptyPot("TOPF-" + nextNumber.toString().padStart(3, "0"));
     });
 
     Promise.all(
