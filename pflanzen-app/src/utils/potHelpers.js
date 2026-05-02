@@ -97,3 +97,12 @@ export function buildEmptyPot(id) {
     status: "empty",
   };
 }
+
+export function getNextPotId(pots) {
+  const highestNumber = pots.reduce((highest, pot) => {
+    const numberPart = Number(pot.id.replace("TOPF-", ""));
+    return numberPart > highest ? numberPart : highest;
+  }, 0);
+
+  return "TOPF-" + (highestNumber + 1).toString().padStart(3, "0");
+}

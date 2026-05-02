@@ -73,3 +73,12 @@ export function validateSeedProfile(seedProfile) {
 
   return "";
 }
+
+export function getNextSeedProfileId(seedProfiles) {
+  const highestNumber = seedProfiles.reduce((highest, profile) => {
+    const numberPart = Number(profile.id.replace("SEED-", ""));
+    return numberPart > highest ? numberPart : highest;
+  }, 0);
+
+  return "SEED-" + (highestNumber + 1).toString().padStart(3, "0");
+}

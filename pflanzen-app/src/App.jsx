@@ -14,6 +14,7 @@ import {
   emptySeedProfile,
   buildSeedProfileData,
   validateSeedProfile,
+  getNextSeedProfileId,
 } from "./utils/seedHelpers";
 
 import {
@@ -23,6 +24,7 @@ import {
   clearedPotData,
   emptyFormData,
   validatePotForm,
+  getNextPotId,
 } from "./utils/potHelpers";
 // 4. Styles (falls vorhanden)
 import "./App.css";
@@ -209,15 +211,7 @@ function App() {
         : [...prevSelectedLabelIds, potId],
     );
   }
-  function getNextPotId() {
-    const highestNumber = pots.reduce((highest, pot) => {
-      const numberPart = Number(pot.id.replace("TOPF-", ""));
 
-      return numberPart > highest ? numberPart : highest;
-    }, 0);
-
-    return "TOPF-" + (highestNumber + 1).toString().padStart(3, "0");
-  }
   function loadPots() {
     fetch("http://localhost:3001/api/pots")
       .then((res) => res.json())
@@ -312,7 +306,7 @@ function App() {
         }
       } else {
         const newPot = {
-          id: getNextPotId(),
+          id: getNextPotId(pots),
           ...potData,
         };
 
@@ -455,14 +449,7 @@ function App() {
       [field]: value,
     });
   }
-  function getNextSeedProfileId() {
-    const highestNumber = customSeedProfiles.reduce((highest, profile) => {
-      const numberPart = Number(profile.id.replace("SEED-", ""));
-      return numberPart > highest ? numberPart : highest;
-    }, 0);
 
-    return "SEED-" + (highestNumber + 1).toString().padStart(3, "0");
-  }
   function handleAddSeedProfile() {
     const validationError = validateSeedProfile(newSeedProfile);
 
@@ -494,7 +481,7 @@ function App() {
         });
     } else {
       const newProfile = {
-        id: getNextSeedProfileId(),
+        id: getNextSeedProfileId(customSeedProfiles),
         ...profileData,
       };
 
