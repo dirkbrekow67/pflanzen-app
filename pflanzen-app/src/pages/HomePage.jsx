@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import PotCard from "../components/PotCard";
-import PotForm from "../components/PotForm";
 
 function HomePage({
   statusFilter,
@@ -21,7 +20,7 @@ function HomePage({
       <h1>Pflanzen App 🌱</h1>
       {reminders?.length > 0 && (
         <div className="card-light reminder-box">
-          <h2>🔔 Hinweise</h2>
+          <h2>Hinweise</h2>
 
           {reminders.map((item, index) => (
             <div key={index} className="reminder-item">
@@ -74,7 +73,7 @@ function HomePage({
       )}
       <p>Meine ersten Töpfe</p>
       <section className="card">
-        <h2 style={{ marginTop: 0 }}>Aktionen</h2>
+        <h2 className="no-margin-top">Aktionen</h2>
         <div className="filter-bar">
           <button onClick={handleExportPots} className="button">
             Topfdaten exportieren
@@ -91,16 +90,14 @@ function HomePage({
         </div>
       </section>
       <section className="card">
-        <h2 style={{ marginTop: 0 }}>Leertöpfe vorbereiten</h2>
+        <h2 className="no-margin-top">Leertöpfe vorbereiten</h2>
         <p>
           Erzeuge mehrere freie Töpfe, um dafür QR-Codes zu drucken und die
           Töpfe später zu belegen.
         </p>
 
-        <div style={{ marginBottom: "12px" }}>
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Anzahl neuer Leertöpfe
-          </label>
+        <div className="mb-12">
+          <label className="label-block">Anzahl neuer Leertöpfe</label>
           <input
             type="number"
             min="1"
@@ -115,7 +112,7 @@ function HomePage({
       </section>
 
       <section className="card">
-        <h2 style={{ marginTop: 0 }}>Topfverwaltung</h2>
+        <h2 className="no-margin-top">Topfverwaltung</h2>
 
         <p>Neue Pflanze eintragen oder freien Topf belegen.</p>
 
@@ -124,7 +121,7 @@ function HomePage({
         </Link>
       </section>
       <section className="card">
-        <h2 style={{ marginTop: 0 }}>Etiketten / QR-Codes</h2>
+        <h2 className="no-margin-top">Etiketten / QR-Codes</h2>
         <p>
           Für Etikettendruck ausgewählt:{" "}
           <strong>{selectedLabelIds.length}</strong>
@@ -187,14 +184,7 @@ function HomePage({
               Etikett auswählen
             </label>
 
-            <Link
-              to={`/pot/${pot.id}`}
-              style={{
-                textDecoration: "none",
-                color: "inherit",
-                display: "block",
-              }}
-            >
+            <Link to={`/pot/${pot.id}`} className="card-link">
               <PotCard
                 id={pot.id}
                 plantName={pot.plantName}

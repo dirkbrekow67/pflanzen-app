@@ -1,6 +1,7 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import PotDetails from "../components/PotDetails";
+import { API_BASE_URL } from "../utils/appConfig";
 
 function PotPage({ pots, handleEditPot, handleClearPot }) {
   const [history, setHistory] = useState([]);
@@ -11,7 +12,7 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
 
   const navigate = useNavigate();
   useEffect(() => {
-    fetch(`http://localhost:3001/api/pot-history/${potId}`)
+    fetch(`${API_BASE_URL}/api/pot-history/${potId}`)
       .then((res) => res.json())
       .then((data) => setHistory(data))
       .catch((err) => console.error("Historie Fehler:", err));

@@ -185,6 +185,7 @@
 
 h2 {
   color: green;
+  margin-top: 0;
 }
 
 .reminder-box {
@@ -244,9 +245,6 @@ h2 {
   margin-bottom: 16px;
 }
 
-.card h2 {
-  margin-top: 0;
-}
 
 .page-actions {
   margin-bottom: 16px;
@@ -289,32 +287,62 @@ h2 {
   word-break: break-all;
 }
 
+
+.no-margin-top {
+  margin-top: 0;
+}
+
+.mb-12 {
+  margin-bottom: 12px;
+}
+
+.label-block {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
 .pot-card {
   padding: 12px;
   margin-bottom: 12px;
   border-radius: 8px;
   cursor: pointer;
-}
-
-.pot-card-empty {
-  border: 2px dashed green;
-  background-color: #fff8dc;
-}
-
-.pot-card-active {
   border: 2px dashed green;
   background-color: #f9f9f9;
 }
 
-.pot-card-selected-empty {
+/* Status */
+.pot-card.empty {
+  background-color: #fff8dc;
+}
+
+.pot-card.active {
+  background-color: #f9f9f9;
+}
+
+/* Selected */
+.pot-card.selected {
   border: 3px solid darkgreen;
+}
+
+/* Kombinationen */
+.pot-card.empty.selected {
   background-color: #f3e8b5;
 }
 
-.pot-card-selected-active {
-  border: 3px solid darkgreen;
+.pot-card.active.selected {
   background-color: #dff5df;
 }
+.pot-title {
+  color: green;
+  margin-top: 0;
+}
+
 
 @media print {
   .no-print {

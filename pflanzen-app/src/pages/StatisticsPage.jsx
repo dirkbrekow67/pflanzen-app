@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { API_BASE_URL } from "../utils/appConfig";
 
 function StatisticsPage() {
   const [stats, setStats] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/statistics")
+    fetch(`${API_BASE_URL}/api/statistics`)
       .then((res) => res.json())
       .then((data) => setStats(data))
       .catch((err) => console.error("Statistik Fehler:", err));
@@ -15,7 +16,7 @@ function StatisticsPage() {
     <div className="container">
       <h1>📊 Auswertung</h1>
 
-      <div style={{ marginBottom: "16px" }}>
+      <div className="page-actions">
         <Link to="/" className="button-link">
           ← Zur Hauptseite
         </Link>
