@@ -9,7 +9,7 @@ function PotForm({
 }) {
   return (
     <div className="card">
-      <h2>Neuen Topf hinzufügen</h2>
+      <h2>{editingPotId ? "Topf bearbeiten" : "Neuen Topf hinzufügen"}</h2>
       {formError && <p className="error-box">{formError}</p>}
       <div className="section">
         <h3 className="section-title">Grunddaten</h3>
