@@ -1,19 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-
-const monthLabels = {
-  1: "Januar",
-  2: "Februar",
-  3: "März",
-  4: "April",
-  5: "Mai",
-  6: "Juni",
-  7: "Juli",
-  8: "August",
-  9: "September",
-  10: "Oktober",
-  11: "November",
-  12: "Dezember",
-};
+import { monthLabels } from "../constants/months";
 
 function SeedLibraryPage({
   seedProfiles,
@@ -33,7 +19,7 @@ function SeedLibraryPage({
     <div className="container">
       <h1>Samenbibliothek 🌿</h1>
 
-      <div style={{ marginBottom: "16px" }}>
+      <div className="page-actions">
         <Link to="/" className="button-link">
           ← Zur Hauptseite
         </Link>
@@ -83,13 +69,7 @@ function SeedLibraryPage({
               : ""
           }`}
         >
-          <h2
-            style={{
-              marginTop: 0,
-              color: "#111",
-              fontWeight: "700",
-            }}
-          >
+          <h2 className="card-title">
             {profile.plantName}
             {profile.variety ? ` – ${profile.variety}` : ""}
           </h2>
@@ -153,7 +133,7 @@ function SeedLibraryPage({
             {monthLabels[profile.outdoorFromMonth]} bis{" "}
             {monthLabels[profile.outdoorToMonth]}
           </p>
-          <div style={{ marginTop: "12px" }}>
+          <div className="card-actions">
             <button
               onClick={() => handleEditAndOpenForm(profile)}
               className="button"
