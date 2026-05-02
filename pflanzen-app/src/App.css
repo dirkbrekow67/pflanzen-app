@@ -248,6 +248,74 @@ h2 {
   margin-top: 0;
 }
 
+.page-actions {
+  margin-bottom: 16px;
+}
+
+.page-actions-large {
+  margin-bottom: 20px;
+}
+
+.card-title {
+  margin-top: 0;
+  color: #111111;
+  font-weight: 700;
+}
+
+.card-title-green {
+  margin-top: 0;
+  color: green;
+}
+
+.card-actions {
+  margin-top: 12px;
+}
+
+.button-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.qr-box {
+  background: white;
+  padding: 12px;
+  display: inline-block;
+  border-radius: 8px;
+}
+
+.breakable-text {
+  margin-top: 12px;
+  word-break: break-all;
+}
+
+.pot-card {
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.pot-card-empty {
+  border: 2px dashed green;
+  background-color: #fff8dc;
+}
+
+.pot-card-active {
+  border: 2px dashed green;
+  background-color: #f9f9f9;
+}
+
+.pot-card-selected-empty {
+  border: 3px solid darkgreen;
+  background-color: #f3e8b5;
+}
+
+.pot-card-selected-active {
+  border: 3px solid darkgreen;
+  background-color: #dff5df;
+}
+
 @media print {
   .no-print {
     display: none !important;

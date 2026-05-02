@@ -28,7 +28,7 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
     <div className="container">
       <h1>{selectedPot ? `Topf ${selectedPot.id}` : "Topfdetails"}</h1>
 
-      <div style={{ marginBottom: "20px" }}>
+      <div className="page-actions-large">
         <Link to="/" className="button-link">
           ← Zur Übersicht
         </Link>

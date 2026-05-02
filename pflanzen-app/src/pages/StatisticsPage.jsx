@@ -26,20 +26,20 @@ function StatisticsPage() {
       ) : (
         <>
           <div className="card-light">
-            <h2 style={{ color: "green" }}>Bestand</h2>
+            <h2>Bestand</h2>
             <p>Aktive Töpfe: {stats.activePots}</p>
             <p>Freie Töpfe: {stats.emptyPots}</p>
           </div>
 
           <div className="card-light">
-            <h2 style={{ color: "green" }}>Historie</h2>
+            <h2>Historie</h2>
             <p>Gesamt Einträge: {stats.historyCount}</p>
             <p>Geerntet: {stats.harvestedCount}</p>
             <p>Fehlgeschlagen: {stats.failedCount}</p>
           </div>
 
           <div className="card-light">
-            <h2 style={{ color: "green" }}>Durchschnitt</h2>
+            <h2>Durchschnitt</h2>
             <p>Standzeit: {stats.averageDuration} Tage</p>
           </div>
           <div className="card-light">

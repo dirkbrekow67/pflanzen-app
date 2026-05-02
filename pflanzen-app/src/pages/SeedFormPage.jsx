@@ -19,7 +19,7 @@ function SeedFormPage({
     <div className="container">
       <h1>Samenprofil anlegen / bearbeiten</h1>
 
-      <div style={{ marginBottom: "16px" }}>
+      <div className="page-actions">
         <Link to="/seeds" className="button-link">
           ← Zur Samenbibliothek
         </Link>

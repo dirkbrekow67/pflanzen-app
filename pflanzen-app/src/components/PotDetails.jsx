@@ -20,7 +20,7 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
   if (!pot) {
     return (
       <div className="card-light">
-        <h2 style={{ marginTop: 0 }}>Ausgewählter Topf</h2>
+        <h2>Ausgewählter Topf</h2>
         <p>Bitte wähle einen Topf aus.</p>
       </div>
     );
@@ -31,7 +31,7 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
   const qrValue = `${QR_BASE_URL}/pot/${pot.id}`;
   return (
     <div className="card-light">
-      <h2 style={{ marginTop: 0, color: "green" }}>Ausgewählter Topf</h2>
+      <h2>Ausgewählter Topf</h2>
       <div className="section">
         <h3 className="section-title">Grunddaten</h3>
         <p>
@@ -80,9 +80,7 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
           <strong>Aussaatdatum:</strong> {pot.sowingDate}
         </p>
         <p>
-          <p>
-            <strong>Nachgesät am:</strong> {pot.resowingDate || "-"}
-          </p>
+          <strong>Nachgesät am:</strong> {pot.resowingDate || "-"}
         </p>
         <p>
           <strong>Aussaattiefe:</strong> {pot.sowingDepthCm} cm
@@ -111,38 +109,27 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
       <div className="section">
         <h3 className="section-title">QR-Code</h3>
 
-        <div
-          style={{
-            background: "white",
-            padding: "12px",
-            display: "inline-block",
-            borderRadius: "8px",
-          }}
-        >
+        <div className="qr-box">
           <QRCode value={qrValue} size={160} />
         </div>
 
-        <p style={{ marginTop: "12px", wordBreak: "break-all" }}>
+        <p className="breakable-text">
           <strong>Zieladresse:</strong> {qrValue}
         </p>
       </div>
 
       <div className="section">
-        {/* Button zum Laden der Topfdaten in das Formular */}
-        <button onClick={() => onEditPot(pot)} className="button">
-          {pot.status === "empty" ? "Neu belegen" : "Bearbeiten"}
-        </button>
-
-        {/* Button zum Leeren des Topfinhalts bei gleichbleibender ID */}
-        {pot.status !== "empty" && (
-          <button
-            onClick={() => onClearPot(pot.id)}
-            className="button"
-            style={{ marginLeft: "12px" }}
-          >
-            Topf freigeben
+        <div className="button-row">
+          <button onClick={() => onEditPot(pot)} className="button">
+            {pot.status === "empty" ? "Neu belegen" : "Bearbeiten"}
           </button>
-        )}
+
+          {pot.status !== "empty" && (
+            <button onClick={() => onClearPot(pot.id)} className="button">
+              Topf freigeben
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

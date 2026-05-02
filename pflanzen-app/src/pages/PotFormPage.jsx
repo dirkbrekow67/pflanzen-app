@@ -29,23 +29,21 @@ function PotFormPage({
     <div className="container">
       <h1>Topf belegen / bearbeiten</h1>
 
-      <div style={{ marginBottom: "16px" }}>
+      <div className="page-actions">
         <Link to="/" className="button-link">
           ← Zur Übersicht
         </Link>
       </div>
 
       <section className="card">
-        <h2 style={{ marginTop: 0 }}>Samenprofil laden</h2>
+        <h2>Samenprofil laden</h2>
         <p>
           Wähle ein Profil aus der Samenbibliothek und übernimm die Stammdaten
           ins Formular.
         </p>
 
-        <div style={{ marginBottom: "12px" }}>
-          <label style={{ display: "block", marginBottom: "4px" }}>
-            Samenprofil
-          </label>
+        <div className="form-field">
+          <label>Samenprofil</label>
 
           <select
             value={selectedSeedProfileId}
