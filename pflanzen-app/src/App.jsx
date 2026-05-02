@@ -347,29 +347,13 @@ function App() {
   function handleEditPot(pot) {
     setFormData({
       ...emptyFormData,
-      plantName: pot.plantName,
-      lifecycle: pot.lifecycle,
-      sowingFromMonth: pot.sowingFromMonth,
-      sowingToMonth: pot.sowingToMonth,
-      germinationTempMin: pot.germinationTempMin,
-      germinationTempMax: pot.germinationTempMax,
-      germinationDaysMin: pot.germinationDaysMin,
-      germinationDaysMax: pot.germinationDaysMax,
-      sowingDepthCm: pot.sowingDepthCm,
-      sowingDate: pot.sowingDate,
-      resowingDate: pot.resowingDate || "",
-      outdoorFromMonth: pot.outdoorFromMonth,
-      outdoorToMonth: pot.outdoorToMonth,
+      ...pot,
       seedProfileId: pot.seedProfileId || "",
+      resowingDate: pot.resowingDate || "",
       potNotes: pot.potNotes || "",
     });
-    /*
-      Die ID des ausgewählten Topfs wird gespeichert.
-      Dadurch weiß die App beim nächsten Speichern, dass kein neuer Topf angelegt,
-      sondern genau dieser Topf bearbeitet werden soll.
-    */
+
     setEditingPotId(pot.id);
-    // Alte Fehlermeldung werden gelöscht
     setFormError("");
   }
 
