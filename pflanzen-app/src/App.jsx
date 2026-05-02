@@ -410,13 +410,10 @@ function App() {
       return;
     }
 
-    const newEmptyPots = Array.from({ length: count }, (_, index) => {
-      const highestNumber = pots.reduce((highest, pot) => {
-        const numberPart = Number(pot.id.replace("TOPF-", ""));
-        return numberPart > highest ? numberPart : highest;
-      }, 0);
+    const startNumber = Number(getNextPotId(pots).replace("TOPF-", ""));
 
-      const nextNumber = highestNumber + index + 1;
+    const newEmptyPots = Array.from({ length: count }, (_, index) => {
+      const nextNumber = startNumber + index;
 
       return buildEmptyPot("TOPF-" + nextNumber.toString().padStart(3, "0"));
     });
