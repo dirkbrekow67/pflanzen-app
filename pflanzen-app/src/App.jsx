@@ -26,12 +26,14 @@ import {
   validatePotForm,
   getNextPotId,
 } from "./utils/potHelpers";
+
+import { API_BASE_URL } from "./utils/appConfig";
 // 4. Styles (falls vorhanden)
 import "./App.css";
 
 function App() {
   useEffect(() => {
-    fetch("http://localhost:3001/api/health")
+    fetch(`${API_BASE_URL}/api/health`)
       .then((res) => res.json())
       .then((data) => console.log("Backend:", data))
       .catch((err) => console.error("Backend Fehler:", err));
@@ -156,7 +158,7 @@ function App() {
     const finalReasonNote =
       releaseReason === "sonstiges" ? releaseReasonNote.trim() : "";
 
-    fetch("http://localhost:3001/api/pot-history", {
+    fetch(`${API_BASE_URL}/api/pot-history`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -175,7 +177,7 @@ function App() {
       }),
     })
       .then(() => {
-        return fetch(`http://localhost:3001/api/pots/${potToReleaseId}`, {
+        return fetch(`${API_BASE_URL}/api/pots/${potToReleaseId}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -213,7 +215,7 @@ function App() {
   }
 
   function loadPots() {
-    fetch("http://localhost:3001/api/pots")
+    fetch(`${API_BASE_URL}/api/pots`)
       .then((res) => res.json())
       .then((data) => {
         setPots(addMissingStatus(data));
@@ -221,13 +223,13 @@ function App() {
       .catch((err) => console.error("Fehler beim Laden:", err));
   }
   function loadReminders() {
-    fetch("http://localhost:3001/api/reminders")
+    fetch(`${API_BASE_URL}/api/reminders`)
       .then((res) => res.json())
       .then((data) => setReminders(data))
       .catch((err) => console.error("Erinnerungen Fehler:", err));
   }
   function loadSeedProfiles() {
-    fetch("http://localhost:3001/api/seed-profiles")
+    fetch(`${API_BASE_URL}/api/seed-profiles`)
       .then((res) => res.json())
       .then((data) => setCustomSeedProfiles(data))
       .catch((err) =>
@@ -288,7 +290,7 @@ function App() {
     try {
       if (editingPotId) {
         const response = await fetch(
-          `http://localhost:3001/api/pots/${editingPotId}`,
+          `${API_BASE_URL}/api/pots/${editingPotId}`,
           {
             method: "PUT",
             headers: {
@@ -310,7 +312,7 @@ function App() {
           ...potData,
         };
 
-        const response = await fetch("http://localhost:3001/api/pots", {
+        const response = await fetch(`${API_BASE_URL}/api/pots`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -420,7 +422,7 @@ function App() {
 
     Promise.all(
       newEmptyPots.map((pot) =>
-        fetch("http://localhost:3001/api/pots", {
+        fetch(`${API_BASE_URL}/api/pots`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -458,7 +460,7 @@ function App() {
     const profileData = buildSeedProfileData(newSeedProfile);
 
     if (editingSeedProfileId) {
-      fetch(`http://localhost:3001/api/seed-profiles/${editingSeedProfileId}`, {
+      fetch(`${API_BASE_URL}/api/seed-profiles/${editingSeedProfileId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -482,7 +484,7 @@ function App() {
         ...profileData,
       };
 
-      fetch("http://localhost:3001/api/seed-profiles", {
+      fetch(`${API_BASE_URL}/api/seed-profiles`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
