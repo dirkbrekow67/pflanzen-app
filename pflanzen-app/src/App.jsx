@@ -10,7 +10,11 @@ import StatisticsPage from "./pages/StatisticsPage";
 import PotFormPage from "./pages/PotFormPage";
 import SeedFormPage from "./pages/SeedFormPage";
 // 3. Daten / Assets
-import { emptySeedProfile } from "./utils/seedHelpers";
+import {
+  emptySeedProfile,
+  buildSeedProfileData,
+  validateSeedProfile,
+} from "./utils/seedHelpers";
 
 import {
   addMissingStatus,
@@ -562,70 +566,14 @@ function App() {
     return "SEED-" + (highestNumber + 1).toString().padStart(3, "0");
   }
   function handleAddSeedProfile() {
-    if (!newSeedProfile.plantName.trim()) {
-      setFormError("Bitte einen Pflanzennamen für das Samenprofil eingeben.");
+    const validationError = validateSeedProfile(newSeedProfile);
+
+    if (validationError) {
+      setFormError(validationError);
       return;
     }
 
-    if (
-      Number(newSeedProfile.sowingFromMonth) >
-      Number(newSeedProfile.sowingToMonth)
-    ) {
-      setFormError("Der Aussaatzeitraum des Samenprofils ist ungültig.");
-      return;
-    }
-
-    if (
-      Number(newSeedProfile.germinationTempMin) >
-      Number(newSeedProfile.germinationTempMax)
-    ) {
-      setFormError("Die Keimtemperatur des Samenprofils ist ungültig.");
-      return;
-    }
-
-    if (
-      Number(newSeedProfile.germinationDaysMin) >
-      Number(newSeedProfile.germinationDaysMax)
-    ) {
-      setFormError("Die Keimdauer des Samenprofils ist ungültig.");
-      return;
-    }
-
-    if (Number(newSeedProfile.sowingDepthCm) < 0) {
-      setFormError(
-        "Die Aussaattiefe des Samenprofils darf nicht negativ sein.",
-      );
-      return;
-    }
-
-    if (
-      Number(newSeedProfile.outdoorFromMonth) >
-      Number(newSeedProfile.outdoorToMonth)
-    ) {
-      setFormError(
-        "Der Zeitraum 'nach draußen' des Samenprofils ist ungültig.",
-      );
-      return;
-    }
-
-    const profileData = {
-      plantName: newSeedProfile.plantName,
-      lifecycle: newSeedProfile.lifecycle,
-      sowingFromMonth: Number(newSeedProfile.sowingFromMonth),
-      sowingToMonth: Number(newSeedProfile.sowingToMonth),
-      germinationTempMin: Number(newSeedProfile.germinationTempMin),
-      germinationTempMax: Number(newSeedProfile.germinationTempMax),
-      germinationDaysMin: Number(newSeedProfile.germinationDaysMin),
-      germinationDaysMax: Number(newSeedProfile.germinationDaysMax),
-      sowingDepthCm: Number(newSeedProfile.sowingDepthCm),
-      outdoorFromMonth: Number(newSeedProfile.outdoorFromMonth),
-      outdoorToMonth: Number(newSeedProfile.outdoorToMonth),
-      variety: newSeedProfile.variety,
-      manufacturer: newSeedProfile.manufacturer,
-      experience: newSeedProfile.experience,
-      profileStatus: newSeedProfile.profileStatus,
-      profileNotes: newSeedProfile.profileNotes,
-    };
+    const profileData = buildSeedProfileData(newSeedProfile);
 
     if (editingSeedProfileId) {
       fetch(`http://localhost:3001/api/seed-profiles/${editingSeedProfileId}`, {
