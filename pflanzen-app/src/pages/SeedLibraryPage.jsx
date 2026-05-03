@@ -10,6 +10,8 @@ function SeedLibraryPage({
   setSeedFilter,
   seedSearch,
   setSeedSearch,
+  seedSort,
+  setSeedSort,
 }) {
   const navigate = useNavigate();
 
@@ -74,6 +76,14 @@ function SeedLibraryPage({
           onChange={(e) => setSeedSearch(e.target.value)}
           placeholder="Samenprofile suchen..."
         />
+      </div>
+      <div className="seed-sort">
+        <label>Sortierung</label>
+        <select value={seedSort} onChange={(e) => setSeedSort(e.target.value)}>
+          <option value="name-asc">Name A–Z</option>
+          <option value="name-desc">Name Z–A</option>
+          <option value="status">Status</option>
+        </select>
       </div>
 
       <div className="seed-grid">

@@ -84,6 +84,8 @@ function App() {
 
   const [seedSearch, setSeedSearch] = useState("");
 
+  const [seedSort, setSeedSort] = useState("name-asc");
+
   const [hiddenReminders, setHiddenReminders] = useState(() => {
     const saved = localStorage.getItem("hiddenReminders");
 
@@ -104,29 +106,48 @@ function App() {
   const [potToReleaseId, setPotToReleaseId] = useState(null);
   const [seedFilter, setSeedFilter] = useState("all");
 
-  const filteredSeedProfiles = customSeedProfiles.filter((profile) => {
-    const matchesFilter =
-      seedFilter === "all" ||
-      (seedFilter === "active" &&
-        profile.profileStatus !== "nicht-brauchbar") ||
-      (seedFilter === "inactive" &&
-        profile.profileStatus === "nicht-brauchbar");
+  const filteredSeedProfiles = customSeedProfiles
+    .filter((profile) => {
+      const matchesFilter =
+        seedFilter === "all" ||
+        (seedFilter === "active" &&
+          profile.profileStatus !== "nicht-brauchbar") ||
+        (seedFilter === "inactive" &&
+          profile.profileStatus === "nicht-brauchbar");
 
-    const searchText = [
-      profile.plantName,
-      profile.variety,
-      profile.manufacturer,
-      profile.experience,
-      profile.profileNotes,
-      profile.id,
-    ]
-      .join(" ")
-      .toLowerCase();
+      const searchText = [
+        profile.plantName,
+        profile.variety,
+        profile.manufacturer,
+        profile.experience,
+        profile.profileNotes,
+        profile.id,
+      ]
+        .join(" ")
+        .toLowerCase();
 
-    const matchesSearch = searchText.includes(seedSearch.toLowerCase());
+      const matchesSearch = searchText.includes(seedSearch.toLowerCase());
 
-    return matchesFilter && matchesSearch;
-  });
+      return matchesFilter && matchesSearch;
+    })
+    .sort((a, b) => {
+      if (seedSort === "name-asc") {
+        return (a.plantName || "").localeCompare(b.plantName || "", "de");
+      }
+
+      if (seedSort === "name-desc") {
+        return (b.plantName || "").localeCompare(a.plantName || "", "de");
+      }
+
+      if (seedSort === "status") {
+        return (a.profileStatus || "").localeCompare(
+          b.profileStatus || "",
+          "de",
+        );
+      }
+
+      return 0;
+    });
 
   // Immer wenn sich pots ändert, werden die aktuellen Daten im localStorage gespeichert
   /*useEffect(() => {
@@ -634,6 +655,8 @@ function App() {
               seedFilter={seedFilter}
               seedSearch={seedSearch}
               setSeedSearch={setSeedSearch}
+              seedSort={seedSort}
+              setSeedSort={setSeedSort}
             />
           }
         />
