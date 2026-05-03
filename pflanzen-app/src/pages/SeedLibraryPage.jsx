@@ -83,10 +83,8 @@ function SeedLibraryPage({
                 </h3>
 
                 <p className="seed-meta">
-                  {profile.manufacturer
-                    ? profile.manufacturer
-                    : "Unbekannter Hersteller"}{" "}
-                  · {formatLifecycle(profile.lifecycle)}
+                  {profile.manufacturer || "Unbekannt"} ·{" "}
+                  {formatLifecycle(profile.lifecycle)}
                 </p>
               </div>
 
