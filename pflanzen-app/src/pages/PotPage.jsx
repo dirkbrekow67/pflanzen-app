@@ -28,13 +28,11 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
   return (
     <div className="container">
       <h1>{selectedPot ? `Topf ${selectedPot.id}` : "Topfdetails"}</h1>
-
       <div className="page-actions-large">
         <Link to="/" className="button-link">
           ← Zur Übersicht
         </Link>
       </div>
-
       {!selectedPot ? (
         <div className="card-light">
           <h2>Topf nicht gefunden</h2>
@@ -52,55 +50,56 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
         />
       )}
       <h2 className="history-title">Verlauf</h2>
-
       {history.length === 0 ? (
         <p>Keine Historie vorhanden.</p>
       ) : (
-        history.map((entry) => {
-          const start = entry.startedAt ? new Date(entry.startedAt) : null;
+        <div className="history-wrapper">
+          {history.map((entry) => {
+            const start = entry.startedAt ? new Date(entry.startedAt) : null;
+            const end = entry.endedAt ? new Date(entry.endedAt) : null;
 
-          const end = entry.endedAt ? new Date(entry.endedAt) : null;
+            const days =
+              start && end
+                ? Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1
+                : null;
 
-          const days =
-            start && end
-              ? Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1
-              : null;
+            const formatDate = (dateString) => {
+              if (!dateString) return "-";
+              return new Date(dateString).toLocaleDateString("de-DE");
+            };
 
-          const formatDate = (dateString) => {
-            if (!dateString) return "-";
-
-            return new Date(dateString).toLocaleDateString("de-DE");
-          };
-
-          return (
-            <div key={entry.id} className="history-entry">
-              <p>
-                <strong>{entry.plantName || "-"}</strong>
-              </p>
-              {entry.seedProfileId && (
+            return (
+              <div key={entry.id} className="history-entry">
                 <p>
-                  <small>Samenprofil: {entry.seedProfileId}</small>
+                  <strong>{entry.plantName || "-"}</strong>
                 </p>
-              )}
 
-              <p>
-                {formatDate(entry.startedAt)} – {formatDate(entry.endedAt)}
-              </p>
+                {entry.seedProfileId && (
+                  <p>
+                    <small>Samenprofil: {entry.seedProfileId}</small>
+                  </p>
+                )}
 
-              <p>Standzeit: {days ? `${days} Tage` : "-"}</p>
-
-              <p>
-                Grund: {entry.endReason}
-                {entry.endReasonNote && <span> ({entry.endReasonNote})</span>}
-              </p>
-              {entry.potNotes && (
                 <p>
-                  <small>Notiz: {entry.potNotes}</small>
+                  {formatDate(entry.startedAt)} – {formatDate(entry.endedAt)}
                 </p>
-              )}
-            </div>
-          );
-        })
+
+                <p>Standzeit: {days ? `${days} Tage` : "-"}</p>
+
+                <p>
+                  Grund: {entry.endReason}
+                  {entry.endReasonNote && <span> ({entry.endReasonNote})</span>}
+                </p>
+
+                {entry.potNotes && (
+                  <p>
+                    <small>Notiz: {entry.potNotes}</small>
+                  </p>
+                )}
+              </div>
+            );
+          })}
+        </div>
       )}
     </div>
   );
