@@ -482,62 +482,70 @@ function App() {
     });
   }
 
-  function handleAddSeedProfile() {
+  async function handleAddSeedProfile() {
     const validationError = validateSeedProfile(newSeedProfile);
 
     if (validationError) {
       setFormError(validationError);
-      return;
+      return false;
     }
 
     const profileData = buildSeedProfileData(newSeedProfile);
 
-    if (editingSeedProfileId) {
-      fetch(`${API_BASE_URL}/api/seed-profiles/${editingSeedProfileId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: editingSeedProfileId,
+    try {
+      if (editingSeedProfileId) {
+        const response = await fetch(
+          `${API_BASE_URL}/api/seed-profiles/${editingSeedProfileId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: editingSeedProfileId,
+              ...profileData,
+            }),
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error("Aktualisieren fehlgeschlagen");
+        }
+      } else {
+        const newProfile = {
+          id: getNextSeedProfileId(customSeedProfiles),
           ...profileData,
-        }),
-      })
-        .then((res) => res.json())
-        .then(() => {
-          loadSeedProfiles();
-        })
-        .catch((err) => {
-          console.error("Fehler beim Aktualisieren des Samenprofils:", err);
-          setFormError("Samenprofil konnte nicht aktualisiert werden.");
-        });
-    } else {
-      const newProfile = {
-        id: getNextSeedProfileId(customSeedProfiles),
-        ...profileData,
-      };
+        };
 
-      fetch(`${API_BASE_URL}/api/seed-profiles`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newProfile),
-      })
-        .then((res) => res.json())
-        .then(() => {
-          loadSeedProfiles();
-        })
-        .catch((err) => {
-          console.error("Fehler beim Speichern des Samenprofils:", err);
-          setFormError("Samenprofil konnte nicht gespeichert werden.");
+        const response = await fetch(`${API_BASE_URL}/api/seed-profiles`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newProfile),
         });
+
+        if (!response.ok) {
+          throw new Error("Speichern fehlgeschlagen");
+        }
+      }
+
+      loadSeedProfiles();
+      setNewSeedProfile(emptySeedProfile);
+      setFormError("");
+      setEditingSeedProfileId(null);
+
+      return true;
+    } catch (err) {
+      console.error(
+        "Fehler beim Speichern/Aktualisieren des Samenprofils:",
+        err,
+      );
+      setFormError("Samenprofil konnte nicht gespeichert werden.");
+      return false;
     }
-    setNewSeedProfile(emptySeedProfile);
-
-    setFormError("");
-    setEditingSeedProfileId(null);
   }
+
   function handleEditSeedProfile(profile) {
     setNewSeedProfile({
       ...emptySeedProfile,

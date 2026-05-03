@@ -10,9 +10,12 @@ function SeedFormPage({
 }) {
   const navigate = useNavigate();
 
-  function handleSaveAndGoBack() {
-    handleAddSeedProfile();
-    navigate("/seeds");
+  async function handleSaveAndGoBack() {
+    const success = await handleAddSeedProfile();
+
+    if (success) {
+      navigate("/seeds");
+    }
   }
 
   return (
