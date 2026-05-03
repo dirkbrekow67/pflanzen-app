@@ -546,6 +546,20 @@ h2 {
   color: #555;
 }
 
+.seed-search {
+  max-width: 980px;
+  margin: 0 auto 20px auto;
+}
+
+.seed-search input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #999;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
 @media (max-width: 800px) {
   .pot-detail-header {
     flex-direction: column;

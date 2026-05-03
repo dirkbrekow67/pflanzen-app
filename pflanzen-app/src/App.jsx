@@ -82,6 +82,8 @@ function App() {
 
   const [reminders, setReminders] = useState([]);
 
+  const [seedSearch, setSeedSearch] = useState("");
+
   const [hiddenReminders, setHiddenReminders] = useState(() => {
     const saved = localStorage.getItem("hiddenReminders");
 
@@ -103,17 +105,27 @@ function App() {
   const [seedFilter, setSeedFilter] = useState("all");
 
   const filteredSeedProfiles = customSeedProfiles.filter((profile) => {
-    if (seedFilter === "all") return true;
+    const matchesFilter =
+      seedFilter === "all" ||
+      (seedFilter === "active" &&
+        profile.profileStatus !== "nicht-brauchbar") ||
+      (seedFilter === "inactive" &&
+        profile.profileStatus === "nicht-brauchbar");
 
-    if (seedFilter === "active") {
-      return profile.profileStatus !== "nicht-brauchbar";
-    }
+    const searchText = [
+      profile.plantName,
+      profile.variety,
+      profile.manufacturer,
+      profile.experience,
+      profile.profileNotes,
+      profile.id,
+    ]
+      .join(" ")
+      .toLowerCase();
 
-    if (seedFilter === "inactive") {
-      return profile.profileStatus === "nicht-brauchbar";
-    }
+    const matchesSearch = searchText.includes(seedSearch.toLowerCase());
 
-    return true;
+    return matchesFilter && matchesSearch;
   });
 
   // Immer wenn sich pots ändert, werden die aktuellen Daten im localStorage gespeichert
@@ -620,6 +632,8 @@ function App() {
               handleCreateNewSeedProfile={handleCreateNewSeedProfile}
               setSeedFilter={setSeedFilter}
               seedFilter={seedFilter}
+              seedSearch={seedSearch}
+              setSeedSearch={setSeedSearch}
             />
           }
         />

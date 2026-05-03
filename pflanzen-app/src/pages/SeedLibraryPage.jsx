@@ -8,6 +8,8 @@ function SeedLibraryPage({
   handleCreateNewSeedProfile,
   seedFilter,
   setSeedFilter,
+  seedSearch,
+  setSeedSearch,
 }) {
   const navigate = useNavigate();
 
@@ -63,6 +65,15 @@ function SeedLibraryPage({
         >
           Inaktiv
         </button>
+      </div>
+
+      <div className="seed-search">
+        <input
+          type="text"
+          value={seedSearch}
+          onChange={(e) => setSeedSearch(e.target.value)}
+          placeholder="Samenprofile suchen..."
+        />
       </div>
 
       <div className="seed-grid">
