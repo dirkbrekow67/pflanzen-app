@@ -220,18 +220,6 @@ h2 {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
-.history-card {
-  margin-bottom: 16px;
-}
-
-.history-card strong {
-  color: #111111;
-  font-size: 18px;
-}
-
-.history-card small {
-  color: #333333;
-}
 
 .form-field {
   margin-bottom: 12px;
@@ -343,6 +331,126 @@ h2 {
   margin-top: 0;
 }
 
+.pot-detail-card {
+  max-width: 980px;
+  margin: 0 auto 24px auto;
+  padding: 24px;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #111111;
+  border: 1px solid #cfcfcf;
+}
+
+.pot-detail-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-start;
+  border-bottom: 1px solid #dddddd;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.pot-detail-header h2 {
+  margin: 0 0 8px 0;
+  color: green;
+}
+
+.pot-detail-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pot-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 24px;
+  align-items: start;
+}
+
+.pot-detail-main {
+  display: grid;
+  gap: 16px;
+}
+
+.detail-section {
+  border-bottom: 1px solid #eeeeee;
+  padding-bottom: 12px;
+  text-align: left;
+}
+
+.detail-section h3 {
+  color: #111111;
+  margin-bottom: 8px;
+}
+.detail-section p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.pot-detail-side {
+  border: 1px solid #dddddd;
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+  background: #f4f4f4;
+}
+
+.qr-box-large {
+  background: white;
+  padding: 16px;
+  display: inline-block;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+
+.qr-hint {
+  font-size: 14px;
+  color: #333333;
+}
+
+.history-title {
+  max-width: 980px;
+  margin: 40px auto 12px auto;
+  color: green;
+}
+
+.history-entry {
+  max-width: 980px;
+  margin: 0 auto 14px auto;
+  padding: 16px 20px;
+  border-left: 5px solid green;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #111111;
+  border-top: 1px solid #cfcfcf;
+  border-right: 1px solid #cfcfcf;
+  border-bottom: 1px solid #cfcfcf;
+}
+
+.history-entry strong {
+  color: #111111;
+  font-size: 18px;
+}
+
+.history-entry small {
+  color: #333333;
+}
+
+@media (max-width: 800px) {
+  .pot-detail-header {
+    flex-direction: column;
+  }
+
+  .pot-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pot-detail-side {
+    text-align: left;
+  }
+}
 
 @media print {
   .no-print {

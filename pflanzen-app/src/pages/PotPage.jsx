@@ -51,7 +51,7 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
           onClearPot={handleClearPot}
         />
       )}
-      <h2>Verlauf</h2>
+      <h2 className="history-title">Verlauf</h2>
 
       {history.length === 0 ? (
         <p>Keine Historie vorhanden.</p>
@@ -73,7 +73,7 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
           };
 
           return (
-            <div key={entry.id} className="card-light history-card">
+            <div key={entry.id} className="history-entry">
               <p>
                 <strong>{entry.plantName || "-"}</strong>
               </p>
