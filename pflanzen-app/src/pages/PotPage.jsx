@@ -97,12 +97,16 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
               für die spätere Entwicklungskontrolle.
             </p>
 
-            <input
-              type="file"
-              accept="image/*"
-              capture="environment"
-              onChange={handlePhotoUpload}
-            />
+            <label className="button-link photo-upload-button">
+              Foto aufnehmen / hochladen
+              <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handlePhotoUpload}
+                hidden
+              />
+            </label>
           </div>
 
           {photos.length > 0 && (

@@ -9,7 +9,7 @@ const app = express();
 const PORT = 3001;
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/");
+    cb(null, "server/uploads/");
   },
   filename: function (req, file, cb) {
     const uniqueName =
@@ -24,7 +24,7 @@ const upload = multer({ storage });
 app.use(cors());
 app.use(express.json());
 
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static("server/uploads"));
 
 app.get("/api/health", (req, res) => {
   res.json({

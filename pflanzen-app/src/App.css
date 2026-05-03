@@ -596,6 +596,55 @@ h2 {
   color: green;
 }
 
+.photo-upload {
+  text-align: center;
+}
+
+.photo-upload-button {
+  cursor: pointer;
+}
+
+.photo-upload .hint {
+  margin-bottom: 12px;
+}
+
+.photo-gallery {
+  max-width: 980px;
+  margin: 24px auto;
+  padding: 20px;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #111111;
+  border: 1px solid #cfcfcf;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+.photo-card {
+  border: 1px solid #dddddd;
+  border-radius: 10px;
+  padding: 10px;
+  background: #f7f7f7;
+  text-align: center;
+}
+
+.photo-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.photo-card p {
+  margin: 6px 0;
+  font-size: 13px;
+}
+
 @media (max-width: 800px) {
   .pot-detail-header {
     flex-direction: column;
