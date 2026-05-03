@@ -5,6 +5,7 @@ import { API_BASE_URL } from "../utils/appConfig";
 
 function PotPage({ pots, handleEditPot, handleClearPot }) {
   const [history, setHistory] = useState([]);
+  const [photos, setPhotos] = useState([]);
   const { potId } = useParams();
 
   // Sucht anhand der URL den passenden Topf aus der Liste
@@ -17,6 +18,13 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
       .then((data) => setHistory(data))
       .catch((err) => console.error("Historie Fehler:", err));
   }, [potId, pots]);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/photos/${potId}`)
+      .then((res) => res.json())
+      .then((data) => setPhotos(data))
+      .catch((err) => console.error("Fotos Fehler:", err));
+  }, [potId]);
 
   // Lädt die Topfdaten ins Formular und wechselt zurück zur Übersichtsseite
   function handleEditAndGoBack() {
@@ -42,7 +50,15 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
 
       const data = await response.json();
 
+      if (!response.ok) {
+        throw new Error(data.error || "Upload fehlgeschlagen");
+      }
+
       console.log("Upload erfolgreich:", data);
+      fetch(`${API_BASE_URL}/api/photos/${selectedPot.id}`)
+        .then((res) => res.json())
+        .then((data) => setPhotos(data))
+        .catch((err) => console.error("Fotos Fehler:", err));
     } catch (error) {
       console.error("Upload Fehler:", error);
     }
@@ -74,19 +90,46 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
       )}
 
       {selectedPot && (
-        <div className="photo-upload">
-          <p className="hint">
-            Optional: Foto aufnehmen oder hochladen. Es dient nur als Hilfe für
-            die spätere Entwicklungskontrolle.
-          </p>
+        <>
+          <div className="photo-upload">
+            <p className="hint">
+              Optional: Foto aufnehmen oder hochladen. Es dient nur als Hilfe
+              für die spätere Entwicklungskontrolle.
+            </p>
 
-          <input
-            type="file"
-            accept="image/*"
-            capture="environment"
-            onChange={handlePhotoUpload}
-          />
-        </div>
+            <input
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handlePhotoUpload}
+            />
+          </div>
+
+          {photos.length > 0 && (
+            <div className="photo-gallery">
+              <h2>Fotos</h2>
+
+              <div className="photo-grid">
+                {photos.map((photo) => (
+                  <div key={photo.id} className="photo-card">
+                    <img
+                      src={`${API_BASE_URL}/uploads/${photo.fileName}`}
+                      alt={photo.originalName || "Topf-Foto"}
+                    />
+
+                    <p>
+                      {photo.uploadedAt
+                        ? new Date(photo.uploadedAt).toLocaleDateString("de-DE")
+                        : "-"}
+                    </p>
+
+                    <p>{photo.photoType || "progress"}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       <h2 className="history-title">Verlauf</h2>
