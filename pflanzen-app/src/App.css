@@ -620,10 +620,10 @@ h2 {
 
 .photo-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, 180px);
   gap: 16px;
+  justify-content: center;
 }
-
 .photo-card {
   border: 1px solid #dddddd;
   border-radius: 10px;
@@ -634,7 +634,7 @@ h2 {
 
 .photo-card img {
   width: 100%;
-  height: 160px;
+  height: 150px;
   object-fit: cover;
   border-radius: 8px;
   background: #ffffff;
@@ -644,6 +644,8 @@ h2 {
   margin: 6px 0;
   font-size: 13px;
 }
+
+
 
 @media (max-width: 800px) {
   .pot-detail-header {

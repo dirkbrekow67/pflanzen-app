@@ -127,7 +127,11 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
                         : "-"}
                     </p>
 
-                    <p>{photo.photoType || "progress"}</p>
+                    <p>
+                      {photo.photoType === "progress"
+                        ? "Entwicklung"
+                        : photo.photoType || "Foto"}
+                    </p>
                   </div>
                 ))}
               </div>
