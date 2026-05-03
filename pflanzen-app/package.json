@@ -5,14 +5,21 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:mac-home": "vite --host 0.0.0.0 --mode dev-mac-home",
+    "dev:mac-hro": "vite --host 0.0.0.0 --mode dev-mac-hro",
+    "dev:raspi": "vite --host 0.0.0.0 --mode dev-raspi",
     "build": "vite build",
+    "build:mac-hro": "vite build --mode dev-mac-hro",
+    "build:mac-home": "vite build --mode dev-mac-home",
+    "build:raspi": "vite build --mode production",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
     "better-sqlite3": "^12.9.0",
     "cors": "^2.8.6",
     "express": "^5.2.1",
+    "multer": "^2.1.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-qr-code": "^2.0.18",

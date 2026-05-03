@@ -25,6 +25,29 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
     navigate("/pots/new");
   }
 
+  async function handlePhotoUpload(event) {
+    const file = event.target.files[0];
+    if (!file || !selectedPot) return;
+
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append("potId", selectedPot.id);
+    formData.append("photoType", "progress");
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/photos`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      console.log("Upload erfolgreich:", data);
+    } catch (error) {
+      console.error("Upload Fehler:", error);
+    }
+  }
+
   return (
     <div className="container">
       <h1>{selectedPot ? `Topf ${selectedPot.id}` : "Topfdetails"}</h1>
@@ -49,6 +72,23 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
           onClearPot={handleClearPot}
         />
       )}
+
+      {selectedPot && (
+        <div className="photo-upload">
+          <p className="hint">
+            Optional: Foto aufnehmen oder hochladen. Es dient nur als Hilfe für
+            die spätere Entwicklungskontrolle.
+          </p>
+
+          <input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={handlePhotoUpload}
+          />
+        </div>
+      )}
+
       <h2 className="history-title">Verlauf</h2>
       {history.length === 0 ? (
         <p>Keine Historie vorhanden.</p>

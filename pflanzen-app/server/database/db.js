@@ -70,6 +70,20 @@ CREATE TABLE IF NOT EXISTS seed_profiles (
 );
 `);
 
+
+db.exec(`
+CREATE TABLE IF NOT EXISTS pot_photos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  potId TEXT NOT NULL,
+  fileName TEXT NOT NULL,
+  originalName TEXT,
+  photoType TEXT,
+  note TEXT,
+  takenAt TEXT,
+  uploadedAt TEXT DEFAULT CURRENT_TIMESTAMP
+);
+`);
+
 console.log("SQLite verbunden");
 
 export default db;
