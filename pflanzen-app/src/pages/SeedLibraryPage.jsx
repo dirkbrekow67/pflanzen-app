@@ -65,78 +65,81 @@ function SeedLibraryPage({
         </button>
       </div>
 
-      {seedProfiles.map((profile) => (
-        <div
-          key={profile.id}
-          className={`card-light ${
-            profile.profileStatus === "nicht-brauchbar"
-              ? "profile-inactive"
-              : ""
-          }`}
-        >
-          <h2 className="card-title">
-            {profile.plantName}
-            {profile.variety ? ` – ${profile.variety}` : ""}
-          </h2>
+      <div className="seed-grid">
+        {seedProfiles.map((profile) => (
+          <div
+            key={profile.id}
+            className={`seed-card ${
+              profile.profileStatus === "nicht-brauchbar"
+                ? "profile-inactive"
+                : ""
+            }`}
+          >
+            <div className="seed-card-header">
+              <div>
+                <h3 className="seed-title">
+                  {profile.plantName || "-"}
+                  {profile.variety ? ` – ${profile.variety}` : ""}
+                </h3>
 
-          <p>
-            <strong>Hersteller:</strong> {profile.manufacturer || "-"}
-          </p>
+                <p className="seed-meta">
+                  {profile.manufacturer
+                    ? profile.manufacturer
+                    : "Unbekannter Hersteller"}{" "}
+                  · {formatLifecycle(profile.lifecycle)}
+                </p>
+              </div>
 
-          <p>
-            <strong>Status:</strong>{" "}
-            {formatProfileStatus(profile.profileStatus)}
-          </p>
+              <span
+                className={`seed-status ${profile.profileStatus || "testen"}`}
+              >
+                {formatProfileStatus(profile.profileStatus)}
+              </span>
+            </div>
 
-          <p>
-            <strong>Erfahrung:</strong> {profile.experience || "-"}
-          </p>
-          <p>
-            <strong>Bemerkungen:</strong> {profile.profileNotes || "-"}
-          </p>
-          <p>
-            <strong>ID:</strong> {profile.id}
-          </p>
+            <div className="seed-card-body">
+              <p>
+                <strong>Aussaat:</strong> {monthLabels[profile.sowingFromMonth]}{" "}
+                bis {monthLabels[profile.sowingToMonth]}
+              </p>
 
-          <p>
-            <strong>Lebenszyklus:</strong> {formatLifecycle(profile.lifecycle)}
-          </p>
+              <p>
+                <strong>Keimung:</strong> {profile.germinationDaysMin} bis{" "}
+                {profile.germinationDaysMax} Tage bei{" "}
+                {profile.germinationTempMin} bis {profile.germinationTempMax} °C
+              </p>
 
-          <p>
-            <strong>Aussaat laut Packung:</strong>{" "}
-            {monthLabels[profile.sowingFromMonth]} bis{" "}
-            {monthLabels[profile.sowingToMonth]}
-          </p>
+              <p>
+                <strong>Tiefe:</strong> {profile.sowingDepthCm} cm
+              </p>
 
-          <p>
-            <strong>Keimtemperatur:</strong> {profile.germinationTempMin} bis{" "}
-            {profile.germinationTempMax} °C
-          </p>
+              <p>
+                <strong>Nach draußen:</strong>{" "}
+                {monthLabels[profile.outdoorFromMonth]} bis{" "}
+                {monthLabels[profile.outdoorToMonth]}
+              </p>
 
-          <p>
-            <strong>Keimdauer:</strong> {profile.germinationDaysMin} bis{" "}
-            {profile.germinationDaysMax} Tage
-          </p>
+              {(profile.experience || profile.profileNotes) && (
+                <p>
+                  <strong>Notiz:</strong>{" "}
+                  {profile.experience || profile.profileNotes || "-"}
+                </p>
+              )}
 
-          <p>
-            <strong>Aussaattiefe:</strong> {profile.sowingDepthCm} cm
-          </p>
+              <p className="seed-id">ID: {profile.id}</p>
+            </div>
 
-          <p>
-            <strong>Nach draußen:</strong>{" "}
-            {monthLabels[profile.outdoorFromMonth]} bis{" "}
-            {monthLabels[profile.outdoorToMonth]}
-          </p>
-          <div className="card-actions">
-            <button
-              onClick={() => handleEditAndOpenForm(profile)}
-              className="button"
-            >
-              Bearbeiten
-            </button>
+            <div className="seed-card-actions">
+              <button
+                onClick={() => handleEditAndOpenForm(profile)}
+                className="button"
+              >
+                Bearbeiten
+              </button>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
