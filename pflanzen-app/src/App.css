@@ -668,6 +668,12 @@ h2 {
   font-size: 12px;
 }
 
+.photo-message {
+  margin-top: 12px;
+  font-weight: 600;
+  color: green;
+}
+
 @media (max-width: 800px) {
   .pot-detail-header {
     flex-direction: column;

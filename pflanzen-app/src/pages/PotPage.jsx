@@ -7,6 +7,7 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
   const [history, setHistory] = useState([]);
   const [photos, setPhotos] = useState([]);
   const [photoType, setPhotoType] = useState("progress");
+  const [photoMessage, setPhotoMessage] = useState("");
   const { potId } = useParams();
 
   // Sucht anhand der URL den passenden Topf aus der Liste
@@ -38,6 +39,8 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
     const file = event.target.files[0];
     if (!file || !selectedPot) return;
 
+    setPhotoMessage("");
+
     const formData = new FormData();
     formData.append("image", file);
     formData.append("potId", selectedPot.id);
@@ -56,12 +59,14 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
       }
 
       console.log("Upload erfolgreich:", data);
+      setPhotoMessage("Foto wurde gespeichert.");
       fetch(`${API_BASE_URL}/api/photos/${selectedPot.id}`)
         .then((res) => res.json())
         .then((data) => setPhotos(data))
         .catch((err) => console.error("Fotos Fehler:", err));
     } catch (error) {
       console.error("Upload Fehler:", error);
+      setPhotoMessage("Foto konnte nicht gespeichert werden.");
     }
   }
 
@@ -120,6 +125,7 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
                 hidden
               />
             </label>
+            {photoMessage && <p className="photo-message">{photoMessage}</p>}
           </div>
 
           {photos.length > 0 && (
