@@ -134,7 +134,8 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
                       alt={photo.originalName || "Topf-Foto"}
                     />
 
-                    <p>
+                    <p className="photo-date">
+                      Hochgeladen am{" "}
                       {photo.uploadedAt
                         ? new Date(photo.uploadedAt).toLocaleDateString("de-DE")
                         : "-"}
