@@ -3,6 +3,14 @@ import cors from "cors";
 import db from "./database/db.js";
 import multer from "multer";
 import path from "path";
+import fs from "fs";
+
+const uploadDir = "server/uploads";
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+  console.log("Uploads-Ordner wurde erstellt:", uploadDir);
+}
 
 
 const app = express();
