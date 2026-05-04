@@ -645,7 +645,23 @@ h2 {
   font-size: 13px;
 }
 
+.photo-type-select {
+  margin: 12px 0;
+}
 
+.photo-type-select label {
+  display: block;
+  margin-bottom: 6px;
+  color: #111111;
+  font-weight: 600;
+}
+
+.photo-type-select select {
+  padding: 10px;
+  border: 1px solid #999;
+  border-radius: 8px;
+  font-size: 16px;
+}
 
 @media (max-width: 800px) {
   .pot-detail-header {

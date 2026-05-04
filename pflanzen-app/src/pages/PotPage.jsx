@@ -6,6 +6,7 @@ import { API_BASE_URL } from "../utils/appConfig";
 function PotPage({ pots, handleEditPot, handleClearPot }) {
   const [history, setHistory] = useState([]);
   const [photos, setPhotos] = useState([]);
+  const [photoType, setPhotoType] = useState("progress");
   const { potId } = useParams();
 
   // Sucht anhand der URL den passenden Topf aus der Liste
@@ -40,7 +41,7 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
     const formData = new FormData();
     formData.append("image", file);
     formData.append("potId", selectedPot.id);
-    formData.append("photoType", "progress");
+    formData.append("photoType", photoType);
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/photos`, {
@@ -96,6 +97,18 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
               Optional: Foto aufnehmen oder hochladen. Es dient nur als Hilfe
               für die spätere Entwicklungskontrolle.
             </p>
+            <div className="photo-type-select">
+              <label>Fotoart</label>
+              <select
+                value={photoType}
+                onChange={(e) => setPhotoType(e.target.value)}
+              >
+                <option value="sowing">Aussaat</option>
+                <option value="germination">Keimkontrolle</option>
+                <option value="outdoor">Nach draußen</option>
+                <option value="progress">Entwicklung</option>
+              </select>
+            </div>
 
             <label className="button-link photo-upload-button">
               Foto aufnehmen / hochladen
@@ -128,9 +141,13 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
                     </p>
 
                     <p>
-                      {photo.photoType === "progress"
-                        ? "Entwicklung"
-                        : photo.photoType || "Foto"}
+                      {photo.photoType === "sowing"
+                        ? "Aussaat"
+                        : photo.photoType === "germination"
+                          ? "Keimkontrolle"
+                          : photo.photoType === "outdoor"
+                            ? "Nach draußen"
+                            : "Entwicklung"}
                     </p>
                   </div>
                 ))}
