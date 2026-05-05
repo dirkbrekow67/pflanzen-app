@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { API_BASE_URL } from "../utils/appConfig";
 import SeedForm from "../components/SeedForm";
 
@@ -14,6 +14,23 @@ function SeedFormPage({
 
   const [seedPhotoType, setSeedPhotoType] = useState("pack_front");
   const [seedPhotoMessage, setSeedPhotoMessage] = useState("");
+  const [seedPhotos, setSeedPhotos] = useState([]);
+
+  function loadSeedPhotos() {
+    if (!editingSeedProfileId) {
+      setSeedPhotos([]);
+      return;
+    }
+
+    fetch(`${API_BASE_URL}/api/seed-profile-photos/${editingSeedProfileId}`)
+      .then((res) => res.json())
+      .then((data) => setSeedPhotos(data))
+      .catch((err) => console.error("Samenprofil-Fotos Fehler:", err));
+  }
+
+  useEffect(() => {
+    loadSeedPhotos();
+  }, [editingSeedProfileId]);
 
   async function handleSaveAndGoBack() {
     const success = await handleAddSeedProfile();
@@ -25,6 +42,7 @@ function SeedFormPage({
 
   async function handleSeedPhotoUpload(event) {
     const file = event.target.files[0];
+    event.target.value = null;
 
     if (!file || !editingSeedProfileId) return;
 
@@ -48,6 +66,7 @@ function SeedFormPage({
       }
 
       setSeedPhotoMessage("Packungsfoto wurde gespeichert.");
+      loadSeedPhotos();
     } catch (error) {
       console.error("Samenprofil-Foto Upload Fehler:", error);
       setSeedPhotoMessage("Packungsfoto konnte nicht gespeichert werden.");
@@ -71,12 +90,16 @@ function SeedFormPage({
         editingId={editingSeedProfileId}
         formError={formError}
       />
+
       {editingSeedProfileId ? (
         <div className="photo-upload">
           <p className="hint">
-            Optional: Foto der Samenpackung aufnehmen oder hochladen. Vorder-
-            und Rückseite können später als Grundlage für automatische
-            Datenerkennung dienen.
+            Optional: Foto der Samenpackung aufnehmen oder hochladen.
+          </p>
+
+          <p className="hint">
+            Fotos der Samenpackung (Vorder- und Rückseite) können später
+            automatisch zur Datenerkennung genutzt werden.
           </p>
 
           <div className="photo-type-select">
@@ -98,6 +121,7 @@ function SeedFormPage({
               capture="environment"
               onChange={handleSeedPhotoUpload}
               hidden
+              disabled={!editingSeedProfileId}
             />
           </label>
 
@@ -109,8 +133,39 @@ function SeedFormPage({
         <div className="photo-upload">
           <p className="hint">
             Packungsfotos können nach dem ersten Speichern des Samenprofils
-            ergänzt werden.
+            ergänzt werden. Sie können später automatisch zur Datenerkennung
+            genutzt werden.
           </p>
+        </div>
+      )}
+
+      {seedPhotos.length > 0 && (
+        <div className="photo-gallery">
+          <h2>Packungsfotos</h2>
+
+          <div className="photo-grid">
+            {seedPhotos.map((photo) => (
+              <div key={photo.id} className="photo-card">
+                <img
+                  src={`${API_BASE_URL}/uploads/${photo.fileName}`}
+                  alt={photo.originalName || "Samenpackung"}
+                />
+
+                <p className="photo-date">
+                  Hochgeladen am{" "}
+                  {photo.uploadedAt
+                    ? new Date(photo.uploadedAt).toLocaleDateString("de-DE")
+                    : "-"}
+                </p>
+
+                <p>
+                  {photo.photoType === "pack_back"
+                    ? "Rückseite"
+                    : "Vorderseite"}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
