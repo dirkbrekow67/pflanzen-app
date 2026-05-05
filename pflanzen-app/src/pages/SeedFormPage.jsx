@@ -16,7 +16,7 @@ function SeedFormPage({
   const [seedPhotoMessage, setSeedPhotoMessage] = useState("");
   const [seedPhotos, setSeedPhotos] = useState([]);
 
-  function loadSeedPhotos() {
+  useEffect(() => {
     if (!editingSeedProfileId) {
       setSeedPhotos([]);
       return;
@@ -26,10 +26,6 @@ function SeedFormPage({
       .then((res) => res.json())
       .then((data) => setSeedPhotos(data))
       .catch((err) => console.error("Samenprofil-Fotos Fehler:", err));
-  }
-
-  useEffect(() => {
-    loadSeedPhotos();
   }, [editingSeedProfileId]);
 
   async function handleSaveAndGoBack() {
@@ -66,7 +62,11 @@ function SeedFormPage({
       }
 
       setSeedPhotoMessage("Packungsfoto wurde gespeichert.");
-      loadSeedPhotos();
+
+      fetch(`${API_BASE_URL}/api/seed-profile-photos/${editingSeedProfileId}`)
+        .then((res) => res.json())
+        .then((data) => setSeedPhotos(data))
+        .catch((err) => console.error("Samenprofil-Fotos Fehler:", err));
     } catch (error) {
       console.error("Samenprofil-Foto Upload Fehler:", error);
       setSeedPhotoMessage("Packungsfoto konnte nicht gespeichert werden.");
