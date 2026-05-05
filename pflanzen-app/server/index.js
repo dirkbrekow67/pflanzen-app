@@ -691,6 +691,66 @@ app.get("/api/photos/:potId", (req, res) => {
   }
 });
 
+app.post("/api/seed-profile-photos", upload.single("image"), (req, res) => {
+  try {
+    const { seedProfileId, photoType } = req.body;
+
+    if (!req.file || !seedProfileId) {
+      return res.status(400).json({ error: "Fehlende Daten" });
+    }
+
+    db.prepare(`
+      INSERT INTO seed_profile_photos (
+        seedProfileId,
+        fileName,
+        originalName,
+        photoType,
+        ocrStatus
+      )
+      VALUES (?, ?, ?, ?, ?)
+    `).run(
+      seedProfileId,
+      req.file.filename,
+      req.file.originalname,
+      photoType || "pack_front",
+      "pending"
+    );
+
+    res.json({
+      success: true,
+      fileName: req.file.filename,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Samenprofil-Foto konnte nicht gespeichert werden",
+    });
+  }
+});
+
+app.get("/api/seed-profile-photos/:seedProfileId", (req, res) => {
+  try {
+    const { seedProfileId } = req.params;
+
+    const photos = db
+      .prepare(`
+        SELECT *
+        FROM seed_profile_photos
+        WHERE seedProfileId = ?
+        ORDER BY uploadedAt DESC
+      `)
+      .all(seedProfileId);
+
+    res.json(photos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Samenprofil-Fotos konnten nicht geladen werden",
+    });
+  }
+});
+
+
 
 
 app.listen(PORT, "0.0.0.0", () => {
