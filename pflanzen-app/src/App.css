@@ -690,6 +690,11 @@ h2 {
   margin-bottom: 8px;
 }
 
+.photo-delete-button {
+  margin-top: 8px;
+  font-size: 13px;
+  padding: 6px 10px;
+}
 
 @media (max-width: 800px) {
   .pot-detail-header {

@@ -9,6 +9,7 @@ function SeedFormPage({
   handleAddSeedProfile,
   editingSeedProfileId,
   formError,
+  loadSeedProfilePhotos,
 }) {
   const navigate = useNavigate();
 
@@ -63,6 +64,8 @@ function SeedFormPage({
 
       setSeedPhotoMessage("Packungsfoto wurde gespeichert.");
 
+      loadSeedProfilePhotos();
+
       fetch(`${API_BASE_URL}/api/seed-profile-photos/${editingSeedProfileId}`)
         .then((res) => res.json())
         .then((data) => setSeedPhotos(data))
@@ -70,6 +73,39 @@ function SeedFormPage({
     } catch (error) {
       console.error("Samenprofil-Foto Upload Fehler:", error);
       setSeedPhotoMessage("Packungsfoto konnte nicht gespeichert werden.");
+    }
+  }
+
+  async function handleDeleteSeedPhoto(photoId) {
+    const confirmed = window.confirm("Packungsfoto wirklich löschen?");
+
+    if (!confirmed) return;
+
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/seed-profile-photos/${photoId}`,
+        {
+          method: "DELETE",
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Löschen fehlgeschlagen");
+      }
+
+      setSeedPhotoMessage("Packungsfoto wurde gelöscht.");
+
+      loadSeedProfilePhotos();
+
+      fetch(`${API_BASE_URL}/api/seed-profile-photos/${editingSeedProfileId}`)
+        .then((res) => res.json())
+        .then((data) => setSeedPhotos(data))
+        .catch((err) => console.error("Samenprofil-Fotos Fehler:", err));
+    } catch (error) {
+      console.error("Samenprofil-Foto Löschen Fehler:", error);
+      setSeedPhotoMessage("Packungsfoto konnte nicht gelöscht werden.");
     }
   }
 
@@ -163,6 +199,13 @@ function SeedFormPage({
                     ? "Rückseite"
                     : "Vorderseite"}
                 </p>
+                <button
+                  type="button"
+                  className="button photo-delete-button"
+                  onClick={() => handleDeleteSeedPhoto(photo.id)}
+                >
+                  Foto löschen
+                </button>
               </div>
             ))}
           </div>

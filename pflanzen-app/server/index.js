@@ -769,6 +769,38 @@ app.get("/api/seed-profile-photos/:seedProfileId", (req, res) => {
   }
 });
 
+app.delete("/api/seed-profile-photos/:photoId", (req, res) => {
+  try {
+    const { photoId } = req.params;
+
+    const photo = db
+      .prepare("SELECT * FROM seed_profile_photos WHERE id = ?")
+      .get(photoId);
+
+    if (!photo) {
+      return res.status(404).json({ error: "Foto nicht gefunden" });
+    }
+
+    const filePath = path.join(uploadDir, photo.fileName);
+
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+
+    db.prepare("DELETE FROM seed_profile_photos WHERE id = ?").run(photoId);
+
+    res.json({
+      success: true,
+      message: "Samenprofil-Foto gelöscht",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Samenprofil-Foto konnte nicht gelöscht werden",
+    });
+  }
+});
+
 
 
 

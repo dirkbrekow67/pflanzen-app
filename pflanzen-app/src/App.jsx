@@ -708,6 +708,7 @@ function App() {
               handleAddSeedProfile={handleAddSeedProfile}
               editingSeedProfileId={editingSeedProfileId}
               formError={formError}
+              loadSeedProfilePhotos={loadSeedProfilePhotos}
             />
           }
         />
