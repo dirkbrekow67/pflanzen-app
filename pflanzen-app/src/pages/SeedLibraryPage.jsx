@@ -1,9 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
 import { monthLabels } from "../constants/months";
 import { formatLifecycle, formatProfileStatus } from "../utils/formatHelpers";
+import { API_BASE_URL } from "../utils/appConfig";
 
 function SeedLibraryPage({
   seedProfiles,
+  seedProfilePhotos,
   handleEditSeedProfile,
   handleCreateNewSeedProfile,
   seedFilter,
@@ -31,6 +33,7 @@ function SeedLibraryPage({
       </div>
 
       <p>Gespeicherte Pflanzen-Stammdaten</p>
+
       <button
         onClick={() => {
           handleCreateNewSeedProfile();
@@ -40,6 +43,7 @@ function SeedLibraryPage({
       >
         Neues Samenprofil anlegen
       </button>
+
       <h2>Vorhandene Samenprofile</h2>
 
       <div className="filter-bar">
@@ -77,6 +81,7 @@ function SeedLibraryPage({
           placeholder="Samenprofile suchen..."
         />
       </div>
+
       <div className="seed-sort">
         <label>Sortierung</label>
         <select value={seedSort} onChange={(e) => setSeedSort(e.target.value)}>
@@ -95,79 +100,102 @@ function SeedLibraryPage({
 
       {seedProfiles.length > 0 && (
         <div className="seed-grid">
-          {seedProfiles.map((profile) => (
-            <div
-              key={profile.id}
-              className={`seed-card ${
-                profile.profileStatus === "nicht-brauchbar"
-                  ? "profile-inactive"
-                  : ""
-              }`}
-            >
-              <div className="seed-card-header">
-                <div>
-                  <h3 className="seed-title">
-                    {profile.plantName || "-"}
-                    {profile.variety ? ` – ${profile.variety}` : ""}
-                  </h3>
+          {seedProfiles.map((profile) => {
+            const previewPhoto = (seedProfilePhotos || []).find(
+              (photo) =>
+                photo.seedProfileId === profile.id &&
+                photo.photoType === "pack_front",
+            );
 
-                  <p className="seed-meta">
-                    {profile.manufacturer || "Unbekannt"} ·{" "}
-                    {formatLifecycle(profile.lifecycle)}
-                  </p>
-                </div>
-
-                <span
-                  className={`seed-status ${profile.profileStatus || "testen"}`}
-                >
-                  {formatProfileStatus(profile.profileStatus)}
-                </span>
-              </div>
-
-              <div className="seed-card-body">
-                <p>
-                  <strong>Aussaat:</strong>{" "}
-                  {monthLabels[profile.sowingFromMonth]} bis{" "}
-                  {monthLabels[profile.sowingToMonth]}
-                </p>
-
-                <p>
-                  <strong>Keimung:</strong> {profile.germinationDaysMin} bis{" "}
-                  {profile.germinationDaysMax} Tage bei{" "}
-                  {profile.germinationTempMin} bis {profile.germinationTempMax}{" "}
-                  °C
-                </p>
-
-                <p>
-                  <strong>Tiefe:</strong> {profile.sowingDepthCm} cm
-                </p>
-
-                <p>
-                  <strong>Nach draußen:</strong>{" "}
-                  {monthLabels[profile.outdoorFromMonth]} bis{" "}
-                  {monthLabels[profile.outdoorToMonth]}
-                </p>
-
-                {(profile.experience || profile.profileNotes) && (
-                  <p>
-                    <strong>Notiz:</strong>{" "}
-                    {profile.experience || profile.profileNotes || "-"}
+            return (
+              <div
+                key={profile.id}
+                className={`seed-card ${
+                  profile.profileStatus === "nicht-brauchbar"
+                    ? "profile-inactive"
+                    : ""
+                }`}
+              >
+                {previewPhoto && (
+                  <img
+                    src={`${API_BASE_URL}/uploads/${previewPhoto.fileName}`}
+                    alt={profile.plantName || "Samenpackung"}
+                    className="seed-preview-image"
+                  />
+                )}
+                {previewPhoto?.ocrStatus && (
+                  <p className="photo-ocr-status">
+                    OCR: {previewPhoto.ocrStatus}
                   </p>
                 )}
 
-                <p className="seed-id">ID: {profile.id}</p>
-              </div>
+                <div className="seed-card-header">
+                  <div>
+                    <h3 className="seed-title">
+                      {profile.plantName || "-"}
+                      {profile.variety ? ` – ${profile.variety}` : ""}
+                    </h3>
 
-              <div className="seed-card-actions">
-                <button
-                  onClick={() => handleEditAndOpenForm(profile)}
-                  className="button"
-                >
-                  Bearbeiten
-                </button>
+                    <p className="seed-meta">
+                      {profile.manufacturer || "Unbekannt"} ·{" "}
+                      {formatLifecycle(profile.lifecycle)}
+                    </p>
+                  </div>
+
+                  <span
+                    className={`seed-status ${
+                      profile.profileStatus || "testen"
+                    }`}
+                  >
+                    {formatProfileStatus(profile.profileStatus)}
+                  </span>
+                </div>
+
+                <div className="seed-card-body">
+                  <p>
+                    <strong>Aussaat:</strong>{" "}
+                    {monthLabels[profile.sowingFromMonth]} bis{" "}
+                    {monthLabels[profile.sowingToMonth]}
+                  </p>
+
+                  <p>
+                    <strong>Keimung:</strong> {profile.germinationDaysMin} bis{" "}
+                    {profile.germinationDaysMax} Tage bei{" "}
+                    {profile.germinationTempMin} bis{" "}
+                    {profile.germinationTempMax} °C
+                  </p>
+
+                  <p>
+                    <strong>Tiefe:</strong> {profile.sowingDepthCm} cm
+                  </p>
+
+                  <p>
+                    <strong>Nach draußen:</strong>{" "}
+                    {monthLabels[profile.outdoorFromMonth]} bis{" "}
+                    {monthLabels[profile.outdoorToMonth]}
+                  </p>
+
+                  {(profile.experience || profile.profileNotes) && (
+                    <p>
+                      <strong>Notiz:</strong>{" "}
+                      {profile.experience || profile.profileNotes || "-"}
+                    </p>
+                  )}
+
+                  <p className="seed-id">ID: {profile.id}</p>
+                </div>
+
+                <div className="seed-card-actions">
+                  <button
+                    onClick={() => handleEditAndOpenForm(profile)}
+                    className="button"
+                  >
+                    Bearbeiten
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
