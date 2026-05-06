@@ -76,6 +76,8 @@ function App() {
 
   const [customSeedProfiles, setCustomSeedProfiles] = useState([]);
 
+  const [seedProfilePhotos, setSeedProfilePhotos] = useState([]);
+
   const [newSeedProfile, setNewSeedProfile] = useState(emptySeedProfile);
 
   const [editingSeedProfileId, setEditingSeedProfileId] = useState(null);
@@ -269,6 +271,16 @@ function App() {
         console.error("Fehler beim Laden der Samenprofile:", err),
       );
   }
+
+  function loadSeedProfilePhotos() {
+    fetch(`${API_BASE_URL}/api/seed-profile-photos`)
+      .then((res) => res.json())
+      .then((data) => setSeedProfilePhotos(data))
+      .catch((err) =>
+        console.error("Fehler beim Laden der Samenprofil-Fotos:", err),
+      );
+  }
+
   function hideReminder(reminderKey, days = 1) {
     const hideUntil = new Date();
     hideUntil.setDate(hideUntil.getDate() + days);
@@ -293,6 +305,7 @@ function App() {
     loadPots();
     loadReminders();
     loadSeedProfiles();
+    loadSeedProfilePhotos();
   }, []);
 
   useEffect(() => {
@@ -657,6 +670,7 @@ function App() {
           element={
             <SeedLibraryPage
               seedProfiles={filteredSeedProfiles}
+              seedProfilePhotos={seedProfilePhotos}
               handleEditSeedProfile={handleEditSeedProfile}
               handleCreateNewSeedProfile={handleCreateNewSeedProfile}
               setSeedFilter={setSeedFilter}

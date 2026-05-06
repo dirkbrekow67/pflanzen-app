@@ -728,6 +728,25 @@ app.post("/api/seed-profile-photos", upload.single("image"), (req, res) => {
   }
 });
 
+app.get("/api/seed-profile-photos", (req, res) => {
+  try {
+    const photos = db
+      .prepare(`
+        SELECT *
+        FROM seed_profile_photos
+        ORDER BY uploadedAt DESC
+      `)
+      .all();
+
+    res.json(photos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Samenprofil-Fotos konnten nicht geladen werden",
+    });
+  }
+});
+
 app.get("/api/seed-profile-photos/:seedProfileId", (req, res) => {
   try {
     const { seedProfileId } = req.params;
