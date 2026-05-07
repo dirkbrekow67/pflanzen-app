@@ -801,6 +801,37 @@ app.delete("/api/seed-profile-photos/:photoId", (req, res) => {
   }
 });
 
+app.post("/api/seed-profile-photos/:photoId/ocr", (req, res) => {
+  try {
+    const { photoId } = req.params;
+
+    const photo = db
+      .prepare("SELECT * FROM seed_profile_photos WHERE id = ?")
+      .get(photoId);
+
+    if (!photo) {
+      return res.status(404).json({ error: "Foto nicht gefunden" });
+    }
+
+    db.prepare(`
+      UPDATE seed_profile_photos
+      SET ocrStatus = ?
+      WHERE id = ?
+    `).run("processing", photoId);
+
+    res.json({
+      success: true,
+      message: "OCR-Verarbeitung vorbereitet",
+      photoId,
+      status: "processing",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "OCR konnte nicht vorbereitet werden",
+    });
+  }
+});
 
 
 
