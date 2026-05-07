@@ -19,7 +19,7 @@ function SeedLibraryPage({
 
   function handleEditAndOpenForm(profile) {
     handleEditSeedProfile(profile);
-    navigate("/seeds/new");
+    navigate(`/seeds/edit/${profile.id}`);
   }
 
   return (

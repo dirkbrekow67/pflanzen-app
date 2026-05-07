@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "../utils/appConfig";
 import SeedForm from "../components/SeedForm";
@@ -16,18 +16,21 @@ function SeedFormPage({
   const [seedPhotoType, setSeedPhotoType] = useState("pack_front");
   const [seedPhotoMessage, setSeedPhotoMessage] = useState("");
   const [seedPhotos, setSeedPhotos] = useState([]);
+  const { seedProfileId } = useParams();
+
+  const currentSeedProfileId = editingSeedProfileId || seedProfileId;
 
   useEffect(() => {
-    if (!editingSeedProfileId) {
+    if (!currentSeedProfileId) {
       setSeedPhotos([]);
       return;
     }
 
-    fetch(`${API_BASE_URL}/api/seed-profile-photos/${editingSeedProfileId}`)
+    fetch(`${API_BASE_URL}/api/seed-profile-photos/${currentSeedProfileId}`)
       .then((res) => res.json())
       .then((data) => setSeedPhotos(data))
       .catch((err) => console.error("Samenprofil-Fotos Fehler:", err));
-  }, [editingSeedProfileId]);
+  }, [currentSeedProfileId]);
 
   async function handleSaveAndGoBack() {
     const success = await handleAddSeedProfile();
@@ -41,13 +44,13 @@ function SeedFormPage({
     const file = event.target.files[0];
     event.target.value = null;
 
-    if (!file || !editingSeedProfileId) return;
+    if (!file || !currentSeedProfileId) return;
 
     setSeedPhotoMessage("");
 
     const formData = new FormData();
     formData.append("image", file);
-    formData.append("seedProfileId", editingSeedProfileId);
+    formData.append("seedProfileId", currentSeedProfileId);
     formData.append("photoType", seedPhotoType);
 
     try {
@@ -66,7 +69,7 @@ function SeedFormPage({
 
       loadSeedProfilePhotos();
 
-      fetch(`${API_BASE_URL}/api/seed-profile-photos/${editingSeedProfileId}`)
+      fetch(`${API_BASE_URL}/api/seed-profile-photos/${currentSeedProfileId}`)
         .then((res) => res.json())
         .then((data) => setSeedPhotos(data))
         .catch((err) => console.error("Samenprofil-Fotos Fehler:", err));
@@ -99,13 +102,44 @@ function SeedFormPage({
 
       loadSeedProfilePhotos();
 
-      fetch(`${API_BASE_URL}/api/seed-profile-photos/${editingSeedProfileId}`)
+      fetch(`${API_BASE_URL}/api/seed-profile-photos/${currentSeedProfileId}`)
         .then((res) => res.json())
         .then((data) => setSeedPhotos(data))
         .catch((err) => console.error("Samenprofil-Fotos Fehler:", err));
     } catch (error) {
       console.error("Samenprofil-Foto Löschen Fehler:", error);
       setSeedPhotoMessage("Packungsfoto konnte nicht gelöscht werden.");
+    }
+  }
+
+  async function handleStartOcr(photoId) {
+    setSeedPhotoMessage("");
+
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/seed-profile-photos/${photoId}/ocr`,
+        {
+          method: "POST",
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "OCR konnte nicht gestartet werden");
+      }
+
+      setSeedPhotoMessage("OCR-Verarbeitung wurde vorbereitet.");
+
+      fetch(`${API_BASE_URL}/api/seed-profile-photos/${currentSeedProfileId}`)
+        .then((res) => res.json())
+        .then((data) => setSeedPhotos(data))
+        .catch((err) => console.error("Samenprofil-Fotos Fehler:", err));
+
+      loadSeedProfilePhotos();
+    } catch (error) {
+      console.error("OCR Fehler:", error);
+      setSeedPhotoMessage("OCR konnte nicht gestartet werden.");
     }
   }
 
@@ -123,11 +157,11 @@ function SeedFormPage({
         formData={newSeedProfile}
         handleFormChange={handleSeedProfileChange}
         handleSubmit={handleSaveAndGoBack}
-        editingId={editingSeedProfileId}
+        editingId={currentSeedProfileId}
         formError={formError}
       />
 
-      {editingSeedProfileId ? (
+      {currentSeedProfileId ? (
         <div className="photo-upload">
           <p className="hint">
             Optional: Foto der Samenpackung aufnehmen oder hochladen.
@@ -157,7 +191,7 @@ function SeedFormPage({
               capture="environment"
               onChange={handleSeedPhotoUpload}
               hidden
-              disabled={!editingSeedProfileId}
+              disabled={!currentSeedProfileId}
             />
           </label>
 
@@ -211,7 +245,7 @@ function SeedFormPage({
           </div>
         </div>
       )}
-      {editingSeedProfileId && seedPhotos.length > 0 && (
+      {currentSeedProfileId && seedPhotos.length > 0 && (
         <div className="photo-gallery">
           <h2>Daten aus Packungsfoto erkennen</h2>
 
@@ -221,12 +255,17 @@ function SeedFormPage({
             werden.
           </p>
 
-          <button type="button" className="button" disabled>
-            Daten aus Foto erkennen
+          <button
+            type="button"
+            className="button"
+            onClick={() => handleStartOcr(seedPhotos[0].id)}
+          >
+            Daten aus erstem Foto erkennen
           </button>
 
           <p className="hint">
-            Diese Funktion ist vorbereitet, aber noch nicht aktiv.
+            Die echte Texterkennung folgt später. Aktuell wird nur der
+            OCR-Status vorbereitet.
           </p>
         </div>
       )}

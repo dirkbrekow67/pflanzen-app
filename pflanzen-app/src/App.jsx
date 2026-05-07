@@ -712,6 +712,19 @@ function App() {
             />
           }
         />
+        <Route
+          path="/seeds/edit/:seedProfileId"
+          element={
+            <SeedFormPage
+              newSeedProfile={newSeedProfile}
+              handleSeedProfileChange={handleSeedProfileChange}
+              handleAddSeedProfile={handleAddSeedProfile}
+              editingSeedProfileId={editingSeedProfileId}
+              formError={formError}
+              loadSeedProfilePhotos={loadSeedProfilePhotos}
+            />
+          }
+        />
       </Routes>
     </>
   );
