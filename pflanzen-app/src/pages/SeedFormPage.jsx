@@ -214,34 +214,45 @@ function SeedFormPage({
           <h2>Packungsfotos</h2>
 
           <div className="photo-grid">
-            {seedPhotos.map((photo) => (
-              <div key={photo.id} className="photo-card">
-                <img
-                  src={`${API_BASE_URL}/uploads/${photo.fileName}`}
-                  alt={photo.originalName || "Samenpackung"}
-                />
+            {[...seedPhotos]
 
-                <p className="photo-date">
-                  Hochgeladen am{" "}
-                  {photo.uploadedAt
-                    ? new Date(photo.uploadedAt).toLocaleDateString("de-DE")
-                    : "-"}
-                </p>
+              .sort((a, b) => {
+                if (a.photoType === b.photoType) return 0;
 
-                <p>
-                  {photo.photoType === "pack_back"
-                    ? "Rückseite"
-                    : "Vorderseite"}
-                </p>
-                <button
-                  type="button"
-                  className="button photo-delete-button"
-                  onClick={() => handleDeleteSeedPhoto(photo.id)}
-                >
-                  Foto löschen
-                </button>
-              </div>
-            ))}
+                if (a.photoType === "pack_front") return -1;
+
+                if (b.photoType === "pack_front") return 1;
+
+                return 0;
+              })
+              .map((photo) => (
+                <div key={photo.id} className="photo-card">
+                  <img
+                    src={`${API_BASE_URL}/uploads/${photo.fileName}`}
+                    alt={photo.originalName || "Samenpackung"}
+                  />
+
+                  <p className="photo-date">
+                    Hochgeladen am{" "}
+                    {photo.uploadedAt
+                      ? new Date(photo.uploadedAt).toLocaleDateString("de-DE")
+                      : "-"}
+                  </p>
+
+                  <p>
+                    {photo.photoType === "pack_back"
+                      ? "Rückseite"
+                      : "Vorderseite"}
+                  </p>
+                  <button
+                    type="button"
+                    className="button photo-delete-button"
+                    onClick={() => handleDeleteSeedPhoto(photo.id)}
+                  >
+                    Foto löschen
+                  </button>
+                </div>
+              ))}
           </div>
         </div>
       )}
