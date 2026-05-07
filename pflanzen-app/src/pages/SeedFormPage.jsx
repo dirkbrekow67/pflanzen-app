@@ -211,6 +211,25 @@ function SeedFormPage({
           </div>
         </div>
       )}
+      {editingSeedProfileId && seedPhotos.length > 0 && (
+        <div className="photo-gallery">
+          <h2>Daten aus Packungsfoto erkennen</h2>
+
+          <p className="hint">
+            Später können hier die Angaben der Samenpackung aus Vorder- und
+            Rückseite ausgelesen und als Vorschläge in das Formular übernommen
+            werden.
+          </p>
+
+          <button type="button" className="button" disabled>
+            Daten aus Foto erkennen
+          </button>
+
+          <p className="hint">
+            Diese Funktion ist vorbereitet, aber noch nicht aktiv.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
