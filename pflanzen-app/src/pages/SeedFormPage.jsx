@@ -146,6 +146,7 @@ function SeedFormPage({
   const frontPhoto =
     seedPhotos.find((photo) => photo.photoType === "pack_front") ||
     seedPhotos[0];
+  const isOcrProcessing = frontPhoto?.ocrStatus === "processing";
 
   return (
     <div className="container">
@@ -277,8 +278,11 @@ function SeedFormPage({
             type="button"
             className="button"
             onClick={() => handleStartOcr(frontPhoto.id)}
+            disabled={isOcrProcessing}
           >
-            Daten aus Vorderseite erkennen
+            {isOcrProcessing
+              ? "OCR läuft..."
+              : "Daten aus Vorderseite erkennen"}
           </button>
 
           <p className="hint">
