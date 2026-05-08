@@ -696,6 +696,25 @@ h2 {
   padding: 6px 10px;
 }
 
+.ocr-status-pending {
+  color: #666666;
+}
+
+.ocr-status-processing {
+  color: #b26a00;
+  font-weight: 600;
+}
+
+.ocr-status-done {
+  color: green;
+  font-weight: 600;
+}
+
+.ocr-status-error {
+  color: darkred;
+  font-weight: 600;
+}
+
 @media (max-width: 800px) {
   .pot-detail-header {
     flex-direction: column;

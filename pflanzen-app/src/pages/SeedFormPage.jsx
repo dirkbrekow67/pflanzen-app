@@ -249,7 +249,9 @@ function SeedFormPage({
                       ? "Rückseite"
                       : "Vorderseite"}
                   </p>
-                  <p className="photo-ocr-status">
+                  <p
+                    className={`photo-ocr-status ocr-status-${photo.ocrStatus || "pending"}`}
+                  >
                     OCR-Status: {photo.ocrStatus || "pending"}
                   </p>
                   <button
