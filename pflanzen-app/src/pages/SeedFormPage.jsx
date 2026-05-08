@@ -248,6 +248,9 @@ function SeedFormPage({
                       ? "Rückseite"
                       : "Vorderseite"}
                   </p>
+                  <p className="photo-ocr-status">
+                    OCR-Status: {photo.ocrStatus || "pending"}
+                  </p>
                   <button
                     type="button"
                     className="button photo-delete-button"
