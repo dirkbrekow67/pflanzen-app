@@ -143,6 +143,10 @@ function SeedFormPage({
     }
   }
 
+  const frontPhoto =
+    seedPhotos.find((photo) => photo.photoType === "pack_front") ||
+    seedPhotos[0];
+
   return (
     <div className="container">
       <h1>Samenprofil anlegen / bearbeiten</h1>
@@ -256,7 +260,7 @@ function SeedFormPage({
           </div>
         </div>
       )}
-      {currentSeedProfileId && seedPhotos.length > 0 && (
+      {currentSeedProfileId && frontPhoto && (
         <div className="photo-gallery">
           <h2>Daten aus Packungsfoto erkennen</h2>
 
@@ -269,9 +273,9 @@ function SeedFormPage({
           <button
             type="button"
             className="button"
-            onClick={() => handleStartOcr(seedPhotos[0].id)}
+            onClick={() => handleStartOcr(frontPhoto.id)}
           >
-            Daten aus erstem Foto erkennen
+            Daten aus Vorderseite erkennen
           </button>
 
           <p className="hint">
