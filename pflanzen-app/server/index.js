@@ -846,15 +846,23 @@ Saattiefe: 0,5 cm
     }
 
     if (line.toLowerCase().includes("aussaat")) {
-      parsedData.sowingMonths = line;
+      parsedData.sowingMonths = line
+  .replace("Aussaat:", "")
+  .trim();
     }
 
     if (line.toLowerCase().includes("keimdauer")) {
-      parsedData.germinationDays = line;
+      parsedData.germinationDays = line
+  .replace("Keimdauer:", "")
+  .replace("Tage", "")
+  .trim();
     }
 
     if (line.toLowerCase().includes("saattiefe")) {
-      parsedData.sowingDepth = line;
+      parsedData.sowingDepth = line
+  .replace("Saattiefe:", "")
+  .replace("cm", "")
+  .trim();
     }
   });
 

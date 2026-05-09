@@ -2,6 +2,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "../utils/appConfig";
 import SeedForm from "../components/SeedForm";
+import { months } from "../utils/months";
 
 function SeedFormPage({
   newSeedProfile,
@@ -54,8 +55,42 @@ function SeedFormPage({
     return () => clearInterval(timer);
   }, [currentSeedProfileId, seedPhotos, loadSeedProfilePhotos]);
 
+  function getMonthValue(monthName) {
+    if (!monthName) return "";
+
+    const normalized = monthName.toLowerCase().replace("ä", "ae");
+
+    const match = months.find((month) => {
+      const label = month.label.toLowerCase().replace("ä", "ae");
+
+      return label === normalized;
+    });
+
+    return match?.value || "";
+  }
+
+  function parseMonthRange(text) {
+    if (!text) {
+      return {
+        from: "",
+        to: "",
+      };
+    }
+
+    const parts = text
+      .toLowerCase()
+      .replace(" bis ", "-")
+      .split("-")
+      .map((part) => part.trim());
+
+    return {
+      from: getMonthValue(parts[0]),
+      to: getMonthValue(parts[1] || parts[0]),
+    };
+  }
+
   async function handleSaveAndGoBack() {
-    const success = await handleAddSeedProfile();
+    const success = await handleAddSeedProfile(currentSeedProfileId);
 
     if (success) {
       navigate("/seeds");
@@ -320,15 +355,36 @@ function SeedFormPage({
                     onClick={() => {
                       const parsed = getParsedOcrData(photo);
 
-                      handleSeedProfileChange({
-                        target: {
-                          name: "plantName",
-                          value: parsed.plantName || "",
-                        },
-                      });
+                      if (!parsed) return;
+
+                      const sowingRange = parseMonthRange(parsed.sowingMonths);
+
+                      handleSeedProfileChange(
+                        "plantName",
+                        parsed.plantName || "",
+                      );
+                      handleSeedProfileChange(
+                        "germinationDaysMax",
+                        parsed.germinationDays?.split("-")[1] || "",
+                      );
+                      handleSeedProfileChange(
+                        "germinationDaysMin",
+                        parsed.germinationDays?.split("-")[0] || "",
+                      );
+                      handleSeedProfileChange(
+                        "sowingDepthCm",
+                        parsed.sowingDepth
+                          ? parsed.sowingDepth.replace(",", ".")
+                          : "",
+                      );
+                      handleSeedProfileChange(
+                        "sowingFromMonth",
+                        sowingRange.from,
+                      );
+                      handleSeedProfileChange("sowingToMonth", sowingRange.to);
                     }}
                   >
-                    Pflanzennamen übernehmen
+                    OCR-Daten übernehmen
                   </button>
                   <button
                     type="button"
