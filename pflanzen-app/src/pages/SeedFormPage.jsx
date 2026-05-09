@@ -170,6 +170,14 @@ function SeedFormPage({
     seedPhotos[0];
   const isOcrProcessing = frontPhoto?.ocrStatus === "processing";
 
+  function formatOcrStatus(status) {
+    if (status === "processing") return "läuft";
+    if (status === "done") return "abgeschlossen";
+    if (status === "error") return "Fehler";
+
+    return "vorbereitet";
+  }
+
   return (
     <div className="container">
       <h1>Samenprofil anlegen / bearbeiten</h1>
@@ -274,7 +282,7 @@ function SeedFormPage({
                   <p
                     className={`photo-ocr-status ocr-status-${photo.ocrStatus || "pending"}`}
                   >
-                    OCR-Status: {photo.ocrStatus || "pending"}
+                    OCR-Status: {formatOcrStatus(photo.ocrStatus)}
                   </p>
                   <button
                     type="button"
