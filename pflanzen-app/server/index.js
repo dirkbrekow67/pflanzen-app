@@ -820,23 +820,59 @@ app.post("/api/seed-profile-photos/:photoId/ocr", (req, res) => {
     `).run("processing", photoId);
 
     setTimeout(() => {
-      const fakeOcrText = `
+  const fakeOcrText = `
 Tomate Roma
 Aussaat: März bis April
 Keimdauer: 8-14 Tage
 Saattiefe: 0,5 cm
 `;
 
-      db.prepare(`
-        UPDATE seed_profile_photos
-        SET
-          ocrStatus = 'done',
-          ocrText = ?
-        WHERE id = ?
-      `).run(fakeOcrText, photoId);
+  const parsedData = {
+    plantName: "",
+    sowingMonths: "",
+    germinationDays: "",
+    sowingDepth: "",
+  };
 
-      console.log("OCR abgeschlossen für Foto:", photoId);
-    }, 3000);
+  const lines = fakeOcrText
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  lines.forEach((line) => {
+    if (!parsedData.plantName) {
+      parsedData.plantName = line;
+      return;
+    }
+
+    if (line.toLowerCase().includes("aussaat")) {
+      parsedData.sowingMonths = line;
+    }
+
+    if (line.toLowerCase().includes("keimdauer")) {
+      parsedData.germinationDays = line;
+    }
+
+    if (line.toLowerCase().includes("saattiefe")) {
+      parsedData.sowingDepth = line;
+    }
+  });
+
+  db.prepare(`
+  UPDATE seed_profile_photos
+  SET
+    ocrStatus = 'done',
+    ocrText = ?,
+    ocrParsed = ?
+  WHERE id = ?
+`).run(
+  fakeOcrText,
+  JSON.stringify(parsedData),
+  photoId,
+);
+
+  console.log("OCR abgeschlossen für Foto:", photoId, parsedData);
+}, 3000);
 
     res.json({
       success: true,
