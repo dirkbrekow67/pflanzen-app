@@ -88,6 +88,7 @@ function SeedFormPage({
       }
 
       setSeedPhotoMessage("Packungsfoto wurde gespeichert.");
+      setSeedPhotoType("pack_back");
 
       loadSeedProfilePhotos();
 
