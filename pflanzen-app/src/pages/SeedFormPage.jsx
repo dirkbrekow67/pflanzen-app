@@ -32,6 +32,28 @@ function SeedFormPage({
       .catch((err) => console.error("Samenprofil-Fotos Fehler:", err));
   }, [currentSeedProfileId]);
 
+  useEffect(() => {
+    const hasProcessingPhoto = seedPhotos.some(
+      (photo) => photo.ocrStatus === "processing",
+    );
+
+    if (!currentSeedProfileId || !hasProcessingPhoto) return;
+
+    const timer = setInterval(() => {
+      fetch(`${API_BASE_URL}/api/seed-profile-photos/${currentSeedProfileId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setSeedPhotos(data);
+          loadSeedProfilePhotos();
+        })
+        .catch((err) =>
+          console.error("OCR-Status Aktualisierung Fehler:", err),
+        );
+    }, 1500);
+
+    return () => clearInterval(timer);
+  }, [currentSeedProfileId, seedPhotos, loadSeedProfilePhotos]);
+
   async function handleSaveAndGoBack() {
     const success = await handleAddSeedProfile();
 
