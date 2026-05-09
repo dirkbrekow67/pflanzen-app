@@ -819,6 +819,16 @@ app.post("/api/seed-profile-photos/:photoId/ocr", (req, res) => {
       WHERE id = ?
     `).run("processing", photoId);
 
+    setTimeout(() => {
+      db.prepare(`
+      UPDATE seed_profile_photos
+      SET ocrStatus = 'done'
+      WHERE id = ?
+    `).run(photoId);
+
+    console.log("OCR abgeschlossen für Foto:", photoId);
+    }, 3000);
+
     res.json({
       success: true,
       message: "OCR-Verarbeitung vorbereitet",
