@@ -285,6 +285,9 @@ function SeedFormPage({
                   >
                     OCR-Status: {formatOcrStatus(photo.ocrStatus)}
                   </p>
+                  {photo.ocrText && (
+                    <pre className="ocr-text-preview">{photo.ocrText}</pre>
+                  )}
                   <button
                     type="button"
                     className="button photo-delete-button"
