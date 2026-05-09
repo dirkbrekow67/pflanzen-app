@@ -727,7 +727,20 @@ h2 {
   color: #111111;
 }
 
+.ocr-parsed-preview {
+  margin-top: 8px;
+  padding: 8px;
+  background: #eef9ee;
+  border: 1px solid #cfe8cf;
+  border-radius: 6px;
+  font-size: 12px;
+  text-align: left;
+  color: #111111;
+}
 
+.ocr-parsed-preview p {
+  margin: 4px 0;
+}
 
 @media (max-width: 800px) {
   .pot-detail-header {

@@ -179,6 +179,16 @@ function SeedFormPage({
     return "vorbereitet";
   }
 
+  function getParsedOcrData(photo) {
+    if (!photo.ocrParsed) return null;
+
+    try {
+      return JSON.parse(photo.ocrParsed);
+    } catch {
+      return null;
+    }
+  }
+
   return (
     <div className="container">
       <h1>Samenprofil anlegen / bearbeiten</h1>
@@ -288,6 +298,38 @@ function SeedFormPage({
                   {photo.ocrText && (
                     <pre className="ocr-text-preview">{photo.ocrText}</pre>
                   )}
+                  {getParsedOcrData(photo) && (
+                    <div className="ocr-parsed-preview">
+                      <strong>Erkannte Daten:</strong>
+                      <p>Pflanze: {getParsedOcrData(photo).plantName || "-"}</p>
+                      <p>
+                        Aussaat: {getParsedOcrData(photo).sowingMonths || "-"}
+                      </p>
+                      <p>
+                        Keimdauer:{" "}
+                        {getParsedOcrData(photo).germinationDays || "-"}
+                      </p>
+                      <p>
+                        Saattiefe: {getParsedOcrData(photo).sowingDepth || "-"}
+                      </p>
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    className="button photo-delete-button"
+                    onClick={() => {
+                      const parsed = getParsedOcrData(photo);
+
+                      handleSeedProfileChange({
+                        target: {
+                          name: "plantName",
+                          value: parsed.plantName || "",
+                        },
+                      });
+                    }}
+                  >
+                    Pflanzennamen übernehmen
+                  </button>
                   <button
                     type="button"
                     className="button photo-delete-button"
