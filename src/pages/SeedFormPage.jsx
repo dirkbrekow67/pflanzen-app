@@ -59,26 +59,6 @@ function SeedFormPage({
     return getMonthValueByName(monthName);
   }
 
-  function parseMonthRange(text) {
-    if (!text) {
-      return {
-        from: "",
-        to: "",
-      };
-    }
-
-    const parts = text
-      .toLowerCase()
-      .replace(" bis ", "-")
-      .split("-")
-      .map((part) => part.trim());
-
-    return {
-      from: getMonthValue(parts[0]),
-      to: getMonthValue(parts[1] || parts[0]),
-    };
-  }
-
   async function handleSaveAndGoBack() {
     const success = await handleAddSeedProfile(currentSeedProfileId);
 
@@ -359,17 +339,14 @@ function SeedFormPage({
 
                       if (!parsed) return;
 
-                      const sowingRange = parseMonthRange(parsed.sowingMonths);
-
                       const tempRange =
                         parsed.germinationTemp?.replace(/\s/g, "").split("-") ||
                         [];
                       const outdoorRange = parsed.outdoorMonths || {};
 
-                      handleSeedProfileChange(
-                        "plantName",
-                        parsed.plantName || "",
-                      );
+                      if (!newSeedProfile.plantName && parsed.plantName) {
+                        handleSeedProfileChange("plantName", parsed.plantName);
+                      }
                       handleSeedProfileChange(
                         "germinationDaysMax",
                         parsed.germinationDays?.split("-")[1] || "",
@@ -392,11 +369,17 @@ function SeedFormPage({
                           ? parsed.sowingDepth.replace(",", ".")
                           : "",
                       );
+
                       handleSeedProfileChange(
                         "sowingFromMonth",
-                        sowingRange.from,
+                        parsed.sowingFromMonth || "",
                       );
-                      handleSeedProfileChange("sowingToMonth", sowingRange.to);
+
+                      handleSeedProfileChange(
+                        "sowingToMonth",
+                        parsed.sowingToMonth || "",
+                      );
+
                       handleSeedProfileChange(
                         "outdoorFromMonth",
                         getMonthValue(outdoorRange.from),
