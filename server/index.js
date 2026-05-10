@@ -1,0 +1,1050 @@
+import express from "express";
+import cors from "cors";
+import db from "./database/db.js";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+import Tesseract from "tesseract.js";
+import sharp from "sharp";
+import { normalizeMonthName, getMonthNumber } from "../src/constants/months.js";
+
+const MONTH_REGEX =
+  "januar|februar|märz|maerz|marz|april|mai|juni|juli|august|september|oktober|november|dezember";
+
+const uploadDir = "server/uploads";
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+  console.log("Uploads-Ordner wurde erstellt:", uploadDir);
+}
+
+const app = express();
+const PORT = 3001;
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "server/uploads/");
+  },
+  filename: function (req, file, cb) {
+    const uniqueName = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, uniqueName + ext);
+  },
+});
+
+const upload = multer({ storage });
+
+app.use(cors());
+app.use(express.json());
+
+app.use("/uploads", express.static("server/uploads"));
+
+app.get("/api/health", (req, res) => {
+  res.json({
+    status: "ok",
+    message: "Server läuft",
+  });
+});
+
+app.get("/api/pots", (req, res) => {
+  try {
+    const pots = db.prepare("SELECT * FROM pots ORDER BY id").all();
+    res.json(pots);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Fehler beim Laden der Töpfe" });
+  }
+});
+
+app.post("/api/pots", (req, res) => {
+  try {
+    const {
+      id,
+      plantName,
+      status,
+      sowingDate,
+      resowingDate,
+      lifecycle,
+      sowingFromMonth,
+      sowingToMonth,
+      germinationTempMin,
+      germinationTempMax,
+      germinationDaysMin,
+      germinationDaysMax,
+      sowingDepthCm,
+      outdoorFromMonth,
+      outdoorToMonth,
+      seedProfileId,
+      potNotes,
+    } = req.body;
+
+    const stmt = db.prepare(`
+      INSERT INTO pots (
+        id,
+        plantName,
+        status,
+        sowingDate,
+        resowingDate,
+        lifecycle,
+        sowingFromMonth,
+        sowingToMonth,
+        germinationTempMin,
+        germinationTempMax,
+        germinationDaysMin,
+        germinationDaysMax,
+        sowingDepthCm,
+        outdoorFromMonth,
+        outdoorToMonth,
+        seedProfileId,
+        potNotes
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    stmt.run(
+      id,
+      plantName,
+      status,
+      sowingDate,
+      resowingDate,
+      lifecycle,
+      sowingFromMonth,
+      sowingToMonth,
+      germinationTempMin,
+      germinationTempMax,
+      germinationDaysMin,
+      germinationDaysMax,
+      sowingDepthCm,
+      outdoorFromMonth,
+      outdoorToMonth,
+      seedProfileId,
+      potNotes,
+    );
+
+    res.json({
+      success: true,
+      message: "Topf gespeichert",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Speichern fehlgeschlagen",
+    });
+  }
+});
+
+app.put("/api/pots/:id", (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const {
+      plantName,
+      status,
+      sowingDate,
+      resowingDate,
+      lifecycle,
+      sowingFromMonth,
+      sowingToMonth,
+      germinationTempMin,
+      germinationTempMax,
+      germinationDaysMin,
+      germinationDaysMax,
+      sowingDepthCm,
+      outdoorFromMonth,
+      outdoorToMonth,
+      seedProfileId,
+      potNotes,
+    } = req.body;
+
+    db.prepare(
+      `
+      UPDATE pots
+      SET plantName = ?,
+          status = ?,
+          sowingDate = ?,
+          resowingDate = ?,
+          lifecycle = ?,
+          sowingFromMonth = ?,
+          sowingToMonth = ?,
+          germinationTempMin = ?,
+          germinationTempMax = ?,
+          germinationDaysMin = ?,
+          germinationDaysMax = ?,
+          sowingDepthCm = ?,
+          outdoorFromMonth = ?,
+          outdoorToMonth = ?,
+          seedProfileId = ?,
+          potNotes = ?
+      WHERE id = ?
+    `,
+    ).run(
+      plantName,
+      status,
+      sowingDate,
+      resowingDate,
+      lifecycle,
+      sowingFromMonth,
+      sowingToMonth,
+      germinationTempMin,
+      germinationTempMax,
+      germinationDaysMin,
+      germinationDaysMax,
+      sowingDepthCm,
+      outdoorFromMonth,
+      outdoorToMonth,
+      seedProfileId,
+      potNotes,
+      id,
+    );
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Aktualisieren fehlgeschlagen",
+    });
+  }
+});
+
+app.post("/api/pot-history", (req, res) => {
+  try {
+    const {
+      potId,
+      plantName,
+      seedProfileId,
+      sowingDate,
+      resowingDate,
+      potNotes,
+      startedAt,
+      endedAt,
+      endReason,
+      endReasonNote,
+    } = req.body;
+
+    const stmt = db.prepare(`
+      INSERT INTO pot_history (
+        potId,
+        plantName,
+        seedProfileId,
+        sowingDate,
+        resowingDate,
+        potNotes,
+        startedAt,
+        endedAt,
+        endReason,
+        endReasonNote
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+
+    stmt.run(
+      potId,
+      plantName,
+      seedProfileId,
+      sowingDate,
+      resowingDate,
+      potNotes,
+      startedAt,
+      endedAt,
+      endReason,
+      endReasonNote,
+    );
+
+    res.json({
+      success: true,
+      message: "Historie gespeichert",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Historie konnte nicht gespeichert werden",
+    });
+  }
+});
+
+app.get("/api/pot-history/:potId", (req, res) => {
+  try {
+    const { potId } = req.params;
+
+    const rows = db
+      .prepare(
+        `
+      SELECT *
+      FROM pot_history
+      WHERE potId = ?
+      ORDER BY id DESC
+    `,
+      )
+      .all(potId);
+
+    res.json(rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Historie konnte nicht geladen werden",
+    });
+  }
+});
+
+app.get("/api/statistics", (req, res) => {
+  try {
+    const activePots = db
+      .prepare("SELECT COUNT(*) AS count FROM pots WHERE status != 'empty'")
+      .get();
+
+    const emptyPots = db
+      .prepare("SELECT COUNT(*) AS count FROM pots WHERE status = 'empty'")
+      .get();
+
+    const historyCount = db
+      .prepare("SELECT COUNT(*) AS count FROM pot_history")
+      .get();
+
+    const harvestedCount = db
+      .prepare(
+        "SELECT COUNT(*) AS count FROM pot_history WHERE endReason = 'geerntet'",
+      )
+      .get();
+
+    const failedCount = db
+      .prepare(
+        "SELECT COUNT(*) AS count FROM pot_history WHERE endReason = 'fehlgeschlagen'",
+      )
+      .get();
+
+    const historyRows = db
+      .prepare("SELECT startedAt, endedAt FROM pot_history")
+      .all();
+
+    const durations = historyRows
+      .map((entry) => {
+        if (!entry.startedAt || !entry.endedAt) return null;
+
+        const start = new Date(entry.startedAt);
+        const end = new Date(entry.endedAt);
+
+        return Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1;
+      })
+      .filter((days) => days !== null);
+
+    const averageDuration =
+      durations.length > 0
+        ? Math.round(
+            durations.reduce((sum, days) => sum + days, 0) / durations.length,
+          )
+        : 0;
+
+    const profileResults = db
+      .prepare(
+        `
+    SELECT 
+      h.seedProfileId,
+      s.plantName,
+      s.variety,
+      s.manufacturer,
+      h.endReason,
+      COUNT(*) AS count
+    FROM pot_history h
+    LEFT JOIN seed_profiles s ON h.seedProfileId = s.id
+    WHERE h.seedProfileId IS NOT NULL AND h.seedProfileId != ''
+    GROUP BY 
+      h.seedProfileId,
+      s.plantName,
+      s.variety,
+      s.manufacturer,
+      h.endReason
+    ORDER BY s.plantName, s.variety, s.manufacturer
+  `,
+      )
+      .all();
+
+    const profileSummaryMap = {};
+
+    profileResults.forEach((item) => {
+      if (!profileSummaryMap[item.seedProfileId]) {
+        profileSummaryMap[item.seedProfileId] = {
+          seedProfileId: item.seedProfileId,
+          plantName: item.plantName || "",
+          variety: item.variety || "",
+          manufacturer: item.manufacturer || "",
+          total: 0,
+          successful: 0,
+          failed: 0,
+          other: 0,
+        };
+      }
+
+      profileSummaryMap[item.seedProfileId].total += item.count;
+
+      if (item.endReason === "geerntet") {
+        profileSummaryMap[item.seedProfileId].successful += item.count;
+      } else if (item.endReason === "fehlgeschlagen") {
+        profileSummaryMap[item.seedProfileId].failed += item.count;
+      } else {
+        profileSummaryMap[item.seedProfileId].other += item.count;
+      }
+    });
+
+    const profileSummary = Object.values(profileSummaryMap).map((item) => ({
+      ...item,
+      successRate:
+        item.total > 0 ? Math.round((item.successful / item.total) * 100) : 0,
+    }));
+
+    const topProfiles = [...profileSummary]
+      .filter((item) => item.total >= 2)
+      .sort((a, b) => {
+        if (b.successRate !== a.successRate) {
+          return b.successRate - a.successRate;
+        }
+
+        return b.total - a.total;
+      })
+      .slice(0, 5);
+
+    res.json({
+      activePots: activePots.count,
+      emptyPots: emptyPots.count,
+      historyCount: historyCount.count,
+      harvestedCount: harvestedCount.count,
+      failedCount: failedCount.count,
+      averageDuration,
+      profileResults,
+      profileSummary,
+      topProfiles,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Statistik konnte nicht geladen werden",
+    });
+  }
+});
+
+app.get("/api/reminders", (req, res) => {
+  try {
+    const pots = db.prepare("SELECT * FROM pots WHERE status != 'empty'").all();
+    const today = new Date();
+
+    const reminders = [];
+
+    pots.forEach((pot) => {
+      if (!pot.sowingDate) return;
+
+      const sowingDate = new Date(pot.sowingDate);
+      const daysSinceSowing =
+        Math.round((today - sowingDate) / (1000 * 60 * 60 * 24)) + 1;
+
+      if (pot.germinationDaysMax && daysSinceSowing > pot.germinationDaysMax) {
+        reminders.push({
+          potId: pot.id,
+          plantName: pot.plantName,
+          type: "germination-check",
+          message: "Keimdauer überschritten – Topf kontrollieren",
+          explanation:
+            "Die maximale Keimdauer laut Samenprofil ist überschritten. Prüfe, ob Keimlinge sichtbar sind und ob Feuchtigkeit, Temperatur und Standort passen.",
+          daysSinceSowing,
+          germinationDaysMax: pot.germinationDaysMax,
+        });
+      }
+
+      if (daysSinceSowing >= 21) {
+        reminders.push({
+          potId: pot.id,
+          plantName: pot.plantName,
+          type: "repot-check",
+          message: "Wuchs prüfen – ggf. vereinzeln oder umtopfen",
+          explanation:
+            "Prüfe, ob die Pflanzen im Topf genügend Platz haben. Wenn mehrere Jungpflanzen sehr dicht stehen, können sie vorsichtig vereinzelt oder in größere bzw. eigene Töpfe umgesetzt werden. Bei Kräutern kann ein dichterer Wuchs je nach Art auch gewünscht sein.",
+          daysSinceSowing,
+        });
+      }
+      if (pot.outdoorFromMonth && pot.outdoorToMonth) {
+        const currentMonth = today.getMonth() + 1;
+
+        if (
+          currentMonth >= pot.outdoorFromMonth &&
+          currentMonth <= pot.outdoorToMonth
+        ) {
+          reminders.push({
+            potId: pot.id,
+            plantName: pot.plantName,
+            type: "outdoor-check",
+            message: "Nach draußen setzen prüfen",
+            explanation:
+              "Der empfohlene Zeitraum für das Auspflanzen hat begonnen. Prüfe, ob die Pflanze kräftig genug ist und die Temperaturen geeignet sind (kein Frost).",
+            daysSinceSowing,
+            outdoorFromMonth: pot.outdoorFromMonth,
+            outdoorToMonth: pot.outdoorToMonth,
+          });
+        }
+      }
+    });
+
+    const priorityOrder = {
+      "germination-check": 1,
+      "repot-check": 2,
+      "outdoor-check": 3,
+    };
+
+    reminders.sort((a, b) => {
+      const priorityA = priorityOrder[a.type] || 99;
+      const priorityB = priorityOrder[b.type] || 99;
+
+      if (priorityA !== priorityB) {
+        return priorityA - priorityB;
+      }
+
+      return b.daysSinceSowing - a.daysSinceSowing;
+    });
+    res.json(reminders);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Erinnerungen konnten nicht geladen werden",
+    });
+  }
+});
+
+app.get("/api/seed-profiles", (req, res) => {
+  try {
+    const profiles = db
+      .prepare("SELECT * FROM seed_profiles ORDER BY plantName, variety")
+      .all();
+
+    res.json(profiles);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Samenprofile konnten nicht geladen werden" });
+  }
+});
+
+app.post("/api/seed-profiles", (req, res) => {
+  try {
+    const {
+      id,
+      plantName,
+      variety,
+      manufacturer,
+      experience,
+      profileNotes,
+      profileStatus,
+      lifecycle,
+      sowingFromMonth,
+      sowingToMonth,
+      germinationTempMin,
+      germinationTempMax,
+      germinationDaysMin,
+      germinationDaysMax,
+      sowingDepthCm,
+      outdoorFromMonth,
+      outdoorToMonth,
+      harvestFromMonth,
+      harvestToMonth,
+    } = req.body;
+
+    db.prepare(
+      `
+      INSERT INTO seed_profiles (
+        id,
+        plantName,
+        variety,
+        manufacturer,
+        experience,
+        profileNotes,
+        profileStatus,
+        lifecycle,
+        sowingFromMonth,
+        sowingToMonth,
+        germinationTempMin,
+        germinationTempMax,
+        germinationDaysMin,
+        germinationDaysMax,
+        sowingDepthCm,
+        outdoorFromMonth,
+        outdoorToMonth,
+        harvestFromMonth,
+        harvestToMonth
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `,
+    ).run(
+      id,
+      plantName,
+      variety,
+      manufacturer,
+      experience,
+      profileNotes,
+      profileStatus,
+      lifecycle,
+      sowingFromMonth,
+      sowingToMonth,
+      germinationTempMin,
+      germinationTempMax,
+      germinationDaysMin,
+      germinationDaysMax,
+      sowingDepthCm,
+      outdoorFromMonth,
+      outdoorToMonth,
+      harvestFromMonth,
+      harvestToMonth,
+    );
+
+    res.json({ success: true, message: "Samenprofil gespeichert" });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Samenprofil konnte nicht gespeichert werden" });
+  }
+});
+
+app.put("/api/seed-profiles/:id", (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const {
+      plantName,
+      variety,
+      manufacturer,
+      experience,
+      profileNotes,
+      profileStatus,
+      lifecycle,
+      sowingFromMonth,
+      sowingToMonth,
+      germinationTempMin,
+      germinationTempMax,
+      germinationDaysMin,
+      germinationDaysMax,
+      sowingDepthCm,
+      outdoorFromMonth,
+      outdoorToMonth,
+      harvestFromMonth,
+      harvestToMonth,
+    } = req.body;
+
+    db.prepare(
+      `
+      UPDATE seed_profiles
+      SET plantName = ?,
+          variety = ?,
+          manufacturer = ?,
+          experience = ?,
+          profileNotes = ?,
+          profileStatus = ?,
+          lifecycle = ?,
+          sowingFromMonth = ?,
+          sowingToMonth = ?,
+          germinationTempMin = ?,
+          germinationTempMax = ?,
+          germinationDaysMin = ?,
+          germinationDaysMax = ?,
+          sowingDepthCm = ?,
+          outdoorFromMonth = ?,
+          outdoorToMonth = ?,
+          harvestFromMonth = ?,
+          harvestToMonth = ?
+      WHERE id = ?
+    `,
+    ).run(
+      plantName,
+      variety,
+      manufacturer,
+      experience,
+      profileNotes,
+      profileStatus,
+      lifecycle,
+      sowingFromMonth,
+      sowingToMonth,
+      germinationTempMin,
+      germinationTempMax,
+      germinationDaysMin,
+      germinationDaysMax,
+      sowingDepthCm,
+      outdoorFromMonth,
+      outdoorToMonth,
+      harvestFromMonth,
+      harvestToMonth,
+      id,
+    );
+
+    res.json({ success: true, message: "Samenprofil aktualisiert" });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Samenprofil konnte nicht aktualisiert werden" });
+  }
+});
+
+app.post("/api/photos", upload.single("image"), (req, res) => {
+  const { potId, photoType } = req.body;
+
+  if (!req.file || !potId) {
+    return res.status(400).json({ error: "Fehlende Daten" });
+  }
+
+  const fileName = req.file.filename;
+  const originalName = req.file.originalname;
+
+  const stmt = db.prepare(`
+    INSERT INTO pot_photos (potId, fileName, originalName, photoType)
+    VALUES (?, ?, ?, ?)
+  `);
+
+  stmt.run(potId, fileName, originalName, photoType || "progress");
+
+  res.json({
+    success: true,
+    fileName,
+  });
+});
+
+app.get("/api/photos/:potId", (req, res) => {
+  try {
+    const { potId } = req.params;
+
+    const photos = db
+      .prepare(
+        `
+        SELECT *
+        FROM pot_photos
+        WHERE potId = ?
+        ORDER BY uploadedAt DESC
+      `,
+      )
+      .all(potId);
+
+    res.json(photos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Fotos konnten nicht geladen werden",
+    });
+  }
+});
+
+app.post("/api/seed-profile-photos", upload.single("image"), (req, res) => {
+  try {
+    const { seedProfileId, photoType } = req.body;
+
+    if (!req.file || !seedProfileId) {
+      return res.status(400).json({ error: "Fehlende Daten" });
+    }
+
+    db.prepare(
+      `
+      INSERT INTO seed_profile_photos (
+        seedProfileId,
+        fileName,
+        originalName,
+        photoType,
+        ocrStatus
+      )
+      VALUES (?, ?, ?, ?, ?)
+    `,
+    ).run(
+      seedProfileId,
+      req.file.filename,
+      req.file.originalname,
+      photoType || "pack_front",
+      "pending",
+    );
+
+    res.json({
+      success: true,
+      fileName: req.file.filename,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Samenprofil-Foto konnte nicht gespeichert werden",
+    });
+  }
+});
+
+app.get("/api/seed-profile-photos", (req, res) => {
+  try {
+    const photos = db
+      .prepare(
+        `
+        SELECT *
+        FROM seed_profile_photos
+        ORDER BY uploadedAt DESC
+      `,
+      )
+      .all();
+
+    res.json(photos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Samenprofil-Fotos konnten nicht geladen werden",
+    });
+  }
+});
+
+app.get("/api/seed-profile-photos/:seedProfileId", (req, res) => {
+  try {
+    const { seedProfileId } = req.params;
+
+    const photos = db
+      .prepare(
+        `
+        SELECT *
+        FROM seed_profile_photos
+        WHERE seedProfileId = ?
+        ORDER BY uploadedAt DESC
+      `,
+      )
+      .all(seedProfileId);
+
+    res.json(photos);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Samenprofil-Fotos konnten nicht geladen werden",
+    });
+  }
+});
+
+app.delete("/api/seed-profile-photos/:photoId", (req, res) => {
+  try {
+    const { photoId } = req.params;
+
+    const photo = db
+      .prepare("SELECT * FROM seed_profile_photos WHERE id = ?")
+      .get(photoId);
+
+    if (!photo) {
+      return res.status(404).json({ error: "Foto nicht gefunden" });
+    }
+
+    const filePath = path.join(uploadDir, photo.fileName);
+
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+
+    if (photo.processedFileName) {
+      const processedFilePath = path.join(uploadDir, photo.processedFileName);
+
+      if (fs.existsSync(processedFilePath)) {
+        fs.unlinkSync(processedFilePath);
+      }
+    }
+
+    db.prepare("DELETE FROM seed_profile_photos WHERE id = ?").run(photoId);
+
+    res.json({
+      success: true,
+      message: "Samenprofil-Foto gelöscht",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "Samenprofil-Foto konnte nicht gelöscht werden",
+    });
+  }
+});
+
+app.post("/api/seed-profile-photos/:photoId/ocr", (req, res) => {
+  try {
+    const { photoId } = req.params;
+
+    const photo = db
+      .prepare("SELECT * FROM seed_profile_photos WHERE id = ?")
+      .get(photoId);
+
+    if (!photo) {
+      return res.status(404).json({ error: "Foto nicht gefunden" });
+    }
+
+    db.prepare(
+      `
+      UPDATE seed_profile_photos
+      SET ocrStatus = ?
+      WHERE id = ?
+    `,
+    ).run("processing", photoId);
+
+    setTimeout(async () => {
+      try {
+        const imagePath = path.join(uploadDir, photo.fileName);
+        const processedFileName = `ocr-${photo.fileName}`;
+        const processedImagePath = path.join(uploadDir, processedFileName);
+
+        await sharp(imagePath)
+          .rotate()
+          .extract({
+            left: 0,
+            top: 0,
+            width: 1200,
+            height: 1800,
+          })
+          .resize({ width: 2400 })
+          .grayscale()
+          .normalize()
+          .sharpen()
+          .toFile(processedImagePath);
+
+        const result = await Tesseract.recognize(processedImagePath, "deu+eng");
+
+        const ocrText = result.data.text;
+
+        const fullText = ocrText.replace(/\s+/g, " ");
+        const fullTextLower = fullText.toLowerCase();
+
+        const parsedData = {
+          plantName: "",
+          sowingMonths: "",
+          sowingFromMonth: null,
+          sowingToMonth: null,
+          germinationDays: "",
+          sowingDepth: "",
+          germinationTemp: "",
+          spacing: "",
+          harvestFromMonth: null,
+          harvestToMonth: null,
+          harvestMonths: "",
+          outdoorMonths: null,
+        };
+
+        const lines = ocrText
+          .split("\n")
+          .map((line) => line.trim())
+          .filter(Boolean);
+
+        lines.forEach((line) => {
+          const lower = line.toLowerCase();
+
+          if (!parsedData.plantName) {
+            if (lower.includes("kerbel")) parsedData.plantName = "Kerbel";
+            else if (lower.includes("brokkoli"))
+              parsedData.plantName = "Brokkoli";
+            else if (
+              lower.includes("cherrytomate") ||
+              lower.includes("cherrytomaten")
+            ) {
+              parsedData.plantName = "Cherrytomate";
+            } else if (
+              lower.includes("petersilie") &&
+              !lower.includes("petersilienähnlich") &&
+              !lower.includes("petersiliedhnlich")
+            ) {
+              parsedData.plantName = "Petersilie";
+            } else if (lower.includes("dill")) {
+              parsedData.plantName = "Dill";
+            }
+          }
+
+          const daysMatch = line.match(/(\d+\s*-\s*\d+)\s*tage/i);
+          if (daysMatch) {
+            parsedData.germinationDays = daysMatch[1].replace(/\s/g, "");
+          }
+
+          const tempMatch = line.match(/(\d+\s*-\s*\d+)\s*°\s*c/i);
+          if (tempMatch) {
+            parsedData.germinationTemp = tempMatch[1].replace(/\s/g, "");
+          }
+
+          const spacingMatch = line.match(/(\d+\s*x\s*\d+)\s*cm/i);
+          if (spacingMatch) {
+            parsedData.spacing = `${spacingMatch[1].replace(/\s/g, "")} cm`;
+          }
+
+          const depthMatch = line.match(/(\d+(?:[,.]\d+)?)\s*cm\s*tief/i);
+          if (depthMatch) {
+            parsedData.sowingDepth = depthMatch[1].replace(",", ".");
+          }
+        });
+
+        const harvestMatch = fullTextLower.match(
+          new RegExp(
+            `ernte.{0,80}?(${MONTH_REGEX})\\s+bis\\s+(${MONTH_REGEX})`,
+            "i",
+          ),
+        );
+
+        if (harvestMatch) {
+          const fromMonth = normalizeMonthName(harvestMatch[1]);
+          const toMonth = normalizeMonthName(harvestMatch[2]);
+
+          parsedData.harvestMonths = `${fromMonth} bis ${toMonth}`;
+
+          parsedData.harvestFromMonth = getMonthNumber(fromMonth);
+          parsedData.harvestToMonth = getMonthNumber(toMonth);
+        }
+
+        const sowingMatch = fullTextLower.match(
+          new RegExp(
+            `aussaat[\\s\\S]{0,150}?(${MONTH_REGEX})\\s*(?:-|bis)\\s*(${MONTH_REGEX})`,
+            "i",
+          ),
+        );
+
+        if (sowingMatch) {
+          const fromMonth = normalizeMonthName(sowingMatch[1]);
+          const toMonth = normalizeMonthName(sowingMatch[2]);
+
+          parsedData.sowingMonths = `${fromMonth} bis ${toMonth}`;
+          parsedData.sowingFromMonth = getMonthNumber(fromMonth);
+          parsedData.sowingToMonth = getMonthNumber(toMonth);
+        }
+
+        const directFreilandMatch = fullTextLower.match(
+          new RegExp(`(${MONTH_REGEX})\\s+direkt\\s+ins\\s+freiland`, "i"),
+        );
+
+        if (directFreilandMatch) {
+          parsedData.outdoorMonths = {
+            from: normalizeMonthName(directFreilandMatch[1]),
+            to: normalizeMonthName(directFreilandMatch[1]),
+          };
+        }
+
+        db.prepare(
+          `
+  UPDATE seed_profile_photos
+  SET
+    ocrStatus = 'done',
+    ocrText = ?,
+    ocrParsed = ?,
+    processedFileName = ?
+  WHERE id = ?
+`,
+        ).run(ocrText, JSON.stringify(parsedData), processedFileName, photoId);
+
+        console.log("OCR abgeschlossen für Foto:", photoId, parsedData);
+      } catch (error) {
+        console.error("OCR Fehler:", error);
+
+        db.prepare(
+          `
+      UPDATE seed_profile_photos
+      SET ocrStatus = 'error'
+      WHERE id = ?
+    `,
+        ).run(photoId);
+      }
+    }, 100);
+
+    res.json({
+      success: true,
+      message: "OCR-Verarbeitung vorbereitet",
+      photoId,
+      status: "processing",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "OCR konnte nicht vorbereitet werden",
+    });
+  }
+});
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server läuft auf Port ${PORT}`);
+});

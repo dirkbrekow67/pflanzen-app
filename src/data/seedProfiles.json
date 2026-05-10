@@ -1,0 +1,44 @@
+[
+  {
+    "id": "SEED-001",
+    "plantName": "Estragon",
+    "lifecycle": "perennial",
+    "sowingFromMonth": 3,
+    "sowingToMonth": 5,
+    "germinationTempMin": 10,
+    "germinationTempMax": 22,
+    "germinationDaysMin": 14,
+    "germinationDaysMax": 20,
+    "sowingDepthCm": 1,
+    "outdoorFromMonth": 5,
+    "outdoorToMonth": 8
+  },
+  {
+    "id": "SEED-002",
+    "plantName": "Dill",
+    "lifecycle": "annual",
+    "sowingFromMonth": 4,
+    "sowingToMonth": 7,
+    "germinationTempMin": 15,
+    "germinationTempMax": 20,
+    "germinationDaysMin": 15,
+    "germinationDaysMax": 20,
+    "sowingDepthCm": 1,
+    "outdoorFromMonth": 4,
+    "outdoorToMonth": 6
+  },
+  {
+    "id": "SEED-003",
+    "plantName": "Petersilie",
+    "lifecycle": "biennial",
+    "sowingFromMonth": 3,
+    "sowingToMonth": 7,
+    "germinationTempMin": 15,
+    "germinationTempMax": 20,
+    "germinationDaysMin": 14,
+    "germinationDaysMax": 28,
+    "sowingDepthCm": 1,
+    "outdoorFromMonth": 3,
+    "outdoorToMonth": 7
+  }
+]
