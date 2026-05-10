@@ -2,8 +2,8 @@ import express from "express";
 import cors from "cors";
 import db from "./database/db.js";
 import fs from "fs";
-import upload from "./utils/upload.js";
 import seedProfilePhotosRoutes from "./routes/seedProfilePhotosRoutes.js";
+import potPhotosRoutes from "./routes/potPhotosRoutes.js";
 
 const uploadDir = "server/uploads";
 
@@ -21,6 +21,7 @@ app.use(express.json());
 app.use("/uploads", express.static("server/uploads"));
 
 app.use("/api/seed-profile-photos", seedProfilePhotosRoutes);
+app.use("/api/photos", potPhotosRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({
@@ -660,53 +661,6 @@ app.put("/api/seed-profiles/:id", (req, res) => {
     res
       .status(500)
       .json({ error: "Samenprofil konnte nicht aktualisiert werden" });
-  }
-});
-
-app.post("/api/photos", upload.single("image"), (req, res) => {
-  const { potId, photoType } = req.body;
-
-  if (!req.file || !potId) {
-    return res.status(400).json({ error: "Fehlende Daten" });
-  }
-
-  const fileName = req.file.filename;
-  const originalName = req.file.originalname;
-
-  const stmt = db.prepare(`
-    INSERT INTO pot_photos (potId, fileName, originalName, photoType)
-    VALUES (?, ?, ?, ?)
-  `);
-
-  stmt.run(potId, fileName, originalName, photoType || "progress");
-
-  res.json({
-    success: true,
-    fileName,
-  });
-});
-
-app.get("/api/photos/:potId", (req, res) => {
-  try {
-    const { potId } = req.params;
-
-    const photos = db
-      .prepare(
-        `
-        SELECT *
-        FROM pot_photos
-        WHERE potId = ?
-        ORDER BY uploadedAt DESC
-      `,
-      )
-      .all(potId);
-
-    res.json(photos);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: "Fotos konnten nicht geladen werden",
-    });
   }
 });
 
