@@ -5,6 +5,7 @@ import fs from "fs";
 import seedProfilePhotosRoutes from "./routes/seedProfilePhotosRoutes.js";
 import potPhotosRoutes from "./routes/potPhotosRoutes.js";
 import potsRoutes from "./routes/potsRoutes.js";
+import potHistoryRoutes from "./routes/potHistoryRoutes.js";
 
 const uploadDir = "server/uploads";
 
@@ -24,92 +25,13 @@ app.use("/uploads", express.static("server/uploads"));
 app.use("/api/seed-profile-photos", seedProfilePhotosRoutes);
 app.use("/api/photos", potPhotosRoutes);
 app.use("/api/pots", potsRoutes);
+app.use("/api/pot-history", potHistoryRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({
     status: "ok",
     message: "Server läuft",
   });
-});
-
-app.post("/api/pot-history", (req, res) => {
-  try {
-    const {
-      potId,
-      plantName,
-      seedProfileId,
-      sowingDate,
-      resowingDate,
-      potNotes,
-      startedAt,
-      endedAt,
-      endReason,
-      endReasonNote,
-    } = req.body;
-
-    const stmt = db.prepare(`
-      INSERT INTO pot_history (
-        potId,
-        plantName,
-        seedProfileId,
-        sowingDate,
-        resowingDate,
-        potNotes,
-        startedAt,
-        endedAt,
-        endReason,
-        endReasonNote
-      )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-
-    stmt.run(
-      potId,
-      plantName,
-      seedProfileId,
-      sowingDate,
-      resowingDate,
-      potNotes,
-      startedAt,
-      endedAt,
-      endReason,
-      endReasonNote,
-    );
-
-    res.json({
-      success: true,
-      message: "Historie gespeichert",
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: "Historie konnte nicht gespeichert werden",
-    });
-  }
-});
-
-app.get("/api/pot-history/:potId", (req, res) => {
-  try {
-    const { potId } = req.params;
-
-    const rows = db
-      .prepare(
-        `
-      SELECT *
-      FROM pot_history
-      WHERE potId = ?
-      ORDER BY id DESC
-    `,
-      )
-      .all(potId);
-
-    res.json(rows);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: "Historie konnte nicht geladen werden",
-    });
-  }
 });
 
 app.get("/api/statistics", (req, res) => {
