@@ -8,6 +8,7 @@ import potHistoryRoutes from "./routes/potHistoryRoutes.js";
 import seedProfilesRoutes from "./routes/seedProfilesRoutes.js";
 import statisticsRoutes from "./routes/statisticsRoutes.js";
 import remindersRoutes from "./routes/remindersRoutes.js";
+import healthRoutes from "./routes/healthRoutes.js";
 
 const uploadDir = "server/uploads";
 
@@ -31,13 +32,7 @@ app.use("/api/pot-history", potHistoryRoutes);
 app.use("/api/seed-profiles", seedProfilesRoutes);
 app.use("/api/statistics", statisticsRoutes);
 app.use("/api/reminders", remindersRoutes);
-
-app.get("/api/health", (req, res) => {
-  res.json({
-    status: "ok",
-    message: "Server läuft",
-  });
-});
+app.use("/api/health", healthRoutes);
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server läuft auf Port ${PORT}`);
