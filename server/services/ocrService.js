@@ -17,7 +17,11 @@ export async function processSeedProfilePhotoOcr({
 }) {
   try {
     const imagePath = path.join(uploadDir, photo.fileName);
-    const processedFileName = `ocr-${photo.fileName}`;
+    const parsedPath = path.parse(photo.fileName);
+    const processedFileName = path.join(
+      parsedPath.dir,
+      `ocr-${parsedPath.base}`,
+    );
     const processedImagePath = path.join(uploadDir, processedFileName);
 
     await sharp(imagePath)
