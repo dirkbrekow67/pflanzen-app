@@ -16,6 +16,7 @@ router.post("/", upload.single("image"), (req, res) => {
     if (!req.file || !seedProfileId) {
       return res.status(400).json({ error: "Fehlende Daten" });
     }
+    const fileName = `${req.uploadSubFolder}/${req.file.filename}`;
 
     db.prepare(
       `
@@ -30,7 +31,7 @@ router.post("/", upload.single("image"), (req, res) => {
     `,
     ).run(
       seedProfileId,
-      req.file.filename,
+      fileName,
       req.file.originalname,
       photoType || "pack_front",
       "pending",
@@ -38,7 +39,7 @@ router.post("/", upload.single("image"), (req, res) => {
 
     res.json({
       success: true,
-      fileName: req.file.filename,
+      fileName,
     });
   } catch (error) {
     console.error(error);

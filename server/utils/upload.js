@@ -5,18 +5,24 @@ import fs from "fs";
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     let targetFolder = "server/uploads/";
+    let uploadSubFolder = "";
 
     if (req.originalUrl.includes("seed-profile-photos")) {
-      targetFolder = "server/uploads/seed-profiles/";
+      uploadSubFolder = "seed-profiles";
+      targetFolder = `server/uploads/${uploadSubFolder}/`;
     }
 
     if (req.originalUrl.includes("/api/photos")) {
-      targetFolder = "server/uploads/pots/";
+      uploadSubFolder = "pots";
+      targetFolder = `server/uploads/${uploadSubFolder}/`;
     }
+
+    req.uploadSubFolder = uploadSubFolder;
 
     if (!fs.existsSync(targetFolder)) {
       fs.mkdirSync(targetFolder, { recursive: true });
     }
+
     cb(null, targetFolder);
   },
   filename: function (req, file, cb) {

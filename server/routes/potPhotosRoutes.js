@@ -11,7 +11,7 @@ router.post("/", upload.single("image"), (req, res) => {
     return res.status(400).json({ error: "Fehlende Daten" });
   }
 
-  const fileName = req.file.filename;
+  const fileName = `${req.uploadSubFolder}/${req.file.filename}`;
   const originalName = req.file.originalname;
 
   const stmt = db.prepare(`
