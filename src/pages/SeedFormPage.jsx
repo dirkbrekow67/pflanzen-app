@@ -215,7 +215,7 @@ function SeedFormPage({
       />
 
       {currentSeedProfileId ? (
-        <div className="photo-upload">
+        <div className="photo-upload seed-upload-section">
           <p className="hint">
             Optional: Foto der Samenpackung aufnehmen oder hochladen.
           </p>
@@ -225,35 +225,50 @@ function SeedFormPage({
             automatisch zur Datenerkennung genutzt werden.
           </p>
 
-          <div className="photo-type-select">
-            <label>Packungsseite</label>
-            <select
-              value={seedPhotoType}
-              onChange={(e) => setSeedPhotoType(e.target.value)}
-            >
-              <option value="pack_front">Vorderseite</option>
-              <option value="pack_back">Rückseite</option>
-            </select>
-          </div>
+          <div className="seed-upload-controls">
+            <div className="photo-type-select">
+              <label>Packungsseite</label>
+              <select
+                value={seedPhotoType}
+                onChange={(e) => setSeedPhotoType(e.target.value)}
+              >
+                <option value="pack_front">Vorderseite</option>
+                <option value="pack_back">Rückseite</option>
+              </select>
+            </div>
 
-          <label className="button-link photo-upload-button">
-            Packungsfoto aufnehmen / hochladen
-            <input
-              type="file"
-              accept="image/*"
-              capture="environment"
-              onChange={handleSeedPhotoUpload}
-              hidden
-              disabled={!currentSeedProfileId}
-            />
-          </label>
+            <div className="seed-upload-buttons">
+              <label className="button-link photo-upload-button">
+                Packungsfoto auswählen / scannen
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleSeedPhotoUpload}
+                  hidden
+                  disabled={!currentSeedProfileId}
+                />
+              </label>
+
+              <label className="button-link photo-upload-button">
+                Foto aufnehmen
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handleSeedPhotoUpload}
+                  hidden
+                  disabled={!currentSeedProfileId}
+                />
+              </label>
+            </div>
+          </div>
 
           {seedPhotoMessage && (
             <p className="photo-message">{seedPhotoMessage}</p>
           )}
         </div>
       ) : (
-        <div className="photo-upload">
+        <div className="photo-upload seed-upload-section">
           <p className="hint">
             Packungsfotos können nach dem ersten Speichern des Samenprofils
             ergänzt werden. Sie können später automatisch zur Datenerkennung

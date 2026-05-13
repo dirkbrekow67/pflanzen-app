@@ -520,6 +520,27 @@ h2 {
   font-size: 13px;
 }
 
+.seed-upload-section {
+  max-width: 980px;
+  margin: 32px auto;
+  text-align: center;
+}
+
+.seed-upload-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.seed-upload-buttons {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 /* Status Badge */
 .seed-status {
   padding: 4px 8px;
