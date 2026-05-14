@@ -567,6 +567,7 @@ function App() {
       ...profile,
       variety: profile.variety || "",
       manufacturer: profile.manufacturer || "",
+      retailer: profile.retailer || "",
       experience: profile.experience || "",
       profileStatus: profile.profileStatus || "testen",
       profileNotes: profile.profileNotes || "",

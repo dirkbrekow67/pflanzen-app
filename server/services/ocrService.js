@@ -6,22 +6,10 @@ import {
   normalizeMonthName,
   getMonthNumber,
 } from "../../src/constants/months.js";
+import { COMMON_PLANT_NAMES } from "../../src/constants/plants.js";
 
 const MONTH_REGEX =
   "januar|februar|märz|maerz|marz|april|mai|juni|juli|august|september|oktober|november|dezember";
-
-const COMMON_PLANTS = [
-  "Dill",
-  "Petersilie",
-  "Kerbel",
-  "Estragon",
-  "Brokkoli",
-  "Tomate",
-  "Cherrytomate",
-  "Paprika",
-  "Gurke",
-  "Zucchini",
-];
 
 export async function processSeedProfilePhotoOcr({
   photo,
@@ -85,6 +73,8 @@ export async function processSeedProfilePhotoOcr({
 
     const parsedData = {
       plantName: "",
+      manufacturer: "",
+      retailer: "",
       lifecycle: "",
       sowingMonths: "",
       sowingFromMonth: null,
@@ -105,11 +95,26 @@ export async function processSeedProfilePhotoOcr({
       .map((line) => line.trim())
       .filter(Boolean);
 
+    if (fullTextLower.includes("kiepenkerl")) {
+      parsedData.manufacturer = "Kiepenkerl";
+    }
+
+    if (fullTextLower.includes("netto marken-discount")) {
+      parsedData.retailer = "Netto Marken-Discount Stiftung & Co.";
+    }
+
+    if (
+      fullTextLower.includes("gartenland gmbh") ||
+      fullTextLower.includes("gartenland.com")
+    ) {
+      parsedData.manufacturer = "Gartenland";
+    }
+
     lines.forEach((line) => {
       const lower = line.toLowerCase();
 
       if (!parsedData.plantName) {
-        for (const plant of COMMON_PLANTS) {
+        for (const plant of COMMON_PLANT_NAMES) {
           if (lower.includes(plant.toLowerCase())) {
             parsedData.plantName = plant;
             break;
@@ -172,6 +177,13 @@ export async function processSeedProfilePhotoOcr({
         }
       }
     });
+
+    if (
+      parsedData.plantName === "Liebstock" ||
+      parsedData.plantName === "Maggikraut"
+    ) {
+      parsedData.plantName = "Liebstöckel";
+    }
 
     if (isBackPhoto && !parsedData.sowingDepth) {
       const seedStrengthFullTextMatch = searchTextLower.match(

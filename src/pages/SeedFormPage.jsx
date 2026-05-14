@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { API_BASE_URL } from "../utils/appConfig";
 import SeedForm from "../components/SeedForm";
 import { getMonthValueByName } from "../constants/months";
+import { COMMON_PLANT_NAMES } from "../constants/plants";
 
 function SeedFormPage({
   newSeedProfile,
@@ -327,6 +328,15 @@ function SeedFormPage({
                       <strong>Erkannte Daten:</strong>
                       <p>Pflanze: {getParsedOcrData(photo).plantName || "-"}</p>
                       <p>
+                        Hersteller / Händler:{" "}
+                        {[
+                          getParsedOcrData(photo).manufacturer,
+                          getParsedOcrData(photo).retailer,
+                        ]
+                          .filter(Boolean)
+                          .join(" / ") || "-"}
+                      </p>
+                      <p>
                         Aussaat: {getParsedOcrData(photo).sowingMonths || "-"}
                       </p>
                       <p>
@@ -367,9 +377,31 @@ function SeedFormPage({
                         [];
                       const outdoorRange = parsed.outdoorMonths || {};
 
-                      if (!newSeedProfile.plantName && parsed.plantName) {
+                      const currentPlantName = newSeedProfile.plantName?.trim();
+
+                      const mayReplacePlantName =
+                        !currentPlantName ||
+                        COMMON_PLANT_NAMES.includes(currentPlantName);
+
+                      if (mayReplacePlantName && parsed.plantName) {
                         handleSeedProfileChange("plantName", parsed.plantName);
                       }
+
+                      if (!newSeedProfile.manufacturer && parsed.manufacturer) {
+                        handleSeedProfileChange(
+                          "manufacturer",
+                          parsed.manufacturer,
+                        );
+                      }
+
+                      if (!newSeedProfile.retailer && parsed.retailer) {
+                        handleSeedProfileChange("retailer", parsed.retailer);
+                      }
+
+                      if (parsed.lifecycle) {
+                        handleSeedProfileChange("lifecycle", parsed.lifecycle);
+                      }
+
                       handleSeedProfileChange(
                         "germinationDaysMax",
                         parsed.germinationDays?.split("-")[1] || "",

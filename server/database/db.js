@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS seed_profiles (
   plantName TEXT,
   variety TEXT,
   manufacturer TEXT,
+  retailer TEXT,
   experience TEXT,
   profileNotes TEXT,
   profileStatus TEXT,
@@ -73,6 +74,12 @@ CREATE TABLE IF NOT EXISTS seed_profiles (
   harvestToMonth INTEGER
 );
 `);
+
+try {
+  db.prepare("ALTER TABLE seed_profiles ADD COLUMN retailer TEXT").run();
+} catch {
+  // Spalte existiert bereits
+}
 
 try {
   db.prepare(

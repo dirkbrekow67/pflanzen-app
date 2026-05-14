@@ -1,0 +1,16 @@
+export const COMMON_PLANT_NAMES = [
+  "Dill",
+  "Petersilie",
+  "Kerbel",
+  "Estragon",
+  "Brokkoli",
+  "Tomate",
+  "Cherrytomate",
+  "Paprika",
+  "Gurke",
+  "Zucchini",
+  "Liebstock",
+  "Liebstöckel",
+  "Maggikraut",
+  "Chili",
+];

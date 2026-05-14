@@ -42,6 +42,15 @@ function SeedForm({
         </div>
 
         <div className="form-field">
+          <label>Händler</label>
+
+          <input
+            value={formData.retailer || ""}
+            onChange={(e) => handleFormChange("retailer", e.target.value)}
+          />
+        </div>
+
+        <div className="form-field">
           <label>Lebenszyklus</label>
           <select
             value={formData.lifecycle}

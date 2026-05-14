@@ -25,6 +25,7 @@ router.post("/", (req, res) => {
       plantName,
       variety,
       manufacturer,
+      retailer,
       experience,
       profileNotes,
       profileStatus,
@@ -52,6 +53,7 @@ router.post("/", (req, res) => {
         plantName,
         variety,
         manufacturer,
+        retailer,
         experience,
         profileNotes,
         profileStatus,
@@ -71,13 +73,14 @@ router.post("/", (req, res) => {
         harvestFromMonth,
         harvestToMonth
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     ).run(
       id,
       plantName,
       variety,
       manufacturer,
+      retailer,
       experience,
       profileNotes,
       profileStatus,
@@ -115,6 +118,7 @@ router.put("/:id", (req, res) => {
       plantName,
       variety,
       manufacturer,
+      retailer,
       experience,
       profileNotes,
       profileStatus,
@@ -141,6 +145,7 @@ router.put("/:id", (req, res) => {
       SET plantName = ?,
           variety = ?,
           manufacturer = ?,
+          retailer = ?,
           experience = ?,
           profileNotes = ?,
           profileStatus = ?,
@@ -165,6 +170,7 @@ router.put("/:id", (req, res) => {
       plantName,
       variety,
       manufacturer,
+      retailer,
       experience,
       profileNotes,
       profileStatus,
