@@ -17,6 +17,7 @@ export const emptySeedProfile = {
   experience: "",
   profileStatus: "testen",
   profileNotes: "",
+  sowingDepthNote: "",
 };
 
 export function buildSeedProfileData(seedProfile) {
@@ -29,7 +30,10 @@ export function buildSeedProfileData(seedProfile) {
     germinationTempMax: Number(seedProfile.germinationTempMax),
     germinationDaysMin: Number(seedProfile.germinationDaysMin),
     germinationDaysMax: Number(seedProfile.germinationDaysMax),
-    sowingDepthCm: Number(seedProfile.sowingDepthCm),
+    sowingDepthCm:
+      seedProfile.sowingDepthCm === ""
+        ? null
+        : Number(seedProfile.sowingDepthCm),
     outdoorFromMonth: Number(seedProfile.outdoorFromMonth),
     outdoorToMonth: Number(seedProfile.outdoorToMonth),
     harvestFromMonth: seedProfile.harvestFromMonth
@@ -43,6 +47,7 @@ export function buildSeedProfileData(seedProfile) {
     experience: seedProfile.experience,
     profileStatus: seedProfile.profileStatus,
     profileNotes: seedProfile.profileNotes,
+    sowingDepthNote: seedProfile.sowingDepthNote,
   };
 }
 

@@ -570,6 +570,7 @@ function App() {
       experience: profile.experience || "",
       profileStatus: profile.profileStatus || "testen",
       profileNotes: profile.profileNotes || "",
+      sowingDepthNote: profile.sowingDepthNote || "",
     });
 
     setEditingSeedProfileId(profile.id);

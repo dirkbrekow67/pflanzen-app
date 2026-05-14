@@ -114,6 +114,16 @@ function SeedForm({
             value={formData.sowingDepthCm}
             onChange={(e) => handleFormChange("sowingDepthCm", e.target.value)}
           />
+          <label htmlFor="sowingDepthNote">Hinweis zur Aussaat</label>
+
+          <input
+            type="text"
+            id="sowingDepthNote"
+            value={formData.sowingDepthNote || ""}
+            onChange={(e) =>
+              handleFormChange("sowingDepthNote", e.target.value)
+            }
+          />
         </div>
 
         <div className="form-field">

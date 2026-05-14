@@ -378,11 +378,21 @@ function SeedFormPage({
                         "germinationTempMax",
                         tempRange[1] || "",
                       );
+                      const numericDepth = parsed.sowingDepth
+                        ? parsed.sowingDepth.replace(",", ".")
+                        : "";
+
                       handleSeedProfileChange(
                         "sowingDepthCm",
-                        parsed.sowingDepth
-                          ? parsed.sowingDepth.replace(",", ".")
+                        numericDepth && !Number.isNaN(Number(numericDepth))
+                          ? numericDepth
                           : "",
+                      );
+                      handleSeedProfileChange(
+                        "sowingDepthNote",
+                        numericDepth && !Number.isNaN(Number(numericDepth))
+                          ? ""
+                          : parsed.sowingDepth || "",
                       );
 
                       handleSeedProfileChange(

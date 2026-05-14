@@ -36,6 +36,7 @@ router.post("/", (req, res) => {
       germinationDaysMin,
       germinationDaysMax,
       sowingDepthCm,
+      sowingDepthNote,
       outdoorFromMonth,
       outdoorToMonth,
       harvestFromMonth,
@@ -60,12 +61,13 @@ router.post("/", (req, res) => {
         germinationDaysMin,
         germinationDaysMax,
         sowingDepthCm,
+        sowingDepthNote,
         outdoorFromMonth,
         outdoorToMonth,
         harvestFromMonth,
         harvestToMonth
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     ).run(
       id,
@@ -83,6 +85,7 @@ router.post("/", (req, res) => {
       germinationDaysMin,
       germinationDaysMax,
       sowingDepthCm,
+      sowingDepthNote,
       outdoorFromMonth,
       outdoorToMonth,
       harvestFromMonth,
@@ -117,6 +120,7 @@ router.put("/:id", (req, res) => {
       germinationDaysMin,
       germinationDaysMax,
       sowingDepthCm,
+      sowingDepthNote,
       outdoorFromMonth,
       outdoorToMonth,
       harvestFromMonth,
@@ -140,6 +144,7 @@ router.put("/:id", (req, res) => {
           germinationDaysMin = ?,
           germinationDaysMax = ?,
           sowingDepthCm = ?,
+          sowingDepthNote = ?,
           outdoorFromMonth = ?,
           outdoorToMonth = ?,
           harvestFromMonth = ?,
@@ -161,6 +166,7 @@ router.put("/:id", (req, res) => {
       germinationDaysMin,
       germinationDaysMax,
       sowingDepthCm,
+      sowingDepthNote,
       outdoorFromMonth,
       outdoorToMonth,
       harvestFromMonth,

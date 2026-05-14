@@ -72,6 +72,17 @@ export async function processSeedProfilePhotoOcr({
     const fullText = cleanedText.replace(/\s+/g, " ");
     const fullTextLower = fullText.toLowerCase();
 
+    const searchTextLower = fullTextLower
+      .replace(/-\s+/g, "")
+      .replace(/(\d+)\s*-\s*facher/g, "$1-facher")
+      .replace(/in(\d+)facher/g, "in $1-facher")
+      .replace(/samenst[aä]rke/g, "samenstärke")
+      .replace(/samenstarke/g, "samenstärke")
+      .replace(/(\d+)fachersa\s*menst[aä]rke/g, "$1-facher samenstärke")
+      .replace(/(\d+)fachersa\s*menstarke/g, "$1-facher samenstärke")
+      .replace(/erde\s+bedecken/g, "erde bedecken")
+      .replace(/\s+/g, " ");
+
     const parsedData = {
       plantName: "",
       lifecycle: "",
@@ -134,11 +145,48 @@ export async function processSeedProfilePhotoOcr({
         }
 
         const depthMatch = line.match(/(\d+(?:[,.]\d+)?)\s*cm\s*tief/i);
+        const seedStrengthDepthMatch = lower.match(
+          /(?:in\s*)?(\d+)\s*facher\s*samenst[aä]rke/i,
+        );
+
+        if (!parsedData.sowingDepth && seedStrengthDepthMatch) {
+          parsedData.sowingDepth = `${seedStrengthDepthMatch[1]}x Samenstärke`;
+        }
         if (depthMatch) {
           parsedData.sowingDepth = depthMatch[1].replace(",", ".");
         }
+        const lightGerminatorMatch = lower.match(
+          /lichtkeimer|nicht\s+mit\s+erde\s+(?:bedecken|überdecken)/i,
+        );
+
+        if (lightGerminatorMatch) {
+          parsedData.sowingDepth = "Lichtkeimer";
+        }
+        const pressOnlyMatch = lower.match(/nur\s+andr[üu]cken/i);
+
+        if (pressOnlyMatch && !parsedData.sowingDepth) {
+          parsedData.sowingDepth = "Nur andrücken";
+        }
       }
     });
+
+    if (isBackPhoto && !parsedData.sowingDepth) {
+      const seedStrengthFullTextMatch = searchTextLower.match(
+        /(?:in\s*)?(\d+)[-\s]*facher\s+samenstärke/i,
+      );
+
+      const seedStrengthLooseMatch = fullTextLower.match(
+        /in\s*(\d+)\s*facher?.{0,120}?menst[aä]rke/i,
+      );
+
+      if (!parsedData.sowingDepth && seedStrengthLooseMatch) {
+        parsedData.sowingDepth = `${seedStrengthLooseMatch[1]}x Samenstärke`;
+      }
+
+      if (seedStrengthFullTextMatch) {
+        parsedData.sowingDepth = `${seedStrengthFullTextMatch[1]}x Samenstärke`;
+      }
+    }
 
     if (isBackPhoto) {
       const harvestMatch = fullTextLower.match(
