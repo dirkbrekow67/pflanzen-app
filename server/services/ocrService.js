@@ -10,12 +10,36 @@ import {
 const MONTH_REGEX =
   "januar|februar|märz|maerz|marz|april|mai|juni|juli|august|september|oktober|november|dezember";
 
+const COMMON_PLANTS = [
+  "Dill",
+  "Petersilie",
+  "Kerbel",
+  "Estragon",
+  "Brokkoli",
+  "Tomate",
+  "Cherrytomate",
+  "Paprika",
+  "Gurke",
+  "Zucchini",
+];
+
 export async function processSeedProfilePhotoOcr({
   photo,
   photoId,
   uploadDir,
 }) {
   try {
+    if (photo.photoType !== "pack_back") {
+      db.prepare(
+        `
+    UPDATE seed_profile_photos
+    SET ocrStatus = 'skipped'
+    WHERE id = ?
+  `,
+      ).run(photoId);
+
+      return;
+    }
     const imagePath = path.join(uploadDir, photo.fileName);
     const parsedPath = path.parse(photo.fileName);
     const processedFileName = path.join(
@@ -24,13 +48,15 @@ export async function processSeedProfilePhotoOcr({
     );
     const processedImagePath = path.join(uploadDir, processedFileName);
 
+    const imageMetadata = await sharp(imagePath).metadata();
+
     await sharp(imagePath)
       .rotate()
       .extract({
         left: 0,
         top: 0,
-        width: 1200,
-        height: 1800,
+        width: Math.min(imageMetadata.width || 1200, 1200),
+        height: Math.min(imageMetadata.height || 1800, 1800),
       })
       .resize({ width: 2400 })
       .grayscale()
@@ -41,8 +67,19 @@ export async function processSeedProfilePhotoOcr({
     const result = await Tesseract.recognize(processedImagePath, "deu+eng");
 
     const ocrText = result.data.text;
+    const cleanedText = ocrText
+      .replace(/ﬁ/g, "fi")
+      .replace(/ﬂ/g, "fl")
+      .replace(/jahrig/g, "jährig")
+      .replace(/fiir/g, "für")
+      .replace(/Qualitat/g, "Qualität")
+      .replace(/\|/g, " ")
+      .replace(/[©®]/g, "")
+      .replace(/[ \t]+/g, " ")
+      .replace(/\n\s+/g, "\n")
+      .trim();
 
-    const fullText = ocrText.replace(/\s+/g, " ");
+    const fullText = cleanedText.replace(/\s+/g, " ");
     const fullTextLower = fullText.toLowerCase();
 
     const parsedData = {
@@ -61,7 +98,7 @@ export async function processSeedProfilePhotoOcr({
       outdoorMonths: null,
     };
 
-    const lines = ocrText
+    const lines = cleanedText
       .split("\n")
       .map((line) => line.trim())
       .filter(Boolean);
@@ -70,25 +107,20 @@ export async function processSeedProfilePhotoOcr({
       const lower = line.toLowerCase();
 
       if (!parsedData.plantName) {
-        if (lower.includes("kerbel")) parsedData.plantName = "Kerbel";
-        else if (lower.includes("estragon")) {
-          parsedData.plantName = "Estragon";
-        } else if (lower.includes("brokkoli"))
-          parsedData.plantName = "Brokkoli";
-        else if (
-          lower.includes("cherrytomate") ||
-          lower.includes("cherrytomaten")
-        ) {
-          parsedData.plantName = "Cherrytomate";
-        } else if (
-          lower.includes("petersilie") &&
-          !lower.includes("petersilienähnlich") &&
-          !lower.includes("petersiliedhnlich")
-        ) {
-          parsedData.plantName = "Petersilie";
-        } else if (lower.includes("dill")) {
-          parsedData.plantName = "Dill";
+        for (const plant of COMMON_PLANTS) {
+          if (lower.includes(plant.toLowerCase())) {
+            parsedData.plantName = plant;
+            break;
+          }
         }
+      }
+
+      if (lower.includes("einjährig") || lower.includes("einjahrig")) {
+        parsedData.lifecycle = "annual";
+      }
+
+      if (lower.includes("zweijährig") || lower.includes("zweijahrig")) {
+        parsedData.lifecycle = "biennial";
       }
 
       if (lower.includes("mehrjährig") || lower.includes("mehrjahrig")) {
@@ -165,6 +197,21 @@ export async function processSeedProfilePhotoOcr({
       parsedData.sowingToMonth = getMonthNumber(toMonth);
     }
 
+    const looseMonthRangeMatch = fullTextLower.match(
+      new RegExp(`(${MONTH_REGEX}).{0,80}?(${MONTH_REGEX})`, "i"),
+    );
+
+    if (!parsedData.sowingFromMonth && looseMonthRangeMatch) {
+      const fromMonth = normalizeMonthName(looseMonthRangeMatch[1]);
+      const toMonth = normalizeMonthName(looseMonthRangeMatch[2]);
+
+      if (fromMonth !== toMonth) {
+        parsedData.sowingMonths = `${fromMonth} bis ${toMonth}`;
+        parsedData.sowingFromMonth = getMonthNumber(fromMonth);
+        parsedData.sowingToMonth = getMonthNumber(toMonth);
+      }
+    }
+
     const directFreilandMatch = fullTextLower.match(
       new RegExp(`(${MONTH_REGEX})\\s+direkt\\s+ins\\s+freiland`, "i"),
     );
@@ -186,7 +233,7 @@ export async function processSeedProfilePhotoOcr({
     processedFileName = ?
   WHERE id = ?
 `,
-    ).run(ocrText, JSON.stringify(parsedData), processedFileName, photoId);
+    ).run(cleanedText, JSON.stringify(parsedData), processedFileName, photoId);
 
     console.log("OCR abgeschlossen für Foto:", photoId, parsedData);
   } catch (error) {
