@@ -125,6 +125,25 @@ function SeedForm({
             }
           />
         </div>
+        <div className="form-field">
+          <label>Reihenabstand (cm)</label>
+
+          <input
+            type="number"
+            value={formData.rowSpacingCm || ""}
+            onChange={(e) => handleFormChange("rowSpacingCm", e.target.value)}
+          />
+        </div>
+
+        <div className="form-field">
+          <label>Pflanzenabstand (cm)</label>
+
+          <input
+            type="number"
+            value={formData.plantSpacingCm || ""}
+            onChange={(e) => handleFormChange("plantSpacingCm", e.target.value)}
+          />
+        </div>
 
         <div className="form-field">
           <label>Aussaat laut Packung von</label>

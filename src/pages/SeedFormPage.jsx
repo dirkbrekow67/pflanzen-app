@@ -333,7 +333,15 @@ function SeedFormPage({
                         Keimtemperatur:{" "}
                         {getParsedOcrData(photo).germinationTemp || "-"}
                       </p>
-                      <p>Abstand: {getParsedOcrData(photo).spacing || "-"}</p>
+                      <p>
+                        Reihenabstand:{" "}
+                        {getParsedOcrData(photo).rowSpacingCm || "-"} cm
+                      </p>
+
+                      <p>
+                        Pflanzenabstand:{" "}
+                        {getParsedOcrData(photo).plantSpacingCm || "-"} cm
+                      </p>
                       <p>
                         Ernte: {getParsedOcrData(photo).harvestMonths || "-"}
                       </p>
@@ -393,6 +401,15 @@ function SeedFormPage({
                         numericDepth && !Number.isNaN(Number(numericDepth))
                           ? ""
                           : parsed.sowingDepth || "",
+                      );
+                      handleSeedProfileChange(
+                        "rowSpacingCm",
+                        parsed.rowSpacingCm || "",
+                      );
+
+                      handleSeedProfileChange(
+                        "plantSpacingCm",
+                        parsed.plantSpacingCm || "",
                       );
 
                       handleSeedProfileChange(

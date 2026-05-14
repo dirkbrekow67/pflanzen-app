@@ -92,7 +92,8 @@ export async function processSeedProfilePhotoOcr({
       germinationDays: "",
       sowingDepth: "",
       germinationTemp: "",
-      spacing: "",
+      rowSpacingCm: "",
+      plantSpacingCm: "",
       harvestFromMonth: null,
       harvestToMonth: null,
       harvestMonths: "",
@@ -139,9 +140,11 @@ export async function processSeedProfilePhotoOcr({
           parsedData.germinationTemp = tempMatch[1].replace(/\s/g, "");
         }
 
-        const spacingMatch = line.match(/(\d+\s*x\s*\d+)\s*cm/i);
+        const spacingMatch = line.match(/(\d+)\s*x\s*(\d+)\s*cm/i);
+
         if (spacingMatch) {
-          parsedData.spacing = `${spacingMatch[1].replace(/\s/g, "")} cm`;
+          parsedData.rowSpacingCm = spacingMatch[1];
+          parsedData.plantSpacingCm = spacingMatch[2];
         }
 
         const depthMatch = line.match(/(\d+(?:[,.]\d+)?)\s*cm\s*tief/i);

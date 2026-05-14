@@ -47,7 +47,6 @@ try {
   // Spalte existiert bereits
 }
 
-
 db.exec(`
 CREATE TABLE IF NOT EXISTS seed_profiles (
   id TEXT PRIMARY KEY,
@@ -65,6 +64,9 @@ CREATE TABLE IF NOT EXISTS seed_profiles (
   germinationDaysMin INTEGER,
   germinationDaysMax INTEGER,
   sowingDepthCm REAL,
+  sowingDepthNote TEXT,
+  rowSpacingCm REAL,
+  plantSpacingCm REAL,
   outdoorFromMonth INTEGER,
   outdoorToMonth INTEGER,
   harvestFromMonth INTEGER,
@@ -73,19 +75,38 @@ CREATE TABLE IF NOT EXISTS seed_profiles (
 `);
 
 try {
-  db.prepare("ALTER TABLE seed_profiles ADD COLUMN harvestFromMonth INTEGER").run();
+  db.prepare(
+    "ALTER TABLE seed_profiles ADD COLUMN harvestFromMonth INTEGER",
+  ).run();
 } catch {
   // Spalte existiert bereits
 }
 
 try {
-  db.prepare("ALTER TABLE seed_profiles ADD COLUMN harvestToMonth INTEGER").run();
+  db.prepare(
+    "ALTER TABLE seed_profiles ADD COLUMN harvestToMonth INTEGER",
+  ).run();
 } catch {
   // Spalte existiert bereits
 }
 
+try {
+  db.prepare("ALTER TABLE seed_profiles ADD COLUMN sowingDepthNote TEXT").run();
+} catch {
+  // Spalte existiert bereits
+}
 
+try {
+  db.prepare("ALTER TABLE seed_profiles ADD COLUMN rowSpacingCm REAL").run();
+} catch {
+  // Spalte existiert bereits
+}
 
+try {
+  db.prepare("ALTER TABLE seed_profiles ADD COLUMN plantSpacingCm REAL").run();
+} catch {
+  // Spalte existiert bereits
+}
 
 db.exec(`
 CREATE TABLE IF NOT EXISTS pot_photos (

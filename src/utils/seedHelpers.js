@@ -18,6 +18,8 @@ export const emptySeedProfile = {
   profileStatus: "testen",
   profileNotes: "",
   sowingDepthNote: "",
+  rowSpacingCm: "",
+  plantSpacingCm: "",
 };
 
 export function buildSeedProfileData(seedProfile) {
@@ -48,6 +50,12 @@ export function buildSeedProfileData(seedProfile) {
     profileStatus: seedProfile.profileStatus,
     profileNotes: seedProfile.profileNotes,
     sowingDepthNote: seedProfile.sowingDepthNote,
+    rowSpacingCm:
+      seedProfile.rowSpacingCm === "" ? null : Number(seedProfile.rowSpacingCm),
+    plantSpacingCm:
+      seedProfile.plantSpacingCm === ""
+        ? null
+        : Number(seedProfile.plantSpacingCm),
   };
 }
 

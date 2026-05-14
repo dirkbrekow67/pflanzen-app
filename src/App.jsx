@@ -571,6 +571,8 @@ function App() {
       profileStatus: profile.profileStatus || "testen",
       profileNotes: profile.profileNotes || "",
       sowingDepthNote: profile.sowingDepthNote || "",
+      rowSpacingCm: profile.rowSpacingCm || "",
+      plantSpacingCm: profile.plantSpacingCm || "",
     });
 
     setEditingSeedProfileId(profile.id);
