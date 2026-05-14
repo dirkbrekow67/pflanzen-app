@@ -29,17 +29,6 @@ export async function processSeedProfilePhotoOcr({
   uploadDir,
 }) {
   try {
-    if (photo.photoType !== "pack_back") {
-      db.prepare(
-        `
-    UPDATE seed_profile_photos
-    SET ocrStatus = 'skipped'
-    WHERE id = ?
-  `,
-      ).run(photoId);
-
-      return;
-    }
     const imagePath = path.join(uploadDir, photo.fileName);
     const parsedPath = path.parse(photo.fileName);
     const processedFileName = path.join(
@@ -47,6 +36,7 @@ export async function processSeedProfilePhotoOcr({
       `ocr-${parsedPath.base}`,
     );
     const processedImagePath = path.join(uploadDir, processedFileName);
+    const isBackPhoto = photo.photoType === "pack_back";
 
     const imageMetadata = await sharp(imagePath).metadata();
 
@@ -127,100 +117,104 @@ export async function processSeedProfilePhotoOcr({
         parsedData.lifecycle = "perennial";
       }
 
-      const daysMatch = line.match(/(\d+\s*-\s*\d+)\s*tage/i);
-      if (daysMatch) {
-        parsedData.germinationDays = daysMatch[1].replace(/\s/g, "");
-      }
+      if (isBackPhoto) {
+        const daysMatch = line.match(/(\d+\s*-\s*\d+)\s*tage/i);
+        if (daysMatch) {
+          parsedData.germinationDays = daysMatch[1].replace(/\s/g, "");
+        }
 
-      const tempMatch = line.match(/(\d+\s*-\s*\d+)\s*°\s*c/i);
-      if (tempMatch) {
-        parsedData.germinationTemp = tempMatch[1].replace(/\s/g, "");
-      }
+        const tempMatch = line.match(/(\d+\s*-\s*\d+)\s*°\s*c/i);
+        if (tempMatch) {
+          parsedData.germinationTemp = tempMatch[1].replace(/\s/g, "");
+        }
 
-      const spacingMatch = line.match(/(\d+\s*x\s*\d+)\s*cm/i);
-      if (spacingMatch) {
-        parsedData.spacing = `${spacingMatch[1].replace(/\s/g, "")} cm`;
-      }
+        const spacingMatch = line.match(/(\d+\s*x\s*\d+)\s*cm/i);
+        if (spacingMatch) {
+          parsedData.spacing = `${spacingMatch[1].replace(/\s/g, "")} cm`;
+        }
 
-      const depthMatch = line.match(/(\d+(?:[,.]\d+)?)\s*cm\s*tief/i);
-      if (depthMatch) {
-        parsedData.sowingDepth = depthMatch[1].replace(",", ".");
+        const depthMatch = line.match(/(\d+(?:[,.]\d+)?)\s*cm\s*tief/i);
+        if (depthMatch) {
+          parsedData.sowingDepth = depthMatch[1].replace(",", ".");
+        }
       }
     });
 
-    const harvestMatch = fullTextLower.match(
-      new RegExp(
-        `ernte.{0,80}?(${MONTH_REGEX})\\s+bis\\s+(${MONTH_REGEX})`,
-        "i",
-      ),
-    );
+    if (isBackPhoto) {
+      const harvestMatch = fullTextLower.match(
+        new RegExp(
+          `ernte.{0,80}?(${MONTH_REGEX})\\s+bis\\s+(${MONTH_REGEX})`,
+          "i",
+        ),
+      );
 
-    if (harvestMatch) {
-      const fromMonth = normalizeMonthName(harvestMatch[1]);
-      const toMonth = normalizeMonthName(harvestMatch[2]);
+      if (harvestMatch) {
+        const fromMonth = normalizeMonthName(harvestMatch[1]);
+        const toMonth = normalizeMonthName(harvestMatch[2]);
 
-      parsedData.harvestMonths = `${fromMonth} bis ${toMonth}`;
+        parsedData.harvestMonths = `${fromMonth} bis ${toMonth}`;
 
-      parsedData.harvestFromMonth = getMonthNumber(fromMonth);
-      parsedData.harvestToMonth = getMonthNumber(toMonth);
-    }
+        parsedData.harvestFromMonth = getMonthNumber(fromMonth);
+        parsedData.harvestToMonth = getMonthNumber(toMonth);
+      }
 
-    const harvestFreilandMatch = fullTextLower.match(
-      new RegExp(
-        `ernte[\\s\\S]{0,120}?freiland:?\\s*(${MONTH_REGEX})\\s*(?:-|bis)\\s*(${MONTH_REGEX})`,
-        "i",
-      ),
-    );
+      const harvestFreilandMatch = fullTextLower.match(
+        new RegExp(
+          `ernte[\\s\\S]{0,120}?freiland:?\\s*(${MONTH_REGEX})\\s*(?:-|bis)\\s*(${MONTH_REGEX})`,
+          "i",
+        ),
+      );
 
-    if (!harvestMatch && harvestFreilandMatch) {
-      const fromMonth = normalizeMonthName(harvestFreilandMatch[1]);
-      const toMonth = normalizeMonthName(harvestFreilandMatch[2]);
+      if (!harvestMatch && harvestFreilandMatch) {
+        const fromMonth = normalizeMonthName(harvestFreilandMatch[1]);
+        const toMonth = normalizeMonthName(harvestFreilandMatch[2]);
 
-      parsedData.harvestMonths = `${fromMonth} bis ${toMonth}`;
-      parsedData.harvestFromMonth = getMonthNumber(fromMonth);
-      parsedData.harvestToMonth = getMonthNumber(toMonth);
-    }
+        parsedData.harvestMonths = `${fromMonth} bis ${toMonth}`;
+        parsedData.harvestFromMonth = getMonthNumber(fromMonth);
+        parsedData.harvestToMonth = getMonthNumber(toMonth);
+      }
 
-    const sowingMatch = fullTextLower.match(
-      new RegExp(
-        `aussaat[\\s\\S]{0,150}?(${MONTH_REGEX})\\s*(?:-|bis)\\s*(${MONTH_REGEX})`,
-        "i",
-      ),
-    );
+      const sowingMatch = fullTextLower.match(
+        new RegExp(
+          `aussaat[\\s\\S]{0,150}?(${MONTH_REGEX})\\s*(?:-|bis)\\s*(${MONTH_REGEX})`,
+          "i",
+        ),
+      );
 
-    if (sowingMatch) {
-      const fromMonth = normalizeMonthName(sowingMatch[1]);
-      const toMonth = normalizeMonthName(sowingMatch[2]);
+      if (sowingMatch) {
+        const fromMonth = normalizeMonthName(sowingMatch[1]);
+        const toMonth = normalizeMonthName(sowingMatch[2]);
 
-      parsedData.sowingMonths = `${fromMonth} bis ${toMonth}`;
-      parsedData.sowingFromMonth = getMonthNumber(fromMonth);
-      parsedData.sowingToMonth = getMonthNumber(toMonth);
-    }
-
-    const looseMonthRangeMatch = fullTextLower.match(
-      new RegExp(`(${MONTH_REGEX}).{0,80}?(${MONTH_REGEX})`, "i"),
-    );
-
-    if (!parsedData.sowingFromMonth && looseMonthRangeMatch) {
-      const fromMonth = normalizeMonthName(looseMonthRangeMatch[1]);
-      const toMonth = normalizeMonthName(looseMonthRangeMatch[2]);
-
-      if (fromMonth !== toMonth) {
         parsedData.sowingMonths = `${fromMonth} bis ${toMonth}`;
         parsedData.sowingFromMonth = getMonthNumber(fromMonth);
         parsedData.sowingToMonth = getMonthNumber(toMonth);
       }
-    }
 
-    const directFreilandMatch = fullTextLower.match(
-      new RegExp(`(${MONTH_REGEX})\\s+direkt\\s+ins\\s+freiland`, "i"),
-    );
+      const looseMonthRangeMatch = fullTextLower.match(
+        new RegExp(`(${MONTH_REGEX}).{0,80}?(${MONTH_REGEX})`, "i"),
+      );
 
-    if (directFreilandMatch) {
-      parsedData.outdoorMonths = {
-        from: normalizeMonthName(directFreilandMatch[1]),
-        to: normalizeMonthName(directFreilandMatch[1]),
-      };
+      if (!parsedData.sowingFromMonth && looseMonthRangeMatch) {
+        const fromMonth = normalizeMonthName(looseMonthRangeMatch[1]);
+        const toMonth = normalizeMonthName(looseMonthRangeMatch[2]);
+
+        if (fromMonth !== toMonth) {
+          parsedData.sowingMonths = `${fromMonth} bis ${toMonth}`;
+          parsedData.sowingFromMonth = getMonthNumber(fromMonth);
+          parsedData.sowingToMonth = getMonthNumber(toMonth);
+        }
+      }
+
+      const directFreilandMatch = fullTextLower.match(
+        new RegExp(`(${MONTH_REGEX})\\s+direkt\\s+ins\\s+freiland`, "i"),
+      );
+
+      if (directFreilandMatch) {
+        parsedData.outdoorMonths = {
+          from: normalizeMonthName(directFreilandMatch[1]),
+          to: normalizeMonthName(directFreilandMatch[1]),
+        };
+      }
     }
 
     db.prepare(
