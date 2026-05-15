@@ -774,6 +774,51 @@ h2 {
   margin: 4px 0;
 }
 
+.clickable-photo {
+  cursor: zoom-in;
+}
+
+.image-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.image-modal-card {
+  max-width: 95vw;
+  max-height: 95vh;
+  background: #ffffff;
+  color: #111111;
+  border-radius: 12px;
+  padding: 16px;
+  overflow: auto;
+}
+
+.image-modal-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.image-modal-header h2 {
+  margin: 0;
+}
+
+.image-modal-photo {
+  max-width: 90vw;
+  max-height: 80vh;
+  object-fit: contain;
+  display: block;
+  background: #ffffff;
+}
+
 @media (max-width: 800px) {
   .pot-detail-header {
     flex-direction: column;

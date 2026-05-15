@@ -18,6 +18,7 @@ function SeedFormPage({
   const [seedPhotoType, setSeedPhotoType] = useState("pack_front");
   const [seedPhotoMessage, setSeedPhotoMessage] = useState("");
   const [seedPhotos, setSeedPhotos] = useState([]);
+  const [selectedPhotoPreview, setSelectedPhotoPreview] = useState(null);
   const { seedProfileId } = useParams();
 
   const currentSeedProfileId = editingSeedProfileId || seedProfileId;
@@ -360,6 +361,18 @@ function SeedFormPage({
                       photo.processedFileName || photo.fileName
                     }`}
                     alt={photo.originalName || "Samenpackung"}
+                    className="clickable-photo"
+                    onClick={() =>
+                      setSelectedPhotoPreview({
+                        src: `${API_BASE_URL}/uploads/${
+                          photo.processedFileName || photo.fileName
+                        }`,
+                        title:
+                          photo.photoType === "pack_back"
+                            ? "Samenpackung Rückseite"
+                            : "Samenpackung Vorderseite",
+                      })
+                    }
                   />
 
                   <p className="photo-date">
@@ -547,6 +560,37 @@ function SeedFormPage({
           </div>
         </div>
       )}
+
+      {selectedPhotoPreview && (
+        <div
+          className="image-modal-backdrop"
+          onClick={() => setSelectedPhotoPreview(null)}
+        >
+          <div
+            className="image-modal-card"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="image-modal-header">
+              <h2>{selectedPhotoPreview.title}</h2>
+
+              <button
+                type="button"
+                className="button"
+                onClick={() => setSelectedPhotoPreview(null)}
+              >
+                Schließen
+              </button>
+            </div>
+
+            <img
+              src={selectedPhotoPreview.src}
+              alt={selectedPhotoPreview.title}
+              className="image-modal-photo"
+            />
+          </div>
+        </div>
+      )}
+
       {currentSeedProfileId && ocrPhoto && (
         <div className="photo-gallery">
           <h2>Daten aus Packungsfoto erkennen</h2>
