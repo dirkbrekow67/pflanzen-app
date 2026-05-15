@@ -60,6 +60,22 @@ function SeedFormPage({
     return getMonthValueByName(monthName);
   }
 
+  async function refreshSeedPhotos() {
+    if (!currentSeedProfileId) return;
+
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/seed-profile-photos/${currentSeedProfileId}`,
+      );
+
+      const data = await response.json();
+
+      setSeedPhotos(data);
+    } catch (error) {
+      console.error("Samenprofil-Fotos Fehler:", error);
+    }
+  }
+
   async function handleSaveAndGoBack() {
     const success = await handleAddSeedProfile(currentSeedProfileId);
 
@@ -98,10 +114,7 @@ function SeedFormPage({
 
       loadSeedProfilePhotos();
 
-      fetch(`${API_BASE_URL}/api/seed-profile-photos/${currentSeedProfileId}`)
-        .then((res) => res.json())
-        .then((data) => setSeedPhotos(data))
-        .catch((err) => console.error("Samenprofil-Fotos Fehler:", err));
+      await refreshSeedPhotos();
     } catch (error) {
       console.error("Samenprofil-Foto Upload Fehler:", error);
       setSeedPhotoMessage("Packungsfoto konnte nicht gespeichert werden.");
@@ -131,10 +144,7 @@ function SeedFormPage({
 
       loadSeedProfilePhotos();
 
-      fetch(`${API_BASE_URL}/api/seed-profile-photos/${currentSeedProfileId}`)
-        .then((res) => res.json())
-        .then((data) => setSeedPhotos(data))
-        .catch((err) => console.error("Samenprofil-Fotos Fehler:", err));
+      await refreshSeedPhotos();
     } catch (error) {
       console.error("Samenprofil-Foto Löschen Fehler:", error);
       setSeedPhotoMessage("Packungsfoto konnte nicht gelöscht werden.");
@@ -158,17 +168,49 @@ function SeedFormPage({
         throw new Error(data.error || "OCR konnte nicht gestartet werden");
       }
 
-      setSeedPhotoMessage("OCR-Verarbeitung wurde vorbereitet.");
+      setSeedPhotoMessage("Texterkennung wurde gestartet.");
 
-      fetch(`${API_BASE_URL}/api/seed-profile-photos/${currentSeedProfileId}`)
-        .then((res) => res.json())
-        .then((data) => setSeedPhotos(data))
-        .catch((err) => console.error("Samenprofil-Fotos Fehler:", err));
+      await refreshSeedPhotos();
 
       loadSeedProfilePhotos();
     } catch (error) {
       console.error("OCR Fehler:", error);
       setSeedPhotoMessage("OCR konnte nicht gestartet werden.");
+    }
+  }
+
+  async function handleScanSeedPhoto(photoType) {
+    if (!currentSeedProfileId) return;
+
+    setSeedPhotoMessage("Scan wird gestartet...");
+
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/api/scanner/seed-profile/${currentSeedProfileId}/scan`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ photoType }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Scan fehlgeschlagen");
+      }
+
+      setSeedPhotoMessage("Scan wurde gespeichert.");
+      setSeedPhotoType("pack_back");
+
+      loadSeedProfilePhotos();
+
+      await refreshSeedPhotos();
+    } catch (error) {
+      console.error("Scanner Fehler:", error);
+      setSeedPhotoMessage("Scan konnte nicht durchgeführt werden.");
     }
   }
 
@@ -240,7 +282,7 @@ function SeedFormPage({
 
             <div className="seed-upload-buttons">
               <label className="button-link photo-upload-button">
-                Packungsfoto auswählen / scannen
+                Packungsfoto auswählen / hochladen
                 <input
                   type="file"
                   accept="image/*"
@@ -261,6 +303,23 @@ function SeedFormPage({
                   disabled={!currentSeedProfileId}
                 />
               </label>
+              <button
+                type="button"
+                className="button-link photo-upload-button"
+                onClick={() => handleScanSeedPhoto("pack_front")}
+                disabled={!currentSeedProfileId}
+              >
+                Vorderseite scannen
+              </button>
+
+              <button
+                type="button"
+                className="button-link photo-upload-button"
+                onClick={() => handleScanSeedPhoto("pack_back")}
+                disabled={!currentSeedProfileId}
+              >
+                Rückseite scannen
+              </button>
             </div>
           </div>
 
@@ -493,8 +552,8 @@ function SeedFormPage({
           <h2>Daten aus Packungsfoto erkennen</h2>
 
           <p className="hint">
-            Später können hier die Angaben der Samenpackung aus Vorder- und
-            Rückseite ausgelesen und als Vorschläge in das Formular übernommen
+            Aus dem ausgewählten Packungsfoto können Pflanzendaten, Aussaat,
+            Keimung, Abstände, Erntezeitraum und Hinweise zur Saattiefe erkannt
             werden.
           </p>
 
@@ -504,12 +563,15 @@ function SeedFormPage({
             onClick={() => handleStartOcr(ocrPhoto.id)}
             disabled={isOcrProcessing}
           >
-            {isOcrProcessing ? "OCR läuft..." : "Daten aus Rückseite erkennen"}
+            {isOcrProcessing
+              ? "Texterkennung läuft..."
+              : "Texterkennung starten"}
           </button>
 
           <p className="hint">
-            Die echte Texterkennung folgt später. Aktuell wird nur der
-            OCR-Status vorbereitet.
+            Die Texterkennung liest die Packungsangaben aus und stellt sie als
+            Vorschlag zur Übernahme in das Samenprofil bereit. Die erkannten
+            Werte sollten vor dem Speichern geprüft werden.
           </p>
         </div>
       )}
