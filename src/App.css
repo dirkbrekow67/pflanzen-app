@@ -706,7 +706,10 @@ h2 {
 .seed-preview-image {
   width: 100%;
   height: 180px;
-  object-fit: cover;
+  max-height: 180px;
+  object-fit: contain;
+  object-position: left top;
+  display: block;
   border-radius: 8px;
   margin-bottom: 12px;
   background: #ffffff;
