@@ -9,6 +9,10 @@ import seedProfilesRoutes from "./routes/seedProfilesRoutes.js";
 import statisticsRoutes from "./routes/statisticsRoutes.js";
 import remindersRoutes from "./routes/remindersRoutes.js";
 import healthRoutes from "./routes/healthRoutes.js";
+import scannerRoutes from "./routes/scannerRoutes.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const uploadDir = "server/uploads";
 
@@ -33,6 +37,7 @@ app.use("/api/seed-profiles", seedProfilesRoutes);
 app.use("/api/statistics", statisticsRoutes);
 app.use("/api/reminders", remindersRoutes);
 app.use("/api/health", healthRoutes);
+app.use("/api/scanner", scannerRoutes);
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server läuft auf Port ${PORT}`);
