@@ -45,10 +45,27 @@ export const monthAliases = {
   dezember: "Dezember",
 };
 
+export const romanMonthAliases = {
+  i: "Januar",
+  ii: "Februar",
+  iii: "März",
+  iv: "April",
+  v: "Mai",
+  vi: "Juni",
+  vii: "Juli",
+  viii: "August",
+  ix: "September",
+  x: "Oktober",
+  xi: "November",
+  xii: "Dezember",
+};
+
 export function normalizeMonthName(month) {
   if (!month) return "";
 
-  return monthAliases[month.toLowerCase()] || month;
+  const lowerMonth = month.toLowerCase();
+
+  return monthAliases[lowerMonth] || romanMonthAliases[lowerMonth] || month;
 }
 
 export function getMonthValueByName(month) {

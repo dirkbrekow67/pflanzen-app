@@ -5,11 +5,14 @@ import db from "../database/db.js";
 import {
   normalizeMonthName,
   getMonthNumber,
+  getMonthValueByName,
 } from "../../src/constants/months.js";
 import { COMMON_PLANT_NAMES } from "../../src/constants/plants.js";
 
 const MONTH_REGEX =
   "januar|februar|märz|maerz|marz|april|mai|juni|juli|august|september|oktober|november|dezember";
+
+const ROMAN_MONTH_REGEX = "xii|xi|viii|vii|vi|iv|ix|iii|ii|x|v|i";
 
 export async function processSeedProfilePhotoOcr({
   photo,
@@ -204,6 +207,66 @@ export async function processSeedProfilePhotoOcr({
     }
 
     if (isBackPhoto) {
+      const sowingRomanMatch = fullTextLower.match(
+        new RegExp(
+          `aussaat[\\s\\S]{0,120}?\\b(${ROMAN_MONTH_REGEX})\\s*(?:-|bis)\\s*(${ROMAN_MONTH_REGEX})\\b`,
+          "i",
+        ),
+      );
+
+      if (sowingRomanMatch) {
+        const fromMonth = normalizeMonthName(sowingRomanMatch[1]);
+        const toMonth = normalizeMonthName(sowingRomanMatch[2]);
+
+        parsedData.sowingMonths = `${fromMonth} bis ${toMonth}`;
+        parsedData.sowingFromMonth = getMonthValueByName(fromMonth);
+        parsedData.sowingToMonth = getMonthValueByName(toMonth);
+      }
+
+      const harvestRomanMatch = fullTextLower.match(
+        new RegExp(
+          `ernte[\\s\\S]{0,120}?\\b(${ROMAN_MONTH_REGEX})\\s*(?:-|bis)\\s*(${ROMAN_MONTH_REGEX})\\b`,
+          "i",
+        ),
+      );
+
+      if (harvestRomanMatch) {
+        const fromMonth = normalizeMonthName(harvestRomanMatch[1]);
+        const toMonth = normalizeMonthName(harvestRomanMatch[2]);
+
+        parsedData.harvestMonths = `${fromMonth} bis ${toMonth}`;
+        parsedData.harvestFromMonth = getMonthValueByName(fromMonth);
+        parsedData.harvestToMonth = getMonthValueByName(toMonth);
+      }
+
+      const allRomanMonthRanges = [
+        ...fullTextLower.matchAll(
+          new RegExp(
+            `\\b(${ROMAN_MONTH_REGEX})\\s*(?:-|bis)\\s*(${ROMAN_MONTH_REGEX})\\b`,
+            "gi",
+          ),
+        ),
+      ];
+
+      if (!parsedData.harvestFromMonth && allRomanMonthRanges.length > 1) {
+        const lastRomanRange =
+          allRomanMonthRanges[allRomanMonthRanges.length - 1];
+        const fromMonth = normalizeMonthName(lastRomanRange[1]);
+        const toMonth = normalizeMonthName(lastRomanRange[2]);
+
+        parsedData.harvestMonths = `${fromMonth} bis ${toMonth}`;
+        parsedData.harvestFromMonth = getMonthValueByName(fromMonth);
+        parsedData.harvestToMonth = getMonthValueByName(toMonth);
+      }
+
+      const iconSpacingMatch = fullTextLower.match(
+        /abstand[\s\S]{0,120}?(\d+)\s*x\s*(\d+)\s*cm/i,
+      );
+
+      if (iconSpacingMatch && !parsedData.rowSpacingCm) {
+        parsedData.rowSpacingCm = iconSpacingMatch[1];
+        parsedData.plantSpacingCm = iconSpacingMatch[2];
+      }
       const harvestMatch = fullTextLower.match(
         new RegExp(
           `ernte.{0,80}?(${MONTH_REGEX})\\s+bis\\s+(${MONTH_REGEX})`,
@@ -211,7 +274,7 @@ export async function processSeedProfilePhotoOcr({
         ),
       );
 
-      if (harvestMatch) {
+      if (harvestMatch && !parsedData.harvestFromMonth) {
         const fromMonth = normalizeMonthName(harvestMatch[1]);
         const toMonth = normalizeMonthName(harvestMatch[2]);
 
@@ -228,7 +291,7 @@ export async function processSeedProfilePhotoOcr({
         ),
       );
 
-      if (!harvestMatch && harvestFreilandMatch) {
+      if (!parsedData.harvestFromMonth && harvestFreilandMatch) {
         const fromMonth = normalizeMonthName(harvestFreilandMatch[1]);
         const toMonth = normalizeMonthName(harvestFreilandMatch[2]);
 
@@ -244,7 +307,7 @@ export async function processSeedProfilePhotoOcr({
         ),
       );
 
-      if (sowingMatch) {
+      if (sowingMatch && !parsedData.sowingFromMonth) {
         const fromMonth = normalizeMonthName(sowingMatch[1]);
         const toMonth = normalizeMonthName(sowingMatch[2]);
 
