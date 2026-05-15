@@ -133,18 +133,27 @@ CREATE TABLE IF NOT EXISTS seed_profile_photos (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   seedProfileId TEXT NOT NULL,
   fileName TEXT NOT NULL,
+  processedFileName TEXT,
   originalName TEXT,
 
-  photoType TEXT,            -- pack_front / pack_back
-  ocrText TEXT,              -- kompletter erkannter Text
-  ocrParsed TEXT,            -- strukturierte Daten (optional)
-  ocrStatus TEXT DEFAULT 'pending', -- pending / done / error
+  photoType TEXT,
+  ocrText TEXT,
+  ocrParsed TEXT,
+  ocrStatus TEXT DEFAULT 'pending',
 
   note TEXT,
   takenAt TEXT,
   uploadedAt TEXT DEFAULT CURRENT_TIMESTAMP
 );
 `);
+
+try {
+  db.prepare(
+    "ALTER TABLE seed_profile_photos ADD COLUMN processedFileName TEXT",
+  ).run();
+} catch {
+  // Spalte existiert bereits
+}
 
 console.log("SQLite verbunden");
 
