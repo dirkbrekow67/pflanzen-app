@@ -1,17 +1,19 @@
 export const emptySeedProfile = {
   plantName: "",
   lifecycle: "annual",
-  sowingFromMonth: 3,
-  sowingToMonth: 5,
-  germinationTempMin: 10,
-  germinationTempMax: 20,
-  germinationDaysMin: 7,
-  germinationDaysMax: 14,
-  sowingDepthCm: 1,
-  outdoorFromMonth: 5,
-  outdoorToMonth: 7,
-  harvestFromMonth: "",
-  harvestToMonth: "",
+  sowingFromMonth: null,
+  sowingToMonth: null,
+  germinationTempMin: "",
+  germinationTempMax: "",
+  germinationDaysMin: "",
+  germinationDaysMax: "",
+  sowingDepthCm: "",
+  sowingWidthCm: "",
+  sowingNotes: "",
+  outdoorFromMonth: null,
+  outdoorToMonth: null,
+  harvestFromMonth: null,
+  harvestToMonth: null,
   variety: "",
   manufacturer: "",
   retailer: "",
@@ -27,8 +29,12 @@ export function buildSeedProfileData(seedProfile) {
   return {
     plantName: seedProfile.plantName,
     lifecycle: seedProfile.lifecycle,
-    sowingFromMonth: Number(seedProfile.sowingFromMonth),
-    sowingToMonth: Number(seedProfile.sowingToMonth),
+    sowingFromMonth: seedProfile.sowingFromMonth
+      ? Number(seedProfile.sowingFromMonth)
+      : null,
+    sowingToMonth: seedProfile.sowingToMonth
+      ? Number(seedProfile.sowingToMonth)
+      : null,
     germinationTempMin: Number(seedProfile.germinationTempMin),
     germinationTempMax: Number(seedProfile.germinationTempMax),
     germinationDaysMin: Number(seedProfile.germinationDaysMin),
@@ -37,8 +43,16 @@ export function buildSeedProfileData(seedProfile) {
       seedProfile.sowingDepthCm === ""
         ? null
         : Number(seedProfile.sowingDepthCm),
-    outdoorFromMonth: Number(seedProfile.outdoorFromMonth),
-    outdoorToMonth: Number(seedProfile.outdoorToMonth),
+    sowingWidthCm: seedProfile.sowingWidthCm
+      ? Number(seedProfile.sowingWidthCm)
+      : null,
+    sowingNotes: seedProfile.sowingNotes || "",
+    outdoorFromMonth: seedProfile.outdoorFromMonth
+      ? Number(seedProfile.outdoorFromMonth)
+      : null,
+    outdoorToMonth: seedProfile.outdoorToMonth
+      ? Number(seedProfile.outdoorToMonth)
+      : null,
     harvestFromMonth: seedProfile.harvestFromMonth
       ? Number(seedProfile.harvestFromMonth)
       : null,
@@ -66,7 +80,11 @@ export function validateSeedProfile(seedProfile) {
     return "Bitte einen Pflanzennamen für das Samenprofil eingeben.";
   }
 
-  if (Number(seedProfile.sowingFromMonth) > Number(seedProfile.sowingToMonth)) {
+  if (
+    seedProfile.sowingFromMonth &&
+    seedProfile.sowingToMonth &&
+    Number(seedProfile.sowingFromMonth) > Number(seedProfile.sowingToMonth)
+  ) {
     return "Der Aussaatzeitraum des Samenprofils ist ungültig.";
   }
 
@@ -89,6 +107,8 @@ export function validateSeedProfile(seedProfile) {
   }
 
   if (
+    seedProfile.outdoorFromMonth &&
+    seedProfile.outdoorToMonth &&
     Number(seedProfile.outdoorFromMonth) > Number(seedProfile.outdoorToMonth)
   ) {
     return "Der Zeitraum 'nach draußen' des Samenprofils ist ungültig.";

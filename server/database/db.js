@@ -66,6 +66,8 @@ CREATE TABLE IF NOT EXISTS seed_profiles (
   germinationDaysMax INTEGER,
   sowingDepthCm REAL,
   sowingDepthNote TEXT,
+  sowingWidthCm REAL,
+  sowingNotes TEXT,
   rowSpacingCm REAL,
   plantSpacingCm REAL,
   outdoorFromMonth INTEGER,
@@ -111,6 +113,18 @@ try {
 
 try {
   db.prepare("ALTER TABLE seed_profiles ADD COLUMN plantSpacingCm REAL").run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare("ALTER TABLE seed_profiles ADD COLUMN sowingWidthCm REAL").run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare("ALTER TABLE seed_profiles ADD COLUMN sowingNotes TEXT").run();
 } catch {
   // Spalte existiert bereits
 }

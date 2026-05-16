@@ -574,6 +574,8 @@ function App() {
       sowingDepthNote: profile.sowingDepthNote || "",
       rowSpacingCm: profile.rowSpacingCm || "",
       plantSpacingCm: profile.plantSpacingCm || "",
+      sowingWidthCm: profile.sowingWidthCm || "",
+      sowingNotes: profile.sowingNotes || "",
     });
 
     setEditingSeedProfileId(profile.id);

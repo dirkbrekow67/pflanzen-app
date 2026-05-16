@@ -434,6 +434,14 @@ function SeedFormPage({
                       <p>
                         Saattiefe: {getParsedOcrData(photo).sowingDepth || "-"}
                       </p>
+                      <p>
+                        Aussaatbreite:{" "}
+                        {getParsedOcrData(photo).sowingWidthCm || "-"} cm
+                      </p>
+
+                      <p>
+                        Hinweise: {getParsedOcrData(photo).sowingNotes || "-"}
+                      </p>
                     </div>
                   )}
                   <button
@@ -505,6 +513,15 @@ function SeedFormPage({
                         numericDepth && !Number.isNaN(Number(numericDepth))
                           ? ""
                           : parsed.sowingDepth || "",
+                      );
+                      handleSeedProfileChange(
+                        "sowingWidthCm",
+                        parsed.sowingWidthCm || "",
+                      );
+
+                      handleSeedProfileChange(
+                        "sowingNotes",
+                        parsed.sowingNotes || "",
                       );
                       handleSeedProfileChange(
                         "rowSpacingCm",

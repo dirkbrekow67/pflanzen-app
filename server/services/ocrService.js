@@ -54,6 +54,9 @@ export async function processSeedProfilePhotoOcr({
       .replace(/jahrig/g, "jährig")
       .replace(/fiir/g, "für")
       .replace(/Qualitat/g, "Qualität")
+      .replace(/andrü-\s*cken/gi, "andrücken")
+      .replace(/andrue-\s*cken/gi, "andrücken")
+      .replace(/andr[üu]\s*cken/gi, "andrücken")
       .replace(/\|/g, " ")
       .replace(/[©®]/g, "")
       .replace(/[ \t]+/g, " ")
@@ -84,6 +87,8 @@ export async function processSeedProfilePhotoOcr({
       sowingToMonth: null,
       germinationDays: "",
       sowingDepth: "",
+      sowingWidthCm: "",
+      sowingNotes: "",
       germinationTemp: "",
       rowSpacingCm: "",
       plantSpacingCm: "",
@@ -155,6 +160,14 @@ export async function processSeedProfilePhotoOcr({
           parsedData.plantSpacingCm = spacingMatch[2];
         }
 
+        const sowingWidthMatch = line.match(
+          /(\d+(?:[,.]\d+)?)\s*cm\s*(?:breit|breite)/i,
+        );
+
+        if (sowingWidthMatch) {
+          parsedData.sowingWidthCm = sowingWidthMatch[1].replace(",", ".");
+        }
+
         const depthMatch = line.match(/(\d+(?:[,.]\d+)?)\s*cm\s*tief/i);
         const seedStrengthDepthMatch = lower.match(
           /(?:in\s*)?(\d+)\s*facher\s*samenst[aä]rke/i,
@@ -180,6 +193,27 @@ export async function processSeedProfilePhotoOcr({
         }
       }
     });
+
+    const fullSowingHints = [];
+
+    if (fullTextLower.includes("leicht mit erde bedecken")) {
+      fullSowingHints.push("Leicht mit Erde bedecken");
+    }
+
+    if (
+      fullTextLower.includes("andrücken") ||
+      fullTextLower.includes("andruecken")
+    ) {
+      fullSowingHints.push("Andrücken");
+    }
+
+    if (fullTextLower.includes("feucht halten")) {
+      fullSowingHints.push("Feucht halten");
+    }
+
+    if (fullSowingHints.length > 0) {
+      parsedData.sowingNotes = fullSowingHints.join(", ");
+    }
 
     if (
       parsedData.plantName === "Liebstock" ||

@@ -133,6 +133,18 @@ function SeedForm({
               handleFormChange("sowingDepthNote", e.target.value)
             }
           />
+          <label>Aussaatbreite (cm)</label>
+          <input
+            type="number"
+            value={formData.sowingWidthCm || ""}
+            onChange={(e) => handleFormChange("sowingWidthCm", e.target.value)}
+          />
+
+          <label>Weitere Hinweise zur Aussaat</label>
+          <textarea
+            value={formData.sowingNotes || ""}
+            onChange={(e) => handleFormChange("sowingNotes", e.target.value)}
+          />
         </div>
         <div className="form-field">
           <label>Reihenabstand (cm)</label>
@@ -157,11 +169,15 @@ function SeedForm({
         <div className="form-field">
           <label>Aussaat laut Packung von</label>
           <select
-            value={formData.sowingFromMonth}
+            value={formData.sowingFromMonth ?? ""}
             onChange={(e) =>
-              handleFormChange("sowingFromMonth", Number(e.target.value))
+              handleFormChange(
+                "sowingFromMonth",
+                e.target.value ? Number(e.target.value) : null,
+              )
             }
           >
+            <option value="">Bitte auswählen</option>
             {months.map((m) => (
               <option key={m.value} value={m.value}>
                 {m.label}
@@ -173,11 +189,15 @@ function SeedForm({
         <div className="form-field">
           <label>Aussaat laut Packung bis</label>
           <select
-            value={formData.sowingToMonth}
+            value={formData.sowingToMonth ?? ""}
             onChange={(e) =>
-              handleFormChange("sowingToMonth", Number(e.target.value))
+              handleFormChange(
+                "sowingToMonth",
+                e.target.value ? Number(e.target.value) : null,
+              )
             }
           >
+            <option value="">Bitte auswählen</option>
             {months.map((m) => (
               <option key={m.value} value={m.value}>
                 {m.label}
@@ -194,11 +214,15 @@ function SeedForm({
         <div className="form-field">
           <label>Nach draußen stellen von</label>
           <select
-            value={formData.outdoorFromMonth}
+            value={formData.outdoorFromMonth ?? ""}
             onChange={(e) =>
-              handleFormChange("outdoorFromMonth", Number(e.target.value))
+              handleFormChange(
+                "outdoorFromMonth",
+                e.target.value ? Number(e.target.value) : null,
+              )
             }
           >
+            <option value="">Bitte auswählen</option>
             {months.map((m) => (
               <option key={m.value} value={m.value}>
                 {m.label}
@@ -210,11 +234,15 @@ function SeedForm({
         <div className="form-field">
           <label>Nach draußen stellen bis</label>
           <select
-            value={formData.outdoorToMonth}
+            value={formData.outdoorToMonth ?? ""}
             onChange={(e) =>
-              handleFormChange("outdoorToMonth", Number(e.target.value))
+              handleFormChange(
+                "outdoorToMonth",
+                e.target.value ? Number(e.target.value) : null,
+              )
             }
           >
+            <option value="">Bitte auswählen</option>
             {months.map((m) => (
               <option key={m.value} value={m.value}>
                 {m.label}
