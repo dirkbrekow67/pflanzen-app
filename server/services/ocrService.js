@@ -57,6 +57,10 @@ export async function processSeedProfilePhotoOcr({
       .replace(/\boitober\b/gi, "Oktober")
       .replace(/\bvoruturim\s+topf\b/gi, "Vorkultur im Topf")
       .replace(/\bvorutur\s*im\s+topf\b/gi, "Vorkultur im Topf")
+      .replace(/\bphotokeimer\b/gi, "Lichtkeimer")
+      .replace(/\bfotokeimer\b/gi, "Lichtkeimer")
+      .replace(/\bkältekeimer\b/gi, "Kaltkeimer")
+      .replace(/\bkaltekeimer\b/gi, "Kaltkeimer")
       .replace(/\btags?\s*bei\b/gi, "Tage bei")
       .replace(/\b7age\b/gi, "Tage")
       .replace(/\bV[Ii][l1][l1]\b/g, "VIII")
@@ -191,7 +195,7 @@ export async function processSeedProfilePhotoOcr({
           : "";
 
         const isColdTreatmentTemperature =
-          /kaltkeimer|kälteperiode|kalteperiode|kallegoliode|k[aä]lteperiode|5-10\s*°\s*c\s+günstig/i.test(
+          /5\s*(?:-|–|—|bis)\s*10\s*(?:°\s*c|grad)?[\s\S]{0,40}?günstig|(?:kälteperiode|kalteperiode|kallegoliode|k[aä]lteperiode)[\s\S]{0,80}?5\s*(?:-|–|—|bis)\s*10/i.test(
             tempContext,
           );
 
@@ -254,7 +258,7 @@ export async function processSeedProfilePhotoOcr({
           parsedData.sowingDepth = sanitizeNumber(depthMatch[1]);
         }
         const lightGerminatorMatch = lower.match(
-          /lichtkeimer|nicht\s+mit\s+erde\s+(?:bedecken|überdecken)/i,
+          /lichtkeimer|nicht\s+mit\s+erde\s+(?:bedecken|überdecken|ueberdecken)|nicht\s+abdecken|keine\s+erde/i,
         );
 
         if (lightGerminatorMatch) {
@@ -305,7 +309,7 @@ export async function processSeedProfilePhotoOcr({
         );
 
         const isColdTreatmentTemperature =
-          /kaltkeimer|kälteperiode|kalteperiode|kallegoliode|k[aä]lteperiode|5-10\s*°\s*c\s+günstig/i.test(
+          /5\s*(?:-|–|—|bis)\s*10\s*(?:°\s*c|grad)?[\s\S]{0,40}?günstig|(?:kälteperiode|kalteperiode|kallegoliode|k[aä]lteperiode)[\s\S]{0,80}?5\s*(?:-|–|—|bis)\s*10/i.test(
             tempContext,
           );
 
@@ -323,13 +327,54 @@ export async function processSeedProfilePhotoOcr({
       fullSowingHints.push("Vorkultur im Topf");
     }
 
+    if (
+      fullTextLower.includes("direktsaat") ||
+      fullTextLower.includes("direkt ins freiland")
+    ) {
+      fullSowingHints.push("Direktsaat ins Freiland");
+    }
+
+    if (
+      fullTextLower.includes("kaltkeimer") ||
+      fullTextLower.includes("kälteperiode") ||
+      fullTextLower.includes("kalteperiode") ||
+      fullTextLower.includes("kallegoliode")
+    ) {
+      fullSowingHints.push("Kaltkeimer / Kälteperiode beachten");
+    }
+
+    if (fullTextLower.includes("lichtkeimer")) {
+      fullSowingHints.push("Lichtkeimer");
+    }
+
+    if (
+      fullTextLower.includes("nicht mit erde bedecken") ||
+      fullTextLower.includes("nicht mit erde abdecken") ||
+      fullTextLower.includes("nicht mit erde überdecken") ||
+      fullTextLower.includes("nicht mit erde ueberdecken") ||
+      fullTextLower.includes("nicht abdecken") ||
+      fullTextLower.includes("keine erde") ||
+      fullTextLower.includes("ohne erde bedecken")
+    ) {
+      fullSowingHints.push("Nicht mit Erde bedecken");
+    }
+
     if (fullTextLower.includes("leicht mit erde bedecken")) {
       fullSowingHints.push("Leicht mit Erde bedecken");
     }
 
+    const hasPressOnlyHint =
+      fullTextLower.includes("nur andrücken") ||
+      fullTextLower.includes("nur andruecken");
+
+    if (hasPressOnlyHint) {
+      fullSowingHints.push("Nur andrücken");
+    }
+
     if (
-      fullTextLower.includes("andrücken") ||
-      fullTextLower.includes("andruecken")
+      !hasPressOnlyHint &&
+      (fullTextLower.includes("andrücken") ||
+        fullTextLower.includes("andruecken"))
     ) {
       fullSowingHints.push("Andrücken");
     }
@@ -339,7 +384,7 @@ export async function processSeedProfilePhotoOcr({
     }
 
     if (fullSowingHints.length > 0) {
-      parsedData.sowingNotes = fullSowingHints.join(", ");
+      parsedData.sowingNotes = [...new Set(fullSowingHints)].join(", ");
     }
 
     if (
