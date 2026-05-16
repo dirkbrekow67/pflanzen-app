@@ -7,6 +7,7 @@ export const COMMON_PLANT_NAMES = [
   "Tomate",
   "Cherrytomate",
   "Paprika",
+  "Einlegegurke",
   "Gurke",
   "Zucchini",
   "Liebstock",

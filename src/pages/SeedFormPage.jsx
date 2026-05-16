@@ -399,8 +399,18 @@ function SeedFormPage({
                     <div className="ocr-parsed-preview">
                       <strong>Erkannte Daten:</strong>
                       <p>
-                        OCR-Qualität: {getParsedOcrData(photo).ocrScore ?? "-"}{" "}
-                        %
+                        OCR-Qualität:{" "}
+                        <span
+                          className={`ocr-score ${
+                            (getParsedOcrData(photo).ocrScore ?? 0) >= 90
+                              ? "ocr-score-good"
+                              : (getParsedOcrData(photo).ocrScore ?? 0) >= 70
+                                ? "ocr-score-medium"
+                                : "ocr-score-bad"
+                          }`}
+                        >
+                          {getParsedOcrData(photo).ocrScore ?? "-"} %
+                        </span>
                       </p>
 
                       {getParsedOcrData(photo).warnings?.length > 0 && (
@@ -474,12 +484,33 @@ function SeedFormPage({
 
                       const currentPlantName = newSeedProfile.plantName?.trim();
 
-                      const mayReplacePlantName =
-                        !currentPlantName ||
-                        COMMON_PLANT_NAMES.includes(currentPlantName);
+                      const normalizedParsedPlant = COMMON_PLANT_NAMES.find(
+                        (plant) =>
+                          plant.toLowerCase() ===
+                          parsed.plantName?.toLowerCase(),
+                      );
 
-                      if (mayReplacePlantName && parsed.plantName) {
-                        handleSeedProfileChange("plantName", parsed.plantName);
+                      if (normalizedParsedPlant) {
+                        if (!currentPlantName) {
+                          handleSeedProfileChange(
+                            "plantName",
+                            normalizedParsedPlant,
+                          );
+                        } else if (
+                          currentPlantName.toLowerCase() !==
+                          normalizedParsedPlant.toLowerCase()
+                        ) {
+                          const alreadyContainsNew = currentPlantName
+                            .toLowerCase()
+                            .includes(normalizedParsedPlant.toLowerCase());
+
+                          if (!alreadyContainsNew) {
+                            handleSeedProfileChange(
+                              "plantName",
+                              `${currentPlantName} / ${normalizedParsedPlant}`,
+                            );
+                          }
+                        }
                       }
 
                       if (!newSeedProfile.manufacturer && parsed.manufacturer) {
