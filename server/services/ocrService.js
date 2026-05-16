@@ -53,6 +53,10 @@ export async function processSeedProfilePhotoOcr({
       .replace(/fiir/g, "für")
       .replace(/Qualitat/g, "Qualität")
       .replace(/\berte\s*:/gi, "Ernte:")
+      .replace(/\bemte\s*:/gi, "Ernte:")
+      .replace(/\boitober\b/gi, "Oktober")
+      .replace(/\btags?\s*bei\b/gi, "Tage bei")
+      .replace(/\b7age\b/gi, "Tage")
       .replace(/\bV[Ii][l1][l1]\b/g, "VIII")
       .replace(/\bV[l1][l1][l1]\b/g, "VIII")
       .replace(/\bjull\b/gi, "Juli")
@@ -163,7 +167,9 @@ export async function processSeedProfilePhotoOcr({
       }
 
       if (isBackPhoto) {
-        const daysMatch = line.match(/(\d+\s*(?:-|–|—|bis)\s*\d+)\s*tage/i);
+        const daysMatch = line.match(
+          /(\d+\s*(?:-|–|—|bis)\s*\d+)\s*(?:tage|7age)/i,
+        );
         if (daysMatch) {
           parsedData.germinationDays = sanitizeDayRange(daysMatch[1]);
         }
@@ -238,6 +244,40 @@ export async function processSeedProfilePhotoOcr({
       }
     });
 
+    if (isBackPhoto && !parsedData.germinationDays) {
+      const daysFullTextMatch = fullTextLower.match(
+        /(\d+\s*(?:-|–|—|bis)\s*\d+)\s*(?:tage|7age)/i,
+      );
+
+      if (daysFullTextMatch) {
+        parsedData.germinationDays = sanitizeDayRange(daysFullTextMatch[1]);
+      }
+    }
+
+    if (isBackPhoto && !parsedData.germinationTemp) {
+      const tempFullTextMatch = fullTextLower.match(
+        /bei\s+(\d+\s*(?:-|–|—|bis)\s*\d+)\s*(?:°\s*c|grad)/i,
+      );
+
+      if (tempFullTextMatch) {
+        const tempContext = fullTextLower.slice(
+          Math.max(0, tempFullTextMatch.index - 120),
+          tempFullTextMatch.index + 120,
+        );
+
+        const isColdTreatmentTemperature =
+          /kaltkeimer|kälteperiode|kalteperiode|kallegoliode|k[aä]lteperiode|5-10\s*°\s*c\s+günstig/i.test(
+            tempContext,
+          );
+
+        if (!isColdTreatmentTemperature) {
+          parsedData.germinationTemp = sanitizeTemperatureRange(
+            tempFullTextMatch[1],
+          );
+        }
+      }
+    }
+
     const fullSowingHints = [];
 
     if (fullTextLower.includes("leicht mit erde bedecken")) {
@@ -275,12 +315,21 @@ export async function processSeedProfilePhotoOcr({
         /in\s*(\d+)\s*facher?.{0,120}?menst[aä]rke/i,
       );
 
+      const seedStrengthBrokenOneMatch =
+        /(?:1|i|l|ing)[-\s]*facher.{0,160}?(?:samenst[aä]rke|menstarke)/i.test(
+          searchTextLower,
+        );
+
       if (!parsedData.sowingDepth && seedStrengthLooseMatch) {
         parsedData.sowingDepth = `${seedStrengthLooseMatch[1]}x Samenstärke`;
       }
 
-      if (seedStrengthFullTextMatch) {
+      if (!parsedData.sowingDepth && seedStrengthFullTextMatch) {
         parsedData.sowingDepth = `${seedStrengthFullTextMatch[1]}x Samenstärke`;
+      }
+
+      if (!parsedData.sowingDepth && seedStrengthBrokenOneMatch) {
+        parsedData.sowingDepth = "1x Samenstärke";
       }
     }
 
