@@ -2,38 +2,13 @@ import express from "express";
 import db from "../database/db.js";
 import path from "path";
 import fs from "fs";
-import sharp from "sharp";
 import { processSeedProfilePhotoOcr } from "../services/ocrService.js";
+import { createSeedPhotoPreview } from "../services/seedPhotoPreviewService.js";
 import upload from "../utils/upload.js";
 
 const router = express.Router();
 
 const uploadDir = "server/uploads";
-
-async function createSeedPhotoPreview(fileName) {
-  const sourcePath = path.join(uploadDir, fileName);
-  const parsedPath = path.parse(fileName);
-
-  const previewFileName = path.join(
-    parsedPath.dir,
-    `preview-${parsedPath.base}`,
-  );
-
-  const previewPath = path.join(uploadDir, previewFileName);
-
-  await sharp(sourcePath)
-    .rotate()
-    .trim({ background: "#ffffff", threshold: 25 })
-    .resize({
-      width: 700,
-      height: 700,
-      fit: "inside",
-      withoutEnlargement: true,
-    })
-    .toFile(previewPath);
-
-  return previewFileName;
-}
 
 router.post("/", upload.single("image"), async (req, res) => {
   try {

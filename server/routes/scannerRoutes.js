@@ -5,38 +5,13 @@ import { execFile } from "child_process";
 import { promisify } from "util";
 import fs from "fs";
 import path from "path";
-import sharp from "sharp";
 import db from "../database/db.js";
+import { createSeedPhotoPreview } from "../services/seedPhotoPreviewService.js";
 
 const execFileAsync = promisify(execFile);
 const router = express.Router();
 
 const uploadDir = "server/uploads";
-
-async function createSeedPhotoPreview(fileName) {
-  const sourcePath = path.join(uploadDir, fileName);
-  const parsedPath = path.parse(fileName);
-
-  const previewFileName = path.join(
-    parsedPath.dir,
-    `preview-${parsedPath.base}`,
-  );
-
-  const previewPath = path.join(uploadDir, previewFileName);
-
-  await sharp(sourcePath)
-    .rotate()
-    .trim({ background: "#ffffff", threshold: 25 })
-    .resize({
-      width: 700,
-      height: 700,
-      fit: "inside",
-      withoutEnlargement: true,
-    })
-    .toFile(previewPath);
-
-  return previewFileName;
-}
 
 router.get("/health", (req, res) => {
   res.json({
@@ -66,8 +41,15 @@ router.post("/seed-profile/:seedProfileId/scan", async (req, res) => {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
 
+    const seedProfileUploadDir = path.join(uploadDir, "seed-profiles");
+
+    if (!fs.existsSync(seedProfileUploadDir)) {
+      fs.mkdirSync(seedProfileUploadDir, { recursive: true });
+    }
+
     const timestamp = Date.now();
-    const fileName = `scan-${seedProfileId}-${photoType}-${timestamp}.png`;
+    const scanBaseName = `scan-${seedProfileId}-${photoType}-${timestamp}.png`;
+    const fileName = `seed-profiles/${scanBaseName}`;
     const filePath = path.join(uploadDir, fileName);
 
     const saneDevice = process.env.SANE_DEVICE;
