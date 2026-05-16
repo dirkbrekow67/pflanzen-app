@@ -55,6 +55,7 @@ export async function processSeedProfilePhotoOcr({
       .replace(/\berte\s*:/gi, "Ernte:")
       .replace(/\bV[Ii][l1][l1]\b/g, "VIII")
       .replace(/\bV[l1][l1][l1]\b/g, "VIII")
+      .replace(/\bjull\b/gi, "Juli")
       .replace(/andrü-\s*cken/gi, "andrücken")
       .replace(/andrue-\s*cken/gi, "andrücken")
       .replace(/andr[üu]\s*cken/gi, "andrücken")
@@ -133,7 +134,16 @@ export async function processSeedProfilePhotoOcr({
 
       if (!parsedData.plantName) {
         for (const plant of COMMON_PLANT_NAMES) {
-          if (lower.includes(plant.toLowerCase())) {
+          const plantLower = plant.toLowerCase();
+
+          if (
+            plantLower === "gurke" &&
+            /\bfür\s+gurken\b|\bgurken,\s*fisch\b/i.test(line)
+          ) {
+            continue;
+          }
+
+          if (lower.includes(plantLower)) {
             parsedData.plantName = plant;
             break;
           }
@@ -161,7 +171,11 @@ export async function processSeedProfilePhotoOcr({
         const tempMatch = line.match(
           /(\d+\s*(?:-|–|—|bis)\s*\d+)\s*(?:°\s*c|grad)/i,
         );
-        if (tempMatch) {
+
+        const isColdTreatmentLine =
+          /kaltkeimer|kälteperiode|kalteperiode|k[aä]lteperiode/i.test(line);
+
+        if (tempMatch && !isColdTreatmentLine) {
           parsedData.germinationTemp = sanitizeTemperatureRange(tempMatch[1]);
         }
 
