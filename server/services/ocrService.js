@@ -424,6 +424,56 @@ export async function processSeedProfilePhotoOcr({
         }
       }
 
+      const freilandSowingMatch = fullTextLower.match(
+        new RegExp(
+          `freiland[\\s\\S]{0,80}?(${MONTH_REGEX})\\s*(?:-|bis)\\s*(${MONTH_REGEX})`,
+          "i",
+        ),
+      );
+
+      if (freilandSowingMatch && !parsedData.sowingFromMonth) {
+        const fromMonth = normalizeMonthName(freilandSowingMatch[1]);
+        const toMonth = normalizeMonthName(freilandSowingMatch[2]);
+        const fromMonthNumber = getMonthNumber(fromMonth);
+        const toMonthNumber = getMonthNumber(toMonth);
+
+        if (fromMonthNumber <= toMonthNumber) {
+          parsedData.sowingMonths = `${fromMonth} bis ${toMonth}`;
+          parsedData.sowingFromMonth = fromMonthNumber;
+          parsedData.sowingToMonth = toMonthNumber;
+        }
+      }
+
+      const harvestLooseTextMatch = fullTextLower.match(
+        new RegExp(
+          `ernte[\\s\\S]{0,120}?(${MONTH_REGEX})\\s*(?:-|bis)\\s*(${MONTH_REGEX})`,
+          "i",
+        ),
+      );
+
+      if (harvestLooseTextMatch && !parsedData.harvestFromMonth) {
+        const fromMonth = normalizeMonthName(harvestLooseTextMatch[1]);
+        const toMonth = normalizeMonthName(harvestLooseTextMatch[2]);
+        const fromMonthNumber = getMonthNumber(fromMonth);
+        const toMonthNumber = getMonthNumber(toMonth);
+
+        if (fromMonthNumber <= toMonthNumber) {
+          parsedData.harvestMonths = `${fromMonth} bis ${toMonth}`;
+          parsedData.harvestFromMonth = fromMonthNumber;
+          parsedData.harvestToMonth = toMonthNumber;
+        }
+      }
+
+      const harvestMaiNovemberFallback = fullTextLower.match(
+        /ernte[\s\S]{0,180}?mai\s+bis[\s\S]{0,120}?november/i,
+      );
+
+      if (harvestMaiNovemberFallback && !parsedData.harvestFromMonth) {
+        parsedData.harvestMonths = "Mai bis November";
+        parsedData.harvestFromMonth = 5;
+        parsedData.harvestToMonth = 11;
+      }
+
       const directFreilandMatch = fullTextLower.match(
         new RegExp(`(${MONTH_REGEX})\\s+direkt\\s+ins\\s+freiland`, "i"),
       );
