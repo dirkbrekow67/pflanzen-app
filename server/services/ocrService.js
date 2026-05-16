@@ -102,6 +102,8 @@ export async function processSeedProfilePhotoOcr({
       harvestToMonth: null,
       harvestMonths: "",
       outdoorMonths: null,
+
+      warnings: [],
     };
 
     const lines = cleanedText
@@ -382,6 +384,34 @@ export async function processSeedProfilePhotoOcr({
           to: normalizeMonthName(directFreilandMatch[1]),
         };
       }
+    }
+
+    if (!parsedData.plantName) {
+      parsedData.warnings.push("Pflanzenname nicht erkannt");
+    }
+
+    if (!parsedData.sowingFromMonth) {
+      parsedData.warnings.push("Aussaatzeitraum fehlt");
+    }
+
+    if (!parsedData.germinationTemp) {
+      parsedData.warnings.push("Keimtemperatur fehlt");
+    }
+
+    if (!parsedData.germinationDays) {
+      parsedData.warnings.push("Keimdauer fehlt");
+    }
+
+    parsedData.ocrScore = 100;
+
+    parsedData.ocrScore -= parsedData.warnings.length * 15;
+
+    if (!parsedData.manufacturer) {
+      parsedData.ocrScore -= 5;
+    }
+
+    if (parsedData.ocrScore < 0) {
+      parsedData.ocrScore = 0;
     }
 
     db.prepare(
