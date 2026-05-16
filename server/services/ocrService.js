@@ -280,10 +280,14 @@ export async function processSeedProfilePhotoOcr({
       if (sowingTextRangeMatch && !parsedData.sowingFromMonth) {
         const fromMonth = normalizeMonthName(sowingTextRangeMatch[1]);
         const toMonth = normalizeMonthName(sowingTextRangeMatch[2]);
+        const fromMonthNumber = getMonthNumber(fromMonth);
+        const toMonthNumber = getMonthNumber(toMonth);
 
-        parsedData.sowingMonths = `${fromMonth} bis ${toMonth}`;
-        parsedData.sowingFromMonth = getMonthNumber(fromMonth);
-        parsedData.sowingToMonth = getMonthNumber(toMonth);
+        if (fromMonthNumber <= toMonthNumber) {
+          parsedData.sowingMonths = `${fromMonth} bis ${toMonth}`;
+          parsedData.sowingFromMonth = fromMonthNumber;
+          parsedData.sowingToMonth = toMonthNumber;
+        }
       }
 
       const preCultivationRomanMatch = fullTextLower.match(
@@ -357,11 +361,14 @@ export async function processSeedProfilePhotoOcr({
       if (harvestMatch && !parsedData.harvestFromMonth) {
         const fromMonth = normalizeMonthName(harvestMatch[1]);
         const toMonth = normalizeMonthName(harvestMatch[2]);
+        const fromMonthNumber = getMonthNumber(fromMonth);
+        const toMonthNumber = getMonthNumber(toMonth);
 
-        parsedData.harvestMonths = `${fromMonth} bis ${toMonth}`;
-
-        parsedData.harvestFromMonth = getMonthNumber(fromMonth);
-        parsedData.harvestToMonth = getMonthNumber(toMonth);
+        if (fromMonthNumber <= toMonthNumber) {
+          parsedData.harvestMonths = `${fromMonth} bis ${toMonth}`;
+          parsedData.harvestFromMonth = fromMonthNumber;
+          parsedData.harvestToMonth = toMonthNumber;
+        }
       }
 
       const harvestFreilandMatch = fullTextLower.match(
@@ -390,10 +397,14 @@ export async function processSeedProfilePhotoOcr({
       if (sowingMatch && !parsedData.sowingFromMonth) {
         const fromMonth = normalizeMonthName(sowingMatch[1]);
         const toMonth = normalizeMonthName(sowingMatch[2]);
+        const fromMonthNumber = getMonthNumber(fromMonth);
+        const toMonthNumber = getMonthNumber(toMonth);
 
-        parsedData.sowingMonths = `${fromMonth} bis ${toMonth}`;
-        parsedData.sowingFromMonth = getMonthNumber(fromMonth);
-        parsedData.sowingToMonth = getMonthNumber(toMonth);
+        if (fromMonthNumber <= toMonthNumber) {
+          parsedData.sowingMonths = `${fromMonth} bis ${toMonth}`;
+          parsedData.sowingFromMonth = fromMonthNumber;
+          parsedData.sowingToMonth = toMonthNumber;
+        }
       }
 
       const looseMonthRangeMatch = fullTextLower.match(
@@ -403,11 +414,13 @@ export async function processSeedProfilePhotoOcr({
       if (!parsedData.sowingFromMonth && looseMonthRangeMatch) {
         const fromMonth = normalizeMonthName(looseMonthRangeMatch[1]);
         const toMonth = normalizeMonthName(looseMonthRangeMatch[2]);
+        const fromMonthNumber = getMonthNumber(fromMonth);
+        const toMonthNumber = getMonthNumber(toMonth);
 
-        if (fromMonth !== toMonth) {
+        if (fromMonth !== toMonth && fromMonthNumber <= toMonthNumber) {
           parsedData.sowingMonths = `${fromMonth} bis ${toMonth}`;
-          parsedData.sowingFromMonth = getMonthNumber(fromMonth);
-          parsedData.sowingToMonth = getMonthNumber(toMonth);
+          parsedData.sowingFromMonth = fromMonthNumber;
+          parsedData.sowingToMonth = toMonthNumber;
         }
       }
 
