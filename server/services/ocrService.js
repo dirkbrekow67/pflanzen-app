@@ -8,6 +8,12 @@ import {
   getMonthValueByName,
 } from "../../src/constants/months.js";
 import { COMMON_PLANT_NAMES } from "../../src/constants/plants.js";
+import {
+  sanitizeDayRange,
+  sanitizeTemperatureRange,
+  sanitizeNumber,
+  sanitizeSpacingCm,
+} from "../../src/utils/ocrHelpers.js";
 
 const MONTH_REGEX =
   "januar|februar|märz|maerz|marz|april|mai|juni|juli|august|september|oktober|november|dezember";
@@ -145,19 +151,19 @@ export async function processSeedProfilePhotoOcr({
       if (isBackPhoto) {
         const daysMatch = line.match(/(\d+\s*-\s*\d+)\s*tage/i);
         if (daysMatch) {
-          parsedData.germinationDays = daysMatch[1].replace(/\s/g, "");
+          parsedData.germinationDays = sanitizeDayRange(daysMatch[1]);
         }
 
         const tempMatch = line.match(/(\d+\s*-\s*\d+)\s*°\s*c/i);
         if (tempMatch) {
-          parsedData.germinationTemp = tempMatch[1].replace(/\s/g, "");
+          parsedData.germinationTemp = sanitizeTemperatureRange(tempMatch[1]);
         }
 
         const spacingMatch = line.match(/(\d+)\s*x\s*(\d+)\s*cm/i);
 
         if (spacingMatch) {
-          parsedData.rowSpacingCm = spacingMatch[1];
-          parsedData.plantSpacingCm = spacingMatch[2];
+          parsedData.rowSpacingCm = sanitizeSpacingCm(spacingMatch[1]);
+          parsedData.plantSpacingCm = sanitizeSpacingCm(spacingMatch[2]);
         }
 
         const sowingWidthMatch = line.match(
@@ -165,7 +171,7 @@ export async function processSeedProfilePhotoOcr({
         );
 
         if (sowingWidthMatch) {
-          parsedData.sowingWidthCm = sowingWidthMatch[1].replace(",", ".");
+          parsedData.sowingWidthCm = sanitizeSpacingCm(sowingWidthMatch[1]);
         }
 
         const depthMatch = line.match(/(\d+(?:[,.]\d+)?)\s*cm\s*tief/i);
@@ -176,8 +182,9 @@ export async function processSeedProfilePhotoOcr({
         if (!parsedData.sowingDepth && seedStrengthDepthMatch) {
           parsedData.sowingDepth = `${seedStrengthDepthMatch[1]}x Samenstärke`;
         }
+
         if (depthMatch) {
-          parsedData.sowingDepth = depthMatch[1].replace(",", ".");
+          parsedData.sowingDepth = sanitizeNumber(depthMatch[1]);
         }
         const lightGerminatorMatch = lower.match(
           /lichtkeimer|nicht\s+mit\s+erde\s+(?:bedecken|überdecken)/i,
@@ -298,8 +305,8 @@ export async function processSeedProfilePhotoOcr({
       );
 
       if (iconSpacingMatch && !parsedData.rowSpacingCm) {
-        parsedData.rowSpacingCm = iconSpacingMatch[1];
-        parsedData.plantSpacingCm = iconSpacingMatch[2];
+        parsedData.rowSpacingCm = sanitizeSpacingCm(iconSpacingMatch[1]);
+        parsedData.plantSpacingCm = sanitizeSpacingCm(iconSpacingMatch[2]);
       }
       const harvestMatch = fullTextLower.match(
         new RegExp(
