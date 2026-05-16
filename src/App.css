@@ -819,6 +819,24 @@ h2 {
   background: #ffffff;
 }
 
+.ocr-warning-box {
+  margin-top: 8px;
+  padding: 8px;
+  background: #fff8e1;
+  border: 1px solid #d89b00;
+  border-radius: 6px;
+  color: #111111;
+}
+
+.ocr-warning-box ul {
+  margin: 6px 0 0 18px;
+  padding: 0;
+}
+
+.ocr-warning-box li {
+  margin: 2px 0;
+}
+
 @media (max-width: 800px) {
   .pot-detail-header {
     flex-direction: column;

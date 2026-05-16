@@ -398,6 +398,21 @@ function SeedFormPage({
                   {getParsedOcrData(photo) && (
                     <div className="ocr-parsed-preview">
                       <strong>Erkannte Daten:</strong>
+                      <p>
+                        OCR-Qualität: {getParsedOcrData(photo).ocrScore ?? "-"}{" "}
+                        %
+                      </p>
+
+                      {getParsedOcrData(photo).warnings?.length > 0 && (
+                        <div className="ocr-warning-box">
+                          <strong>Hinweise zur OCR:</strong>
+                          <ul>
+                            {getParsedOcrData(photo).warnings.map((warning) => (
+                              <li key={warning}>{warning}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                       <p>Pflanze: {getParsedOcrData(photo).plantName || "-"}</p>
                       <p>
                         Hersteller / Händler:{" "}
