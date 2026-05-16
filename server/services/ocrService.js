@@ -172,10 +172,22 @@ export async function processSeedProfilePhotoOcr({
           /(\d+\s*(?:-|–|—|bis)\s*\d+)\s*(?:°\s*c|grad)/i,
         );
 
-        const isColdTreatmentLine =
-          /kaltkeimer|kälteperiode|kalteperiode|k[aä]lteperiode/i.test(line);
+        const tempContext = tempMatch
+          ? fullTextLower.slice(
+              Math.max(
+                0,
+                fullTextLower.indexOf(tempMatch[0].toLowerCase()) - 120,
+              ),
+              fullTextLower.indexOf(tempMatch[0].toLowerCase()) + 120,
+            )
+          : "";
 
-        if (tempMatch && !isColdTreatmentLine) {
+        const isColdTreatmentTemperature =
+          /kaltkeimer|kälteperiode|kalteperiode|kallegoliode|k[aä]lteperiode|5-10\s*°\s*c\s+günstig/i.test(
+            tempContext,
+          );
+
+        if (tempMatch && !isColdTreatmentTemperature) {
           parsedData.germinationTemp = sanitizeTemperatureRange(tempMatch[1]);
         }
 
