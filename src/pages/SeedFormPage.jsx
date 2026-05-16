@@ -215,13 +215,6 @@ function SeedFormPage({
     }
   }
 
-  const ocrPhoto =
-    seedPhotos.find((photo) => photo.photoType === "pack_back") ||
-    seedPhotos.find((photo) => photo.photoType === "pack_front") ||
-    seedPhotos[0];
-
-  const isOcrProcessing = ocrPhoto?.ocrStatus === "processing";
-
   function formatOcrStatus(status) {
     if (status === "processing") return "läuft";
     if (status === "done") return "abgeschlossen";
@@ -493,119 +486,142 @@ function SeedFormPage({
                   <button
                     type="button"
                     className="button photo-delete-button"
-                    onClick={() => {
-                      const parsed = getParsedOcrData(photo);
+                    onClick={() => handleStartOcr(photo.id)}
+                    disabled={photo.ocrStatus === "processing"}
+                  >
+                    {photo.ocrStatus === "processing"
+                      ? "Texterkennung läuft..."
+                      : photo.photoType === "pack_front"
+                        ? "OCR Vorderseite starten"
+                        : "OCR Rückseite starten"}
+                  </button>
+                  {getParsedOcrData(photo) && (
+                    <button
+                      type="button"
+                      className="button photo-delete-button"
+                      onClick={() => {
+                        const parsed = getParsedOcrData(photo);
 
-                      if (!parsed) return;
+                        const outdoorRange = parsed.outdoorMonths || {};
 
-                      const outdoorRange = parsed.outdoorMonths || {};
+                        const currentPlantName =
+                          newSeedProfile.plantName?.trim();
 
-                      const currentPlantName = newSeedProfile.plantName?.trim();
+                        const normalizedParsedPlant = COMMON_PLANT_NAMES.find(
+                          (plant) =>
+                            plant.toLowerCase() ===
+                            parsed.plantName?.toLowerCase(),
+                        );
 
-                      const normalizedParsedPlant = COMMON_PLANT_NAMES.find(
-                        (plant) =>
-                          plant.toLowerCase() ===
-                          parsed.plantName?.toLowerCase(),
-                      );
-
-                      if (normalizedParsedPlant) {
-                        if (!currentPlantName) {
-                          handleSeedProfileChange(
-                            "plantName",
-                            normalizedParsedPlant,
-                          );
-                        } else if (
-                          currentPlantName.toLowerCase() !==
-                          normalizedParsedPlant.toLowerCase()
-                        ) {
-                          const alreadyContainsNew = currentPlantName
-                            .toLowerCase()
-                            .includes(normalizedParsedPlant.toLowerCase());
-
-                          if (!alreadyContainsNew) {
+                        if (normalizedParsedPlant) {
+                          if (!currentPlantName) {
                             handleSeedProfileChange(
                               "plantName",
-                              `${currentPlantName} / ${normalizedParsedPlant}`,
+                              normalizedParsedPlant,
                             );
+                          } else if (
+                            currentPlantName.toLowerCase() !==
+                            normalizedParsedPlant.toLowerCase()
+                          ) {
+                            const alreadyContainsNew = currentPlantName
+                              .toLowerCase()
+                              .includes(normalizedParsedPlant.toLowerCase());
+
+                            if (!alreadyContainsNew) {
+                              handleSeedProfileChange(
+                                "plantName",
+                                `${currentPlantName} / ${normalizedParsedPlant}`,
+                              );
+                            }
                           }
                         }
-                      }
 
-                      applyOcrValueIfEmpty("manufacturer", parsed.manufacturer);
-                      applyOcrValueIfEmpty("retailer", parsed.retailer);
-                      applyOcrValueIfEmpty("lifecycle", parsed.lifecycle);
+                        applyOcrValueIfEmpty(
+                          "manufacturer",
+                          parsed.manufacturer,
+                        );
+                        applyOcrValueIfEmpty("retailer", parsed.retailer);
+                        applyOcrValueIfEmpty("lifecycle", parsed.lifecycle);
 
-                      applyOcrRangeIfEmpty(
-                        "germinationDaysMin",
-                        "germinationDaysMax",
-                        parsed.germinationDays,
-                      );
+                        applyOcrRangeIfEmpty(
+                          "germinationDaysMin",
+                          "germinationDaysMax",
+                          parsed.germinationDays,
+                        );
 
-                      applyOcrRangeIfEmpty(
-                        "germinationTempMin",
-                        "germinationTempMax",
-                        parsed.germinationTemp,
-                      );
+                        applyOcrRangeIfEmpty(
+                          "germinationTempMin",
+                          "germinationTempMax",
+                          parsed.germinationTemp,
+                        );
 
-                      const numericDepth = parsed.sowingDepth
-                        ? parsed.sowingDepth.replace(",", ".")
-                        : "";
-
-                      const numericDepthValue =
-                        numericDepth && !Number.isNaN(Number(numericDepth))
-                          ? numericDepth
+                        const numericDepth = parsed.sowingDepth
+                          ? parsed.sowingDepth.replace(",", ".")
                           : "";
 
-                      const depthNoteValue =
-                        numericDepth && !Number.isNaN(Number(numericDepth))
-                          ? ""
-                          : parsed.sowingDepth || "";
+                        const numericDepthValue =
+                          numericDepth && !Number.isNaN(Number(numericDepth))
+                            ? numericDepth
+                            : "";
 
-                      applyOcrValueIfEmpty("sowingDepthCm", numericDepthValue);
-                      applyOcrValueIfEmpty("sowingDepthNote", depthNoteValue);
-                      applyOcrValueIfEmpty(
-                        "sowingWidthCm",
-                        parsed.sowingWidthCm,
-                      );
+                        const depthNoteValue =
+                          numericDepth && !Number.isNaN(Number(numericDepth))
+                            ? ""
+                            : parsed.sowingDepth || "";
 
-                      applyOcrValueIfEmpty("sowingNotes", parsed.sowingNotes);
-                      applyOcrValueIfEmpty("rowSpacingCm", parsed.rowSpacingCm);
-                      applyOcrValueIfEmpty(
-                        "plantSpacingCm",
-                        parsed.plantSpacingCm,
-                      );
+                        applyOcrValueIfEmpty(
+                          "sowingDepthCm",
+                          numericDepthValue,
+                        );
+                        applyOcrValueIfEmpty("sowingDepthNote", depthNoteValue);
+                        applyOcrValueIfEmpty(
+                          "sowingWidthCm",
+                          parsed.sowingWidthCm,
+                        );
 
-                      applyOcrValueIfEmpty(
-                        "sowingFromMonth",
-                        parsed.sowingFromMonth,
-                      );
-                      applyOcrValueIfEmpty(
-                        "sowingToMonth",
-                        parsed.sowingToMonth,
-                      );
+                        applyOcrValueIfEmpty("sowingNotes", parsed.sowingNotes);
+                        applyOcrValueIfEmpty(
+                          "rowSpacingCm",
+                          parsed.rowSpacingCm,
+                        );
+                        applyOcrValueIfEmpty(
+                          "plantSpacingCm",
+                          parsed.plantSpacingCm,
+                        );
 
-                      applyOcrValueIfEmpty(
-                        "outdoorFromMonth",
-                        getMonthValue(outdoorRange.from),
-                      );
+                        applyOcrValueIfEmpty(
+                          "sowingFromMonth",
+                          parsed.sowingFromMonth,
+                        );
+                        applyOcrValueIfEmpty(
+                          "sowingToMonth",
+                          parsed.sowingToMonth,
+                        );
 
-                      applyOcrValueIfEmpty(
-                        "outdoorToMonth",
-                        getMonthValue(outdoorRange.to),
-                      );
+                        applyOcrValueIfEmpty(
+                          "outdoorFromMonth",
+                          getMonthValue(outdoorRange.from),
+                        );
 
-                      applyOcrValueIfEmpty(
-                        "harvestFromMonth",
-                        parsed.harvestFromMonth,
-                      );
-                      applyOcrValueIfEmpty(
-                        "harvestToMonth",
-                        parsed.harvestToMonth,
-                      );
-                    }}
-                  >
-                    OCR-Daten in leere Felder übernehmen
-                  </button>
+                        applyOcrValueIfEmpty(
+                          "outdoorToMonth",
+                          getMonthValue(outdoorRange.to),
+                        );
+
+                        applyOcrValueIfEmpty(
+                          "harvestFromMonth",
+                          parsed.harvestFromMonth,
+                        );
+                        applyOcrValueIfEmpty(
+                          "harvestToMonth",
+                          parsed.harvestToMonth,
+                        );
+                      }}
+                    >
+                      OCR-Daten in leere Felder übernehmen
+                    </button>
+                  )}
+
                   <button
                     type="button"
                     className="button photo-delete-button"
@@ -646,35 +662,6 @@ function SeedFormPage({
               className="image-modal-photo"
             />
           </div>
-        </div>
-      )}
-
-      {currentSeedProfileId && ocrPhoto && (
-        <div className="photo-gallery">
-          <h2>Daten aus Packungsfoto erkennen</h2>
-
-          <p className="hint">
-            Aus dem ausgewählten Packungsfoto können Pflanzendaten, Aussaat,
-            Keimung, Abstände, Erntezeitraum und Hinweise zur Saattiefe erkannt
-            werden.
-          </p>
-
-          <button
-            type="button"
-            className="button"
-            onClick={() => handleStartOcr(ocrPhoto.id)}
-            disabled={isOcrProcessing}
-          >
-            {isOcrProcessing
-              ? "Texterkennung läuft..."
-              : "Texterkennung starten"}
-          </button>
-
-          <p className="hint">
-            Die Texterkennung liest die Packungsangaben aus und stellt sie als
-            Vorschlag zur Übernahme in das Samenprofil bereit. Die erkannten
-            Werte sollten vor dem Speichern geprüft werden.
-          </p>
         </div>
       )}
     </div>
