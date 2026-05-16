@@ -162,7 +162,7 @@ export async function processSeedProfilePhotoOcr({
           parsedData.germinationTemp = sanitizeTemperatureRange(tempMatch[1]);
         }
 
-        const spacingMatch = line.match(/(\d+)\s*x\s*(\d+)\s*cm/i);
+        const spacingMatch = line.match(/(\d+)\s*(?:x|×|mal)\s*(\d+)\s*cm/i);
 
         if (spacingMatch) {
           parsedData.rowSpacingCm = sanitizeSpacingCm(spacingMatch[1]);
@@ -336,13 +336,14 @@ export async function processSeedProfilePhotoOcr({
       }
 
       const iconSpacingMatch = fullTextLower.match(
-        /abstand[\s\S]{0,120}?(\d+)\s*x\s*(\d+)\s*cm/i,
+        /abstand[\s\S]{0,120}?(\d+)\s*(?:x|×|mal)\s*(\d+)\s*cm/i,
       );
 
       if (iconSpacingMatch && !parsedData.rowSpacingCm) {
         parsedData.rowSpacingCm = sanitizeSpacingCm(iconSpacingMatch[1]);
         parsedData.plantSpacingCm = sanitizeSpacingCm(iconSpacingMatch[2]);
       }
+
       const harvestMatch = fullTextLower.match(
         new RegExp(
           `ernte.{0,80}?(${MONTH_REGEX})\\s+bis\\s+(${MONTH_REGEX})`,
