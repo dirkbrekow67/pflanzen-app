@@ -240,6 +240,27 @@ function SeedFormPage({
     }
   }
 
+  function hasProfileValue(value) {
+    return value !== null && value !== undefined && value !== "";
+  }
+
+  function applyOcrValueIfEmpty(fieldName, ocrValue) {
+    if (!hasProfileValue(ocrValue)) return;
+
+    if (hasProfileValue(newSeedProfile[fieldName])) return;
+
+    handleSeedProfileChange(fieldName, ocrValue);
+  }
+
+  function applyOcrRangeIfEmpty(minFieldName, maxFieldName, rangeValue) {
+    const rangeParts = rangeValue?.replace(/\s/g, "").split("-") || [];
+    const minValue = rangeParts[0] || "";
+    const maxValue = rangeParts[1] || "";
+
+    applyOcrValueIfEmpty(minFieldName, minValue);
+    applyOcrValueIfEmpty(maxFieldName, maxValue);
+  }
+
   return (
     <div className="container">
       <h1>Samenprofil anlegen / bearbeiten</h1>
@@ -477,9 +498,6 @@ function SeedFormPage({
 
                       if (!parsed) return;
 
-                      const tempRange =
-                        parsed.germinationTemp?.replace(/\s/g, "").split("-") ||
-                        [];
                       const outdoorRange = parsed.outdoorMonths || {};
 
                       const currentPlantName = newSeedProfile.plantName?.trim();
@@ -513,103 +531,80 @@ function SeedFormPage({
                         }
                       }
 
-                      if (!newSeedProfile.manufacturer && parsed.manufacturer) {
-                        handleSeedProfileChange(
-                          "manufacturer",
-                          parsed.manufacturer,
-                        );
-                      }
+                      applyOcrValueIfEmpty("manufacturer", parsed.manufacturer);
+                      applyOcrValueIfEmpty("retailer", parsed.retailer);
+                      applyOcrValueIfEmpty("lifecycle", parsed.lifecycle);
 
-                      if (!newSeedProfile.retailer && parsed.retailer) {
-                        handleSeedProfileChange("retailer", parsed.retailer);
-                      }
-
-                      if (parsed.lifecycle) {
-                        handleSeedProfileChange("lifecycle", parsed.lifecycle);
-                      }
-
-                      handleSeedProfileChange(
-                        "germinationDaysMax",
-                        parsed.germinationDays?.split("-")[1] || "",
-                      );
-                      handleSeedProfileChange(
+                      applyOcrRangeIfEmpty(
                         "germinationDaysMin",
-                        parsed.germinationDays?.split("-")[0] || "",
+                        "germinationDaysMax",
+                        parsed.germinationDays,
                       );
-                      handleSeedProfileChange(
+
+                      applyOcrRangeIfEmpty(
                         "germinationTempMin",
-                        tempRange[0] || "",
-                      );
-                      handleSeedProfileChange(
                         "germinationTempMax",
-                        tempRange[1] || "",
+                        parsed.germinationTemp,
                       );
+
                       const numericDepth = parsed.sowingDepth
                         ? parsed.sowingDepth.replace(",", ".")
                         : "";
 
-                      handleSeedProfileChange(
-                        "sowingDepthCm",
+                      const numericDepthValue =
                         numericDepth && !Number.isNaN(Number(numericDepth))
                           ? numericDepth
-                          : "",
-                      );
-                      handleSeedProfileChange(
-                        "sowingDepthNote",
+                          : "";
+
+                      const depthNoteValue =
                         numericDepth && !Number.isNaN(Number(numericDepth))
                           ? ""
-                          : parsed.sowingDepth || "",
-                      );
-                      handleSeedProfileChange(
+                          : parsed.sowingDepth || "";
+
+                      applyOcrValueIfEmpty("sowingDepthCm", numericDepthValue);
+                      applyOcrValueIfEmpty("sowingDepthNote", depthNoteValue);
+                      applyOcrValueIfEmpty(
                         "sowingWidthCm",
-                        parsed.sowingWidthCm || "",
+                        parsed.sowingWidthCm,
                       );
 
-                      handleSeedProfileChange(
-                        "sowingNotes",
-                        parsed.sowingNotes || "",
-                      );
-                      handleSeedProfileChange(
-                        "rowSpacingCm",
-                        parsed.rowSpacingCm || "",
-                      );
-
-                      handleSeedProfileChange(
+                      applyOcrValueIfEmpty("sowingNotes", parsed.sowingNotes);
+                      applyOcrValueIfEmpty("rowSpacingCm", parsed.rowSpacingCm);
+                      applyOcrValueIfEmpty(
                         "plantSpacingCm",
-                        parsed.plantSpacingCm || "",
+                        parsed.plantSpacingCm,
                       );
 
-                      handleSeedProfileChange(
+                      applyOcrValueIfEmpty(
                         "sowingFromMonth",
-                        parsed.sowingFromMonth || "",
+                        parsed.sowingFromMonth,
                       );
-
-                      handleSeedProfileChange(
+                      applyOcrValueIfEmpty(
                         "sowingToMonth",
-                        parsed.sowingToMonth || "",
+                        parsed.sowingToMonth,
                       );
 
-                      handleSeedProfileChange(
+                      applyOcrValueIfEmpty(
                         "outdoorFromMonth",
                         getMonthValue(outdoorRange.from),
                       );
 
-                      handleSeedProfileChange(
+                      applyOcrValueIfEmpty(
                         "outdoorToMonth",
                         getMonthValue(outdoorRange.to),
                       );
-                      handleSeedProfileChange(
-                        "harvestFromMonth",
-                        parsed.harvestFromMonth || "",
-                      );
 
-                      handleSeedProfileChange(
+                      applyOcrValueIfEmpty(
+                        "harvestFromMonth",
+                        parsed.harvestFromMonth,
+                      );
+                      applyOcrValueIfEmpty(
                         "harvestToMonth",
-                        parsed.harvestToMonth || "",
+                        parsed.harvestToMonth,
                       );
                     }}
                   >
-                    OCR-Daten übernehmen
+                    OCR-Daten in leere Felder übernehmen
                   </button>
                   <button
                     type="button"
