@@ -495,7 +495,9 @@ function App() {
     }));
   }
 
-  async function handleAddSeedProfile(seedProfileIdFromRoute) {
+  async function handleAddSeedProfile(seedProfileIdFromRoute, options = {}) {
+    const { stayOnPage = false } = options;
+
     const validationError = validateSeedProfile(newSeedProfile);
 
     if (validationError) {
@@ -546,9 +548,12 @@ function App() {
       }
 
       loadSeedProfiles();
-      setNewSeedProfile(emptySeedProfile);
       setFormError("");
-      setEditingSeedProfileId(null);
+
+      if (!stayOnPage) {
+        setNewSeedProfile(emptySeedProfile);
+        setEditingSeedProfileId(null);
+      }
 
       return true;
     } catch (err) {

@@ -148,6 +148,7 @@ CREATE TABLE IF NOT EXISTS seed_profile_photos (
   seedProfileId TEXT NOT NULL,
   fileName TEXT NOT NULL,
   processedFileName TEXT,
+  previewFileName TEXT,
   originalName TEXT,
 
   photoType TEXT,
@@ -164,6 +165,14 @@ CREATE TABLE IF NOT EXISTS seed_profile_photos (
 try {
   db.prepare(
     "ALTER TABLE seed_profile_photos ADD COLUMN processedFileName TEXT",
+  ).run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare(
+    "ALTER TABLE seed_profile_photos ADD COLUMN previewFileName TEXT",
   ).run();
 } catch {
   // Spalte existiert bereits

@@ -118,7 +118,11 @@ function SeedLibraryPage({
               >
                 {previewPhoto && (
                   <img
-                    src={`${API_BASE_URL}/uploads/${previewPhoto.fileName}`}
+                    src={`${API_BASE_URL}/uploads/${
+                      previewPhoto.previewFileName ||
+                      previewPhoto.processedFileName ||
+                      previewPhoto.fileName
+                    }`}
                     alt={profile.plantName || "Samenpackung"}
                     className="seed-preview-image"
                   />

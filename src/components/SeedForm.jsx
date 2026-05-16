@@ -4,6 +4,7 @@ function SeedForm({
   formData,
   handleFormChange,
   handleSubmit,
+  handleSubmitAndGoBack,
   editingId,
   formError,
 }) {
@@ -331,9 +332,20 @@ function SeedForm({
         </div>
       </div>
 
-      <button className="button" onClick={handleSubmit}>
-        {editingId ? "Speichern" : "Anlegen"}
-      </button>
+      <div className="form-actions">
+        <button className="button" onClick={handleSubmit}>
+          {editingId ? "Speichern" : "Anlegen"}
+        </button>
+
+        {editingId && handleSubmitAndGoBack && (
+          <button
+            className="button button-secondary"
+            onClick={handleSubmitAndGoBack}
+          >
+            Speichern und zur Übersicht
+          </button>
+        )}
+      </div>
     </div>
   );
 }

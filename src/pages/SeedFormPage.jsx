@@ -77,8 +77,20 @@ function SeedFormPage({
     }
   }
 
+  async function handleSaveStayOnPage() {
+    const success = await handleAddSeedProfile(currentSeedProfileId, {
+      stayOnPage: true,
+    });
+
+    if (success) {
+      setSeedPhotoMessage("Samenprofil wurde gespeichert.");
+    }
+  }
+
   async function handleSaveAndGoBack() {
-    const success = await handleAddSeedProfile(currentSeedProfileId);
+    const success = await handleAddSeedProfile(currentSeedProfileId, {
+      stayOnPage: false,
+    });
 
     if (success) {
       navigate("/seeds");
@@ -237,10 +249,35 @@ function SeedFormPage({
     return value !== null && value !== undefined && value !== "";
   }
 
+  function isEmptyNumberFieldValue(value) {
+    return (
+      value === null ||
+      value === undefined ||
+      value === "" ||
+      Number(value) === 0
+    );
+  }
+
   function applyOcrValueIfEmpty(fieldName, ocrValue) {
     if (!hasProfileValue(ocrValue)) return;
 
     if (hasProfileValue(newSeedProfile[fieldName])) return;
+
+    handleSeedProfileChange(fieldName, ocrValue);
+  }
+
+  function applyOcrLifecycleValue(ocrValue) {
+    if (!hasProfileValue(ocrValue)) return;
+
+    if (!newSeedProfile.lifecycle || newSeedProfile.lifecycle === "annual") {
+      handleSeedProfileChange("lifecycle", ocrValue);
+    }
+  }
+
+  function applyOcrNumberValueIfEmpty(fieldName, ocrValue) {
+    if (!hasProfileValue(ocrValue)) return;
+
+    if (!isEmptyNumberFieldValue(newSeedProfile[fieldName])) return;
 
     handleSeedProfileChange(fieldName, ocrValue);
   }
@@ -250,8 +287,8 @@ function SeedFormPage({
     const minValue = rangeParts[0] || "";
     const maxValue = rangeParts[1] || "";
 
-    applyOcrValueIfEmpty(minFieldName, minValue);
-    applyOcrValueIfEmpty(maxFieldName, maxValue);
+    applyOcrNumberValueIfEmpty(minFieldName, minValue);
+    applyOcrNumberValueIfEmpty(maxFieldName, maxValue);
   }
 
   return (
@@ -267,7 +304,12 @@ function SeedFormPage({
       <SeedForm
         formData={newSeedProfile}
         handleFormChange={handleSeedProfileChange}
-        handleSubmit={handleSaveAndGoBack}
+        handleSubmit={
+          currentSeedProfileId ? handleSaveStayOnPage : handleSaveAndGoBack
+        }
+        handleSubmitAndGoBack={
+          currentSeedProfileId ? handleSaveAndGoBack : null
+        }
         editingId={currentSeedProfileId}
         formError={formError}
       />
@@ -279,8 +321,9 @@ function SeedFormPage({
           </p>
 
           <p className="hint">
-            Fotos der Samenpackung (Vorder- und Rückseite) können später
-            automatisch zur Datenerkennung genutzt werden.
+            Vorderseiten eignen sich vor allem zur Erkennung von Pflanzenname
+            und Sorte. Rückseiten liefern meist die Angaben zu Aussaat, Keimung,
+            Abständen, Ernte und Hinweisen.
           </p>
 
           <div className="seed-upload-controls">
@@ -372,14 +415,18 @@ function SeedFormPage({
                 <div key={photo.id} className="photo-card">
                   <img
                     src={`${API_BASE_URL}/uploads/${
-                      photo.processedFileName || photo.fileName
+                      photo.previewFileName ||
+                      photo.processedFileName ||
+                      photo.fileName
                     }`}
                     alt={photo.originalName || "Samenpackung"}
                     className="clickable-photo"
                     onClick={() =>
                       setSelectedPhotoPreview({
                         src: `${API_BASE_URL}/uploads/${
-                          photo.processedFileName || photo.fileName
+                          photo.previewFileName ||
+                          photo.processedFileName ||
+                          photo.fileName
                         }`,
                         title:
                           photo.photoType === "pack_back"
@@ -411,7 +458,12 @@ function SeedFormPage({
                   )}
                   {getParsedOcrData(photo) && (
                     <div className="ocr-parsed-preview">
-                      <strong>Erkannte Daten:</strong>
+                      <strong>
+                        {photo.photoType === "pack_front"
+                          ? "Erkannte Vorderseite:"
+                          : "Erkannte Daten:"}
+                      </strong>
+
                       <p>
                         OCR-Qualität:{" "}
                         <span
@@ -427,60 +479,112 @@ function SeedFormPage({
                         </span>
                       </p>
 
-                      {getParsedOcrData(photo).warnings?.length > 0 && (
-                        <div className="ocr-warning-box">
-                          <strong>Hinweise zur OCR:</strong>
-                          <ul>
-                            {getParsedOcrData(photo).warnings.map((warning) => (
-                              <li key={warning}>{warning}</li>
-                            ))}
-                          </ul>
-                        </div>
+                      {photo.photoType === "pack_front" ? (
+                        <>
+                          <p>
+                            Pflanze: {getParsedOcrData(photo).plantName || "-"}
+                          </p>
+
+                          <p>
+                            Hersteller / Händler:{" "}
+                            {[
+                              getParsedOcrData(photo).manufacturer,
+                              getParsedOcrData(photo).retailer,
+                            ]
+                              .filter(Boolean)
+                              .join(" / ") || "-"}
+                          </p>
+
+                          {getParsedOcrData(photo).lifecycle && (
+                            <p>
+                              Lebenszyklus:{" "}
+                              {getParsedOcrData(photo).lifecycle === "annual"
+                                ? "Einjährig"
+                                : getParsedOcrData(photo).lifecycle ===
+                                    "biennial"
+                                  ? "Zweijährig"
+                                  : getParsedOcrData(photo).lifecycle ===
+                                      "perennial"
+                                    ? "Mehrjährig"
+                                    : getParsedOcrData(photo).lifecycle}
+                            </p>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          {getParsedOcrData(photo).warnings?.length > 0 && (
+                            <div className="ocr-warning-box">
+                              <strong>Hinweise zur OCR:</strong>
+                              <ul>
+                                {getParsedOcrData(photo).warnings.map(
+                                  (warning) => (
+                                    <li key={warning}>{warning}</li>
+                                  ),
+                                )}
+                              </ul>
+                            </div>
+                          )}
+
+                          <p>
+                            Pflanze: {getParsedOcrData(photo).plantName || "-"}
+                          </p>
+
+                          <p>
+                            Hersteller / Händler:{" "}
+                            {[
+                              getParsedOcrData(photo).manufacturer,
+                              getParsedOcrData(photo).retailer,
+                            ]
+                              .filter(Boolean)
+                              .join(" / ") || "-"}
+                          </p>
+
+                          <p>
+                            Aussaat:{" "}
+                            {getParsedOcrData(photo).sowingMonths || "-"}
+                          </p>
+
+                          <p>
+                            Keimtemperatur:{" "}
+                            {getParsedOcrData(photo).germinationTemp || "-"}
+                          </p>
+
+                          <p>
+                            Reihenabstand:{" "}
+                            {getParsedOcrData(photo).rowSpacingCm || "-"} cm
+                          </p>
+
+                          <p>
+                            Pflanzenabstand:{" "}
+                            {getParsedOcrData(photo).plantSpacingCm || "-"} cm
+                          </p>
+
+                          <p>
+                            Ernte:{" "}
+                            {getParsedOcrData(photo).harvestMonths || "-"}
+                          </p>
+
+                          <p>
+                            Keimdauer:{" "}
+                            {getParsedOcrData(photo).germinationDays || "-"}
+                          </p>
+
+                          <p>
+                            Saattiefe:{" "}
+                            {getParsedOcrData(photo).sowingDepth || "-"}
+                          </p>
+
+                          <p>
+                            Aussaatbreite:{" "}
+                            {getParsedOcrData(photo).sowingWidthCm || "-"} cm
+                          </p>
+
+                          <p>
+                            Hinweise:{" "}
+                            {getParsedOcrData(photo).sowingNotes || "-"}
+                          </p>
+                        </>
                       )}
-                      <p>Pflanze: {getParsedOcrData(photo).plantName || "-"}</p>
-                      <p>
-                        Hersteller / Händler:{" "}
-                        {[
-                          getParsedOcrData(photo).manufacturer,
-                          getParsedOcrData(photo).retailer,
-                        ]
-                          .filter(Boolean)
-                          .join(" / ") || "-"}
-                      </p>
-                      <p>
-                        Aussaat: {getParsedOcrData(photo).sowingMonths || "-"}
-                      </p>
-                      <p>
-                        Keimtemperatur:{" "}
-                        {getParsedOcrData(photo).germinationTemp || "-"}
-                      </p>
-                      <p>
-                        Reihenabstand:{" "}
-                        {getParsedOcrData(photo).rowSpacingCm || "-"} cm
-                      </p>
-
-                      <p>
-                        Pflanzenabstand:{" "}
-                        {getParsedOcrData(photo).plantSpacingCm || "-"} cm
-                      </p>
-                      <p>
-                        Ernte: {getParsedOcrData(photo).harvestMonths || "-"}
-                      </p>
-                      <p>
-                        Keimdauer:{" "}
-                        {getParsedOcrData(photo).germinationDays || "-"}
-                      </p>
-                      <p>
-                        Saattiefe: {getParsedOcrData(photo).sowingDepth || "-"}
-                      </p>
-                      <p>
-                        Aussaatbreite:{" "}
-                        {getParsedOcrData(photo).sowingWidthCm || "-"} cm
-                      </p>
-
-                      <p>
-                        Hinweise: {getParsedOcrData(photo).sowingNotes || "-"}
-                      </p>
                     </div>
                   )}
                   <button
@@ -492,8 +596,8 @@ function SeedFormPage({
                     {photo.ocrStatus === "processing"
                       ? "Texterkennung läuft..."
                       : photo.photoType === "pack_front"
-                        ? "OCR Vorderseite starten"
-                        : "OCR Rückseite starten"}
+                        ? "Pflanzenname von Vorderseite erkennen"
+                        : "Packungsdaten von Rückseite erkennen"}
                   </button>
                   {getParsedOcrData(photo) && (
                     <button
@@ -541,7 +645,7 @@ function SeedFormPage({
                           parsed.manufacturer,
                         );
                         applyOcrValueIfEmpty("retailer", parsed.retailer);
-                        applyOcrValueIfEmpty("lifecycle", parsed.lifecycle);
+                        applyOcrLifecycleValue(parsed.lifecycle);
 
                         applyOcrRangeIfEmpty(
                           "germinationDaysMin",
@@ -569,22 +673,22 @@ function SeedFormPage({
                             ? ""
                             : parsed.sowingDepth || "";
 
-                        applyOcrValueIfEmpty(
+                        applyOcrNumberValueIfEmpty(
                           "sowingDepthCm",
                           numericDepthValue,
                         );
                         applyOcrValueIfEmpty("sowingDepthNote", depthNoteValue);
-                        applyOcrValueIfEmpty(
+
+                        applyOcrValueIfEmpty("sowingNotes", parsed.sowingNotes);
+                        applyOcrNumberValueIfEmpty(
                           "sowingWidthCm",
                           parsed.sowingWidthCm,
                         );
-
-                        applyOcrValueIfEmpty("sowingNotes", parsed.sowingNotes);
-                        applyOcrValueIfEmpty(
+                        applyOcrNumberValueIfEmpty(
                           "rowSpacingCm",
                           parsed.rowSpacingCm,
                         );
-                        applyOcrValueIfEmpty(
+                        applyOcrNumberValueIfEmpty(
                           "plantSpacingCm",
                           parsed.plantSpacingCm,
                         );
@@ -618,7 +722,9 @@ function SeedFormPage({
                         );
                       }}
                     >
-                      OCR-Daten in leere Felder übernehmen
+                      {photo.photoType === "pack_front"
+                        ? "Vorderseiten-Daten übernehmen"
+                        : "OCR-Daten in leere Felder übernehmen"}
                     </button>
                   )}
 

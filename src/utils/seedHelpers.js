@@ -35,10 +35,25 @@ export function buildSeedProfileData(seedProfile) {
     sowingToMonth: seedProfile.sowingToMonth
       ? Number(seedProfile.sowingToMonth)
       : null,
-    germinationTempMin: Number(seedProfile.germinationTempMin),
-    germinationTempMax: Number(seedProfile.germinationTempMax),
-    germinationDaysMin: Number(seedProfile.germinationDaysMin),
-    germinationDaysMax: Number(seedProfile.germinationDaysMax),
+    germinationTempMin:
+      seedProfile.germinationTempMin === ""
+        ? null
+        : Number(seedProfile.germinationTempMin),
+
+    germinationTempMax:
+      seedProfile.germinationTempMax === ""
+        ? null
+        : Number(seedProfile.germinationTempMax),
+
+    germinationDaysMin:
+      seedProfile.germinationDaysMin === ""
+        ? null
+        : Number(seedProfile.germinationDaysMin),
+
+    germinationDaysMax:
+      seedProfile.germinationDaysMax === ""
+        ? null
+        : Number(seedProfile.germinationDaysMax),
     sowingDepthCm:
       seedProfile.sowingDepthCm === ""
         ? null

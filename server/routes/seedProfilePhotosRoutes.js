@@ -2,6 +2,7 @@ import express from "express";
 import db from "../database/db.js";
 import path from "path";
 import fs from "fs";
+import sharp from "sharp";
 import { processSeedProfilePhotoOcr } from "../services/ocrService.js";
 import upload from "../utils/upload.js";
 
@@ -9,7 +10,32 @@ const router = express.Router();
 
 const uploadDir = "server/uploads";
 
-router.post("/", upload.single("image"), (req, res) => {
+async function createSeedPhotoPreview(fileName) {
+  const sourcePath = path.join(uploadDir, fileName);
+  const parsedPath = path.parse(fileName);
+
+  const previewFileName = path.join(
+    parsedPath.dir,
+    `preview-${parsedPath.base}`,
+  );
+
+  const previewPath = path.join(uploadDir, previewFileName);
+
+  await sharp(sourcePath)
+    .rotate()
+    .trim({ background: "#ffffff", threshold: 25 })
+    .resize({
+      width: 700,
+      height: 700,
+      fit: "inside",
+      withoutEnlargement: true,
+    })
+    .toFile(previewPath);
+
+  return previewFileName;
+}
+
+router.post("/", upload.single("image"), async (req, res) => {
   try {
     const { seedProfileId, photoType } = req.body;
 
@@ -18,28 +44,39 @@ router.post("/", upload.single("image"), (req, res) => {
     }
     const fileName = `${req.uploadSubFolder}/${req.file.filename}`;
 
+    let previewFileName = "";
+
+    try {
+      previewFileName = await createSeedPhotoPreview(fileName);
+    } catch (previewError) {
+      console.error("Preview-Erzeugung fehlgeschlagen:", previewError);
+    }
+
     db.prepare(
       `
-      INSERT INTO seed_profile_photos (
-        seedProfileId,
-        fileName,
-        originalName,
-        photoType,
-        ocrStatus
-      )
-      VALUES (?, ?, ?, ?, ?)
-    `,
+  INSERT INTO seed_profile_photos (
+    seedProfileId,
+    fileName,
+    originalName,
+    photoType,
+    ocrStatus,
+    previewFileName
+  )
+  VALUES (?, ?, ?, ?, ?, ?)
+`,
     ).run(
       seedProfileId,
       fileName,
       req.file.originalname,
       photoType || "pack_front",
       "pending",
+      previewFileName,
     );
 
     res.json({
       success: true,
       fileName,
+      previewFileName,
     });
   } catch (error) {
     console.error(error);
@@ -117,6 +154,14 @@ router.delete("/:photoId", (req, res) => {
 
       if (fs.existsSync(processedFilePath)) {
         fs.unlinkSync(processedFilePath);
+      }
+    }
+
+    if (photo.previewFileName) {
+      const previewFilePath = path.join(uploadDir, photo.previewFileName);
+
+      if (fs.existsSync(previewFilePath)) {
+        fs.unlinkSync(previewFilePath);
       }
     }
 

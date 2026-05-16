@@ -482,8 +482,10 @@ h2 {
 }
 
 .seed-card-body p {
-  margin: 10px 0;
+  margin: 6px 0;
   line-height: 1.5;
+  font-size: 14px;
+  color: #111111;
 }
 
 .seed-card-header {
@@ -503,12 +505,6 @@ h2 {
   font-size: 13px;
   color: #555;
   line-height: 1.4;
-}
-
-.seed-card-body p {
-  margin: 6px 0;
-  font-size: 14px;
-  color: #111111;
 }
 
 .seed-card-actions {
@@ -857,6 +853,25 @@ h2 {
 .ocr-score-bad {
   background: #ffe5e5;
   color: darkred;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.card .form-actions .button {
+  display: inline-block;
+  margin: 0;
+}
+
+.button-secondary {
+  background: white;
+  color: green;
+  border: 1px solid green;
 }
 
 @media (max-width: 800px) {
