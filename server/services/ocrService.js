@@ -55,6 +55,8 @@ export async function processSeedProfilePhotoOcr({
       .replace(/\berte\s*:/gi, "Ernte:")
       .replace(/\bemte\s*:/gi, "Ernte:")
       .replace(/\boitober\b/gi, "Oktober")
+      .replace(/\bvoruturim\s+topf\b/gi, "Vorkultur im Topf")
+      .replace(/\bvorutur\s*im\s+topf\b/gi, "Vorkultur im Topf")
       .replace(/\btags?\s*bei\b/gi, "Tage bei")
       .replace(/\b7age\b/gi, "Tage")
       .replace(/\bV[Ii][l1][l1]\b/g, "VIII")
@@ -209,6 +211,16 @@ export async function processSeedProfilePhotoOcr({
           parsedData.plantSpacingCm = sanitizeSpacingCm(spacingMatch[2]);
         }
 
+        const singlePlantSpacingMatch = line.match(
+          /abstand\s+von\s+(\d+)\s*cm/i,
+        );
+
+        if (singlePlantSpacingMatch && !parsedData.plantSpacingCm) {
+          parsedData.plantSpacingCm = sanitizeSpacingCm(
+            singlePlantSpacingMatch[1],
+          );
+        }
+
         const sowingWidthMatch = line.match(
           /(\d+(?:[,.]\d+)?)\s*cm\s*(?:breit|breite)/i,
         );
@@ -217,6 +229,9 @@ export async function processSeedProfilePhotoOcr({
           parsedData.sowingWidthCm = sanitizeSpacingCm(sowingWidthMatch[1]);
         }
 
+        const depthRangeMatch = line.match(
+          /saattiefe\s*(?:beträgt)?\s*(?:ca\.)?\s*(\d+(?:[,.]\d+)?)\s*(?:-|–|—|bis)\s*(\d+(?:[,.]\d+)?)\s*cm/i,
+        );
         const depthMatch = line.match(/(\d+(?:[,.]\d+)?)\s*cm\s*tief/i);
         const seedStrengthDepthMatch = lower.match(
           /(?:in\s*)?(\d+)\s*facher\s*samenst[aä]rke/i,
@@ -224,6 +239,15 @@ export async function processSeedProfilePhotoOcr({
 
         if (!parsedData.sowingDepth && seedStrengthDepthMatch) {
           parsedData.sowingDepth = `${seedStrengthDepthMatch[1]}x Samenstärke`;
+        }
+
+        if (!parsedData.sowingDepth && depthRangeMatch) {
+          const fromDepth = sanitizeNumber(depthRangeMatch[1]);
+          const toDepth = sanitizeNumber(depthRangeMatch[2]);
+
+          if (fromDepth && toDepth) {
+            parsedData.sowingDepth = `${fromDepth}-${toDepth}`;
+          }
         }
 
         if (depthMatch) {
@@ -243,6 +267,21 @@ export async function processSeedProfilePhotoOcr({
         }
       }
     });
+
+    if (isBackPhoto && !parsedData.sowingDepth) {
+      const depthRangeFullTextMatch = fullTextLower.match(
+        /saattiefe[\s\S]{0,80}?(\d+(?:[,.]\d+)?)\s*(?:-|–|—|bis)\s*(\d+(?:[,.]\d+)?)\s*cm/i,
+      );
+
+      if (depthRangeFullTextMatch) {
+        const fromDepth = sanitizeNumber(depthRangeFullTextMatch[1]);
+        const toDepth = sanitizeNumber(depthRangeFullTextMatch[2]);
+
+        if (fromDepth && toDepth) {
+          parsedData.sowingDepth = `${fromDepth}-${toDepth}`;
+        }
+      }
+    }
 
     if (isBackPhoto && !parsedData.germinationDays) {
       const daysFullTextMatch = fullTextLower.match(
@@ -279,6 +318,10 @@ export async function processSeedProfilePhotoOcr({
     }
 
     const fullSowingHints = [];
+
+    if (fullTextLower.includes("vorkultur im topf")) {
+      fullSowingHints.push("Vorkultur im Topf");
+    }
 
     if (fullTextLower.includes("leicht mit erde bedecken")) {
       fullSowingHints.push("Leicht mit Erde bedecken");
@@ -557,6 +600,20 @@ export async function processSeedProfilePhotoOcr({
         parsedData.harvestMonths = "Mai bis November";
         parsedData.harvestFromMonth = 5;
         parsedData.harvestToMonth = 11;
+      }
+
+      const outdoorPlantingMatch = fullTextLower.match(
+        new RegExp(
+          `(?:ab|im)\\s+(${MONTH_REGEX})[\\s\\S]{0,120}?(?:jungpflanzen|kräftigen\\s+jungpflanzen|kräftige\\s+jungpflanzen)[\\s\\S]{0,120}?(?:ins\\s+freiland|in\\s+das\\s+beet|auspflanzen|pflanzen)`,
+          "i",
+        ),
+      );
+
+      if (outdoorPlantingMatch && !parsedData.outdoorMonths) {
+        parsedData.outdoorMonths = {
+          from: normalizeMonthName(outdoorPlantingMatch[1]),
+          to: normalizeMonthName(outdoorPlantingMatch[1]),
+        };
       }
 
       const directFreilandMatch = fullTextLower.match(
