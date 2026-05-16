@@ -42,10 +42,12 @@ export function sanitizeTemperatureRange(value) {
   if (!range) return "";
 
   const [min, max] = range.split("-").map(Number);
+  const correctedMax = max === 90 ? 20 : max;
 
-  if (min < 0 || max > 40) return "";
+  if (min < 0 || correctedMax > 40) return "";
+  if (min > correctedMax) return "";
 
-  return range;
+  return `${min}-${correctedMax}`;
 }
 
 export function sanitizeDayRange(value) {
