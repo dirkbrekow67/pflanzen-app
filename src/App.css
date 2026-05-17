@@ -1095,6 +1095,36 @@ h2 {
   font-size: 14px;
 }
 
+.form-section-header-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.form-section-header-row h3 {
+  margin: 0;
+}
+
+.form-extra-area {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 10px;
+  background: #f7f7f7;
+  border: 1px solid #eeeeee;
+}
+
+.form-muted-text {
+  margin: 10px 0 0 0;
+  color: #555555;
+  font-size: 14px;
+}
+
+.button-compact {
+  padding: 7px 12px;
+  font-size: 14px;
+}
+
 .form-section-wide {
   grid-column: 1 / -1;
 }
