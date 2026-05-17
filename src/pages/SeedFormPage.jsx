@@ -424,9 +424,7 @@ function SeedFormPage({
                     onClick={() =>
                       setSelectedPhotoPreview({
                         src: `${API_BASE_URL}/uploads/${
-                          photo.previewFileName ||
-                          photo.processedFileName ||
-                          photo.fileName
+                          photo.previewFileName || photo.fileName
                         }`,
                         title:
                           photo.photoType === "pack_back"

@@ -14,6 +14,10 @@ function PotFormPage({
 }) {
   const navigate = useNavigate();
 
+  const selectedSeedProfile = seedProfiles.find(
+    (profile) => profile.id === selectedSeedProfileId,
+  );
+
   async function handleSaveAndGoBack() {
     const success = await handleAddPot();
 
@@ -25,6 +29,7 @@ function PotFormPage({
       });
     }
   }
+
   return (
     <div className="container">
       <h1>Topf belegen / bearbeiten</h1>
@@ -64,6 +69,48 @@ function PotFormPage({
           Profil ins Formular übernehmen
         </button>
       </section>
+      {selectedSeedProfile && (
+        <div className="seed-profile-summary">
+          <h3>Ausgewähltes Samenprofil</h3>
+
+          <p>
+            <strong>Pflanze:</strong> {selectedSeedProfile.plantName || "-"}
+            {selectedSeedProfile.variety
+              ? ` – ${selectedSeedProfile.variety}`
+              : ""}
+          </p>
+
+          <p>
+            <strong>Hersteller:</strong>{" "}
+            {selectedSeedProfile.manufacturer || "Unbekannt"}
+          </p>
+
+          <p>
+            <strong>Reihenabstand:</strong>{" "}
+            {selectedSeedProfile.rowSpacingCm || "-"} cm
+          </p>
+
+          <p>
+            <strong>Pflanzenabstand:</strong>{" "}
+            {selectedSeedProfile.plantSpacingCm || "-"} cm
+          </p>
+
+          <p>
+            <strong>Aussaatbreite:</strong>{" "}
+            {selectedSeedProfile.sowingWidthCm || "-"} cm
+          </p>
+
+          <p>
+            <strong>Hinweis zur Tiefe:</strong>{" "}
+            {selectedSeedProfile.sowingDepthNote || "-"}
+          </p>
+
+          <p>
+            <strong>Weitere Aussaat-Hinweise:</strong>{" "}
+            {selectedSeedProfile.sowingNotes || "-"}
+          </p>
+        </div>
+      )}
 
       <PotForm
         formData={formData}

@@ -102,6 +102,20 @@ function App() {
     return {};
   });
 
+  const [doneReminders, setDoneReminders] = useState(() => {
+    const saved = localStorage.getItem("doneReminders");
+
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return {};
+      }
+    }
+
+    return {};
+  });
+
   const [releaseReason, setReleaseReason] = useState("freigegeben");
   const [releaseReasonNote, setReleaseReasonNote] = useState("");
   const [showReleaseDialog, setShowReleaseDialog] = useState(false);
@@ -292,15 +306,30 @@ function App() {
   }
   const visibleReminders = reminders.filter((item) => {
     const key = `${item.potId}-${item.type}`;
+
+    if (doneReminders[key]) {
+      return false;
+    }
+
     const hiddenUntil = hiddenReminders[key];
 
     if (!hiddenUntil) return true;
 
     return new Date() >= new Date(hiddenUntil);
   });
+
   function resetHiddenReminders() {
     setHiddenReminders({});
+    setDoneReminders({});
   }
+
+  function markReminderDone(reminderKey) {
+    setDoneReminders((prev) => ({
+      ...prev,
+      [reminderKey]: new Date().toISOString(),
+    }));
+  }
+
   useEffect(() => {
     loadPots();
     loadReminders();
@@ -311,6 +340,10 @@ function App() {
   useEffect(() => {
     localStorage.setItem("hiddenReminders", JSON.stringify(hiddenReminders));
   }, [hiddenReminders]);
+
+  useEffect(() => {
+    localStorage.setItem("doneReminders", JSON.stringify(doneReminders));
+  }, [doneReminders]);
 
   // Speichert Formular-Daten: entweder als neuer Topf oder als Änderung an einem bestehenden Topf
   async function handleAddPot() {
@@ -659,6 +692,7 @@ function App() {
               reminders={visibleReminders}
               hideReminder={hideReminder}
               resetHiddenReminders={resetHiddenReminders}
+              markReminderDone={markReminderDone}
             />
           }
         />

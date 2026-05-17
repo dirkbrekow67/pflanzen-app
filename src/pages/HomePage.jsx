@@ -14,6 +14,7 @@ function HomePage({
   reminders,
   hideReminder,
   resetHiddenReminders,
+  markReminderDone,
 }) {
   return (
     <div className="container">
@@ -66,6 +67,13 @@ function HomePage({
                 >
                   +7 Tage
                 </button>
+
+                <button
+                  className="button"
+                  onClick={() => markReminderDone(`${item.potId}-${item.type}`)}
+                >
+                  Erledigt
+                </button>
               </div>
             </div>
           ))}
@@ -85,7 +93,7 @@ function HomePage({
             Auswertung öffnen
           </Link>
           <button onClick={resetHiddenReminders} className="button">
-            Ausgeblendete Hinweise wieder anzeigen
+            Ausgeblendete / erledigte Hinweise wieder anzeigen
           </button>
         </div>
       </section>
