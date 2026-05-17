@@ -297,39 +297,87 @@ h2 {
 }
 
 .pot-card {
-  padding: 12px;
-  margin-bottom: 12px;
-  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 0;
+  border-radius: 10px;
   cursor: pointer;
-  border: 2px dashed green;
-  background-color: #f9f9f9;
+  border: 1px solid #cfcfcf;
+  background-color: #ffffff;
+  color: #111111;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease;
 }
 
-/* Status */
+.pot-card:hover {
+  border-color: green;
+  background-color: #f7fff7;
+  transform: translateY(-1px);
+}
+
 .pot-card.empty {
-  background-color: #fff8dc;
+  background-color: #fffaf0;
 }
 
 .pot-card.active {
-  background-color: #f9f9f9;
+  background-color: #ffffff;
 }
 
-/* Selected */
 .pot-card.selected {
-  border: 3px solid darkgreen;
+  border: 2px solid darkgreen;
+  background-color: #eef9ee;
 }
 
-/* Kombinationen */
-.pot-card.empty.selected {
-  background-color: #f3e8b5;
+.pot-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
 }
 
-.pot-card.active.selected {
-  background-color: #dff5df;
-}
 .pot-title {
   color: green;
-  margin-top: 0;
+  margin: 0 0 4px 0;
+  font-size: 20px;
+}
+
+.pot-card-plant {
+  margin: 0;
+  color: #111111;
+}
+
+.pot-card-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+  color: #555555;
+  font-size: 14px;
+  flex-wrap: wrap;
+}
+
+.pot-status-badge {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pot-status-badge.active {
+  background: #d4edda;
+  color: #155724;
+}
+
+.pot-status-badge.empty {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.pot-selected-label {
+  color: darkgreen;
+  font-weight: 700;
 }
 
 .pot-detail-card {
@@ -355,6 +403,75 @@ h2 {
 .pot-detail-header h2 {
   margin: 0 0 8px 0;
   color: green;
+}
+
+.pot-detail-badges {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.pot-profile-badge {
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: #eef9ee;
+  color: darkgreen;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pot-detail-overview {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.pot-detail-overview > div {
+  padding: 14px;
+  border: 1px solid #dddddd;
+  border-radius: 10px;
+  background: #f7f7f7;
+  text-align: left;
+}
+
+.detail-label {
+  display: block;
+  margin-bottom: 4px;
+  color: #555555;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.detail-section-card {
+  border: 1px solid #eeeeee;
+  border-radius: 10px;
+  padding: 16px;
+  background: #ffffff;
+}
+
+.detail-fact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.detail-fact-grid p {
+  margin: 0;
+  padding: 10px;
+  border-radius: 8px;
+  background: #f7f7f7;
+}
+
+.detail-note {
+  margin: 0;
+  padding: 10px;
+  border-radius: 8px;
+  background: #f7f7f7;
+  color: #111111;
 }
 
 .pot-detail-actions {
@@ -475,6 +592,54 @@ h2 {
   text-align: left;
   padding: 24px;
   border-radius: 14px;
+}
+
+.seed-card-compact {
+  padding: 16px;
+  gap: 12px;
+}
+
+.seed-card-compact-header {
+  display: grid;
+  grid-template-columns: 96px 1fr auto;
+  gap: 14px;
+  align-items: start;
+}
+
+.seed-preview-image-compact {
+  width: 96px;
+  height: 72px;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+}
+
+.seed-card-title-block {
+  min-width: 0;
+}
+
+.seed-card-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 16px;
+  color: #111111;
+}
+
+.seed-card-facts p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.seed-card-note {
+  margin: 0;
+  padding: 8px;
+  border-radius: 8px;
+  background: #f7f7f7;
+  color: #111111;
+  font-size: 14px;
 }
 
 .seed-card-body {
@@ -908,6 +1073,10 @@ h2 {
   max-width: 1100px;
 }
 
+.seed-form-card {
+  max-width: 1100px;
+}
+
 .form-section-wide {
   grid-column: 1 / -1;
 }
@@ -933,6 +1102,137 @@ h2 {
   font-size: 14px;
 }
 
+.dashboard-actions {
+  max-width: 1100px;
+  margin: 0 auto 24px auto;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.reminder-box {
+  max-width: 1100px;
+  margin: 0 auto 24px auto;
+}
+
+.reminder-list {
+  display: grid;
+  gap: 12px;
+}
+
+.reminder-item {
+  padding: 14px;
+  border-left: 4px solid #d89b00;
+  background-color: #ffffff;
+  border-radius: 8px;
+}
+
+.reminder-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.reminder-title {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+}
+
+.reminder-message {
+  margin: 0;
+  color: #333333;
+}
+
+.reminder-days {
+  min-width: 78px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #fff3cd;
+  color: #856404;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.reminder-details {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #fff8e1;
+  color: #111111;
+  text-align: left;
+}
+
+.reminder-details p {
+  margin: 4px 0;
+}
+
+.reminder-actions {
+  margin-top: 12px;
+  margin-bottom: 0;
+}
+
+.management-box {
+  max-width: 1100px;
+}
+
+.management-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.management-card {
+  padding: 16px;
+  border: 1px solid #dddddd;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #111111;
+  text-align: left;
+}
+
+.management-card h3 {
+  margin-top: 0;
+  color: green;
+}
+
+.management-card .button,
+.management-card .button-link {
+  margin: 8px 8px 0 0;
+}
+
+.topf-section {
+  max-width: 1100px;
+  margin: 32px auto 0 auto;
+}
+
+.topf-section-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.topf-section-header h2 {
+  margin-bottom: 4px;
+}
+
+.topf-section-header p {
+  margin-top: 0;
+}
+
+.pot-list {
+  display: grid;
+  gap: 14px;
+}
+
+.pot-list .label-select-row {
+  margin-bottom: 0;
+}
+
 @media (max-width: 800px) {
   .pot-detail-header {
     flex-direction: column;
@@ -952,6 +1252,43 @@ h2 {
 
   .pot-detail-side {
     text-align: left;
+  }
+  .management-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .topf-section-header {
+    flex-direction: column;
+  }
+
+  .reminder-header {
+    flex-direction: column;
+  }
+
+  .reminder-days {
+    align-self: flex-start;
+  }
+
+  .seed-card-compact-header {
+    grid-template-columns: 72px 1fr;
+  }
+
+  .seed-card-compact-header .seed-status {
+    grid-column: 1 / -1;
+    width: fit-content;
+  }
+
+  .seed-preview-image-compact {
+    width: 72px;
+    height: 56px;
+  }
+
+  .seed-card-facts {
+    grid-template-columns: 1fr;
+  }
+  .pot-detail-overview,
+  .detail-fact-grid {
+    grid-template-columns: 1fr;
   }
 }
 

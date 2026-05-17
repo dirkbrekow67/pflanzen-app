@@ -9,327 +9,343 @@ function SeedForm({
   formError,
 }) {
   return (
-    <div className="card">
+    <div className="card seed-form-card">
       <h2>{editingId ? "Samenprofil bearbeiten" : "Neues Samenprofil"}</h2>
 
       {formError && <p className="error-box">{formError}</p>}
 
       {/* Grunddaten */}
-      <div className="section">
-        <h3 className="section-title">Grunddaten</h3>
+      <div className="form-grid">
+        <section className="form-section-card">
+          <h3>Grunddaten</h3>
 
-        <div className="form-field">
-          <label>Pflanzenname</label>
-          <input
-            value={formData.plantName}
-            onChange={(e) => handleFormChange("plantName", e.target.value)}
-          />
-        </div>
+          <div className="form-field">
+            <label>Pflanzenname</label>
+            <input
+              value={formData.plantName}
+              onChange={(e) => handleFormChange("plantName", e.target.value)}
+            />
+          </div>
 
-        <div className="form-field">
-          <label>Sorte</label>
-          <input
-            value={formData.variety}
-            onChange={(e) => handleFormChange("variety", e.target.value)}
-          />
-        </div>
+          <div className="form-field">
+            <label>Sorte</label>
+            <input
+              value={formData.variety}
+              onChange={(e) => handleFormChange("variety", e.target.value)}
+            />
+          </div>
 
-        <div className="form-field">
-          <label>Hersteller</label>
-          <input
-            value={formData.manufacturer}
-            onChange={(e) => handleFormChange("manufacturer", e.target.value)}
-          />
-        </div>
+          <div className="form-field">
+            <label>Hersteller</label>
+            <input
+              value={formData.manufacturer}
+              onChange={(e) => handleFormChange("manufacturer", e.target.value)}
+            />
+          </div>
 
-        <div className="form-field">
-          <label>Händler</label>
+          <div className="form-field">
+            <label>Händler</label>
 
-          <input
-            value={formData.retailer || ""}
-            onChange={(e) => handleFormChange("retailer", e.target.value)}
-          />
-        </div>
+            <input
+              value={formData.retailer || ""}
+              onChange={(e) => handleFormChange("retailer", e.target.value)}
+            />
+          </div>
 
-        <div className="form-field">
-          <label>Lebenszyklus</label>
-          <select
-            value={formData.lifecycle}
-            onChange={(e) => handleFormChange("lifecycle", e.target.value)}
-          >
-            <option value="annual">Einjährig</option>
-            <option value="biennial">Zweijährig</option>
-            <option value="perennial">Mehrjährig</option>
-          </select>
-        </div>
-      </div>
+          <div className="form-field">
+            <label>Lebenszyklus</label>
+            <select
+              value={formData.lifecycle}
+              onChange={(e) => handleFormChange("lifecycle", e.target.value)}
+            >
+              <option value="annual">Einjährig</option>
+              <option value="biennial">Zweijährig</option>
+              <option value="perennial">Mehrjährig</option>
+            </select>
+          </div>
+        </section>
 
-      {/* Keimung */}
-      <div className="section">
-        <h3 className="section-title">Keimung</h3>
+        {/* Keimung */}
+        <section className="form-section-card">
+          <h3>Keimung</h3>
 
-        <div className="form-field">
-          <label>Keimtemperatur min (°C)</label>
-          <input
-            type="number"
-            value={formData.germinationTempMin}
-            onChange={(e) =>
-              handleFormChange("germinationTempMin", e.target.value)
-            }
-          />
-        </div>
+          <div className="form-inline-grid">
+            <div className="form-field">
+              <label>Keimtemperatur min (°C)</label>
+              <input
+                type="number"
+                value={formData.germinationTempMin}
+                onChange={(e) =>
+                  handleFormChange("germinationTempMin", e.target.value)
+                }
+              />
+            </div>
 
-        <div className="form-field">
-          <label>Keimtemperatur max (°C)</label>
-          <input
-            type="number"
-            value={formData.germinationTempMax}
-            onChange={(e) =>
-              handleFormChange("germinationTempMax", e.target.value)
-            }
-          />
-        </div>
+            <div className="form-field">
+              <label>Keimtemperatur max (°C)</label>
+              <input
+                type="number"
+                value={formData.germinationTempMax}
+                onChange={(e) =>
+                  handleFormChange("germinationTempMax", e.target.value)
+                }
+              />
+            </div>
 
-        <div className="form-field">
-          <label>Keimdauer min (Tage)</label>
-          <input
-            type="number"
-            value={formData.germinationDaysMin}
-            onChange={(e) =>
-              handleFormChange("germinationDaysMin", e.target.value)
-            }
-          />
-        </div>
+            <div className="form-field">
+              <label>Keimdauer min (Tage)</label>
+              <input
+                type="number"
+                value={formData.germinationDaysMin}
+                onChange={(e) =>
+                  handleFormChange("germinationDaysMin", e.target.value)
+                }
+              />
+            </div>
 
-        <div className="form-field">
-          <label>Keimdauer max (Tage)</label>
-          <input
-            type="number"
-            value={formData.germinationDaysMax}
-            onChange={(e) =>
-              handleFormChange("germinationDaysMax", e.target.value)
-            }
-          />
-        </div>
-      </div>
+            <div className="form-field">
+              <label>Keimdauer max (Tage)</label>
+              <input
+                type="number"
+                value={formData.germinationDaysMax}
+                onChange={(e) =>
+                  handleFormChange("germinationDaysMax", e.target.value)
+                }
+              />
+            </div>
+          </div>
+        </section>
 
-      {/* Aussaat */}
-      <div className="section">
-        <h3 className="section-title">Aussaat</h3>
+        {/* Aussaat */}
+        <section className="form-section-card">
+          <h3>Aussaat</h3>
 
-        <div className="form-field">
-          <label>Aussaattiefe (cm)</label>
-          <input
-            type="number"
-            value={formData.sowingDepthCm}
-            onChange={(e) => handleFormChange("sowingDepthCm", e.target.value)}
-          />
-          <label htmlFor="sowingDepthNote">Hinweis zur Aussaat</label>
+          <div className="form-field">
+            <label>Aussaattiefe (cm)</label>
+            <input
+              type="number"
+              value={formData.sowingDepthCm}
+              onChange={(e) =>
+                handleFormChange("sowingDepthCm", e.target.value)
+              }
+            />
+            <label htmlFor="sowingDepthNote">Hinweis zur Aussaat</label>
 
-          <input
-            type="text"
-            id="sowingDepthNote"
-            value={formData.sowingDepthNote || ""}
-            onChange={(e) =>
-              handleFormChange("sowingDepthNote", e.target.value)
-            }
-          />
-          <label>Aussaatbreite (cm)</label>
-          <input
-            type="number"
-            value={formData.sowingWidthCm || ""}
-            onChange={(e) => handleFormChange("sowingWidthCm", e.target.value)}
-          />
+            <input
+              type="text"
+              id="sowingDepthNote"
+              value={formData.sowingDepthNote || ""}
+              onChange={(e) =>
+                handleFormChange("sowingDepthNote", e.target.value)
+              }
+            />
+            <label>Aussaatbreite (cm)</label>
+            <input
+              type="number"
+              value={formData.sowingWidthCm || ""}
+              onChange={(e) =>
+                handleFormChange("sowingWidthCm", e.target.value)
+              }
+            />
 
-          <label>Weitere Hinweise zur Aussaat</label>
-          <textarea
-            value={formData.sowingNotes || ""}
-            onChange={(e) => handleFormChange("sowingNotes", e.target.value)}
-          />
-        </div>
-        <div className="form-field">
-          <label>Reihenabstand (cm)</label>
+            <label>Weitere Hinweise zur Aussaat</label>
+            <textarea
+              value={formData.sowingNotes || ""}
+              onChange={(e) => handleFormChange("sowingNotes", e.target.value)}
+            />
+          </div>
+          <div className="form-field">
+            <label>Reihenabstand (cm)</label>
 
-          <input
-            type="number"
-            value={formData.rowSpacingCm || ""}
-            onChange={(e) => handleFormChange("rowSpacingCm", e.target.value)}
-          />
-        </div>
+            <input
+              type="number"
+              value={formData.rowSpacingCm || ""}
+              onChange={(e) => handleFormChange("rowSpacingCm", e.target.value)}
+            />
+          </div>
 
-        <div className="form-field">
-          <label>Pflanzenabstand (cm)</label>
+          <div className="form-field">
+            <label>Pflanzenabstand (cm)</label>
 
-          <input
-            type="number"
-            value={formData.plantSpacingCm || ""}
-            onChange={(e) => handleFormChange("plantSpacingCm", e.target.value)}
-          />
-        </div>
+            <input
+              type="number"
+              value={formData.plantSpacingCm || ""}
+              onChange={(e) =>
+                handleFormChange("plantSpacingCm", e.target.value)
+              }
+            />
+          </div>
 
-        <div className="form-field">
-          <label>Aussaat laut Packung von</label>
-          <select
-            value={formData.sowingFromMonth ?? ""}
-            onChange={(e) =>
-              handleFormChange(
-                "sowingFromMonth",
-                e.target.value ? Number(e.target.value) : null,
-              )
-            }
-          >
-            <option value="">Bitte auswählen</option>
-            {months.map((m) => (
-              <option key={m.value} value={m.value}>
-                {m.label}
-              </option>
-            ))}
-          </select>
-        </div>
+          <div className="form-field">
+            <label>Aussaat laut Packung von</label>
+            <select
+              value={formData.sowingFromMonth ?? ""}
+              onChange={(e) =>
+                handleFormChange(
+                  "sowingFromMonth",
+                  e.target.value ? Number(e.target.value) : null,
+                )
+              }
+            >
+              <option value="">Bitte auswählen</option>
+              {months.map((m) => (
+                <option key={m.value} value={m.value}>
+                  {m.label}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        <div className="form-field">
-          <label>Aussaat laut Packung bis</label>
-          <select
-            value={formData.sowingToMonth ?? ""}
-            onChange={(e) =>
-              handleFormChange(
-                "sowingToMonth",
-                e.target.value ? Number(e.target.value) : null,
-              )
-            }
-          >
-            <option value="">Bitte auswählen</option>
-            {months.map((m) => (
-              <option key={m.value} value={m.value}>
-                {m.label}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+          <div className="form-field">
+            <label>Aussaat laut Packung bis</label>
+            <select
+              value={formData.sowingToMonth ?? ""}
+              onChange={(e) =>
+                handleFormChange(
+                  "sowingToMonth",
+                  e.target.value ? Number(e.target.value) : null,
+                )
+              }
+            >
+              <option value="">Bitte auswählen</option>
+              {months.map((m) => (
+                <option key={m.value} value={m.value}>
+                  {m.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </section>
 
-      {/* Nach draußen */}
-      <div className="section">
-        <h3 className="section-title">Nach draußen</h3>
+        {/* Nach draußen */}
+        <section className="form-section-card">
+          <h3>Nach draußen</h3>
 
-        <div className="form-field">
-          <label>Nach draußen stellen von</label>
-          <select
-            value={formData.outdoorFromMonth ?? ""}
-            onChange={(e) =>
-              handleFormChange(
-                "outdoorFromMonth",
-                e.target.value ? Number(e.target.value) : null,
-              )
-            }
-          >
-            <option value="">Bitte auswählen</option>
-            {months.map((m) => (
-              <option key={m.value} value={m.value}>
-                {m.label}
-              </option>
-            ))}
-          </select>
-        </div>
+          <div className="form-inline-grid">
+            <div className="form-field">
+              <label>Nach draußen stellen von</label>
+              <select
+                value={formData.outdoorFromMonth ?? ""}
+                onChange={(e) =>
+                  handleFormChange(
+                    "outdoorFromMonth",
+                    e.target.value ? Number(e.target.value) : null,
+                  )
+                }
+              >
+                <option value="">Bitte auswählen</option>
+                {months.map((m) => (
+                  <option key={m.value} value={m.value}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        <div className="form-field">
-          <label>Nach draußen stellen bis</label>
-          <select
-            value={formData.outdoorToMonth ?? ""}
-            onChange={(e) =>
-              handleFormChange(
-                "outdoorToMonth",
-                e.target.value ? Number(e.target.value) : null,
-              )
-            }
-          >
-            <option value="">Bitte auswählen</option>
-            {months.map((m) => (
-              <option key={m.value} value={m.value}>
-                {m.label}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+            <div className="form-field">
+              <label>Nach draußen stellen bis</label>
+              <select
+                value={formData.outdoorToMonth ?? ""}
+                onChange={(e) =>
+                  handleFormChange(
+                    "outdoorToMonth",
+                    e.target.value ? Number(e.target.value) : null,
+                  )
+                }
+              >
+                <option value="">Bitte auswählen</option>
+                {months.map((m) => (
+                  <option key={m.value} value={m.value}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </section>
 
-      {/* Ernte */}
-      <div className="section">
-        <h3 className="section-title">Ernte</h3>
+        {/* Ernte */}
+        <section className="form-section-card">
+          <h3>Ernte</h3>
 
-        <div className="form-field">
-          <label>Ernte laut Packung von</label>
-          <select
-            value={formData.harvestFromMonth || ""}
-            onChange={(e) =>
-              handleFormChange(
-                "harvestFromMonth",
-                e.target.value ? Number(e.target.value) : "",
-              )
-            }
-          >
-            <option value="">Bitte auswählen</option>
-            {months.map((m) => (
-              <option key={m.value} value={m.value}>
-                {m.label}
-              </option>
-            ))}
-          </select>
-        </div>
+          <div className="form-inline-grid">
+            <div className="form-field">
+              <label>Ernte laut Packung von</label>
+              <select
+                value={formData.harvestFromMonth || ""}
+                onChange={(e) =>
+                  handleFormChange(
+                    "harvestFromMonth",
+                    e.target.value ? Number(e.target.value) : "",
+                  )
+                }
+              >
+                <option value="">Bitte auswählen</option>
+                {months.map((m) => (
+                  <option key={m.value} value={m.value}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        <div className="form-field">
-          <label>Ernte laut Packung bis</label>
-          <select
-            value={formData.harvestToMonth || ""}
-            onChange={(e) =>
-              handleFormChange(
-                "harvestToMonth",
-                e.target.value ? Number(e.target.value) : "",
-              )
-            }
-          >
-            <option value="">Bitte auswählen</option>
-            {months.map((m) => (
-              <option key={m.value} value={m.value}>
-                {m.label}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+            <div className="form-field">
+              <label>Ernte laut Packung bis</label>
+              <select
+                value={formData.harvestToMonth || ""}
+                onChange={(e) =>
+                  handleFormChange(
+                    "harvestToMonth",
+                    e.target.value ? Number(e.target.value) : "",
+                  )
+                }
+              >
+                <option value="">Bitte auswählen</option>
+                {months.map((m) => (
+                  <option key={m.value} value={m.value}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </section>
 
-      {/* Bewertung */}
-      <div className="section">
-        <h3 className="section-title">Bewertung</h3>
+        {/* Bewertung */}
+        <section className="form-section-card form-section-wide">
+          <h3>Bewertung</h3>
 
-        <div className="form-field">
-          <label>Status</label>
-          <select
-            value={formData.profileStatus}
-            onChange={(e) => handleFormChange("profileStatus", e.target.value)}
-          >
-            <option value="testen">Testen</option>
-            <option value="wiederverwenden">Wiederverwenden</option>
-            <option value="keimt-schlecht">Keimt schlecht</option>
-            <option value="nicht-brauchbar">Nicht brauchbar</option>
-          </select>
-        </div>
+          <div className="form-field">
+            <label>Status</label>
+            <select
+              value={formData.profileStatus}
+              onChange={(e) =>
+                handleFormChange("profileStatus", e.target.value)
+              }
+            >
+              <option value="testen">Testen</option>
+              <option value="wiederverwenden">Wiederverwenden</option>
+              <option value="keimt-schlecht">Keimt schlecht</option>
+              <option value="nicht-brauchbar">Nicht brauchbar</option>
+            </select>
+          </div>
 
-        <div className="form-field">
-          <label>Erfahrungen</label>
-          <textarea
-            value={formData.experience}
-            onChange={(e) => handleFormChange("experience", e.target.value)}
-          />
-        </div>
+          <div className="form-field">
+            <label>Erfahrungen</label>
+            <textarea
+              value={formData.experience}
+              onChange={(e) => handleFormChange("experience", e.target.value)}
+            />
+          </div>
 
-        <div className="form-field">
-          <label>Bemerkungen</label>
-          <textarea
-            value={formData.profileNotes}
-            onChange={(e) => handleFormChange("profileNotes", e.target.value)}
-          />
-        </div>
+          <div className="form-field">
+            <label>Bemerkungen</label>
+            <textarea
+              value={formData.profileNotes}
+              onChange={(e) => handleFormChange("profileNotes", e.target.value)}
+            />
+          </div>
+        </section>
       </div>
 
       <div className="form-actions">

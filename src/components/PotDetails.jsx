@@ -20,15 +20,18 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
       <div className="pot-detail-header">
         <div>
           <h2>{pot.id}</h2>
-          <p>
-            <strong>Status:</strong> {formatPotStatus(pot.status)}
-          </p>
-          <p>
-            <strong>
-              {pot.status === "empty" ? "Letztes Profil:" : "Pflanze:"}
-            </strong>{" "}
-            {pot.plantName || "-"}
-          </p>
+
+          <div className="pot-detail-badges">
+            <span
+              className={`pot-status-badge ${pot.status === "empty" ? "empty" : "active"}`}
+            >
+              {formatPotStatus(pot.status)}
+            </span>
+
+            {pot.seedProfileId && (
+              <span className="pot-profile-badge">{pot.seedProfileId}</span>
+            )}
+          </div>
         </div>
 
         <div className="pot-detail-actions">
@@ -44,67 +47,92 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
         </div>
       </div>
 
+      <div className="pot-detail-overview">
+        <div>
+          <span className="detail-label">
+            {pot.status === "empty" ? "Letzte Pflanze" : "Pflanze"}
+          </span>
+          <strong>{pot.plantName || "-"}</strong>
+        </div>
+
+        <div>
+          <span className="detail-label">Aussaat</span>
+          <strong>{pot.sowingDate || "-"}</strong>
+        </div>
+
+        <div>
+          <span className="detail-label">Nachgesät</span>
+          <strong>{pot.resowingDate || "-"}</strong>
+        </div>
+
+        <div>
+          <span className="detail-label">Lebenszyklus</span>
+          <strong>{formatLifecycle(pot.lifecycle)}</strong>
+        </div>
+      </div>
+
       <div className="pot-detail-grid">
         <div className="pot-detail-main">
-          <section className="detail-section">
-            <h3>Grunddaten</h3>
-            <p>
-              <strong>Lebensdauer:</strong> {formatLifecycle(pot.lifecycle)}
-            </p>
-            <p>
-              <strong>
-                {pot.status === "empty"
-                  ? "Letztes Samenprofil:"
-                  : "Samenprofil:"}
-              </strong>{" "}
-              {pot.seedProfileId
-                ? `${pot.plantName || "-"} (${pot.seedProfileId})`
-                : "Kein Profil zugewiesen"}
-            </p>
-          </section>
-
-          <section className="detail-section">
+          <section className="detail-section detail-section-card">
             <h3>Keimung</h3>
-            <p>
-              <strong>Keimtemperatur:</strong> {pot.germinationTempMin} bis{" "}
-              {pot.germinationTempMax} °C
-            </p>
-            <p>
-              <strong>Keimdauer:</strong> {pot.germinationDaysMin} bis{" "}
-              {pot.germinationDaysMax} Tage
-            </p>
+
+            <div className="detail-fact-grid">
+              <p>
+                <span className="detail-label">Temperatur</span>
+                <strong>
+                  {pot.germinationTempMin || "-"} bis{" "}
+                  {pot.germinationTempMax || "-"} °C
+                </strong>
+              </p>
+
+              <p>
+                <span className="detail-label">Dauer</span>
+                <strong>
+                  {pot.germinationDaysMin || "-"} bis{" "}
+                  {pot.germinationDaysMax || "-"} Tage
+                </strong>
+              </p>
+            </div>
           </section>
 
-          <section className="detail-section">
+          <section className="detail-section detail-section-card">
             <h3>Aussaat</h3>
-            <p>
-              <strong>Aussaatdatum:</strong> {pot.sowingDate || "-"}
-            </p>
-            <p>
-              <strong>Nachgesät am:</strong> {pot.resowingDate || "-"}
-            </p>
-            <p>
-              <strong>Aussaattiefe:</strong> {pot.sowingDepthCm} cm
-            </p>
-            <p>
-              <strong>Aussaat laut Packung:</strong>{" "}
-              {monthLabels[pot.sowingFromMonth]} bis{" "}
-              {monthLabels[pot.sowingToMonth]}
-            </p>
+
+            <div className="detail-fact-grid">
+              <p>
+                <span className="detail-label">Aussaattiefe</span>
+                <strong>{pot.sowingDepthCm ?? "-"} cm</strong>
+              </p>
+
+              <p>
+                <span className="detail-label">Packungszeitraum</span>
+                <strong>
+                  {monthLabels[pot.sowingFromMonth] || "-"} bis{" "}
+                  {monthLabels[pot.sowingToMonth] || "-"}
+                </strong>
+              </p>
+            </div>
           </section>
 
-          <section className="detail-section">
+          <section className="detail-section detail-section-card">
             <h3>Nach draußen</h3>
-            <p>
-              <strong>Zeitraum:</strong> {monthLabels[pot.outdoorFromMonth]} bis{" "}
-              {monthLabels[pot.outdoorToMonth]}
-            </p>
+
+            <div className="detail-fact-grid">
+              <p>
+                <span className="detail-label">Zeitraum</span>
+                <strong>
+                  {monthLabels[pot.outdoorFromMonth] || "-"} bis{" "}
+                  {monthLabels[pot.outdoorToMonth] || "-"}
+                </strong>
+              </p>
+            </div>
           </section>
 
-          <section className="detail-section">
+          <section className="detail-section detail-section-card">
             <h3>Beobachtungen</h3>
-            <p>
-              <strong>Topfnotizen:</strong> {pot.potNotes || "-"}
+
+            <p className="detail-note">
+              {pot.potNotes || "Keine Notiz vorhanden."}
             </p>
           </section>
         </div>
