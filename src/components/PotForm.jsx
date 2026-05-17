@@ -9,8 +9,21 @@ function PotForm({
 }) {
   return (
     <div className="card pot-form-card">
-      <h2>{editingPotId ? "Topf bearbeiten" : "Neuen Topf hinzufügen"}</h2>
+      <div className="form-header-row">
+        <div>
+          <h2>{editingPotId ? "Topf bearbeiten" : "Neuen Topf hinzufügen"}</h2>
+          <p className="form-subtitle">
+            Aktuelle Belegung, Aussaatdaten und Beobachtungen zum Topf.
+          </p>
+        </div>
+
+        {editingPotId && (
+          <span className="pot-profile-badge">{editingPotId}</span>
+        )}
+      </div>
+
       {formError && <p className="error-box">{formError}</p>}
+
       <div className="form-grid">
         <section className="form-section-card">
           <h3>Grunddaten</h3>
@@ -36,12 +49,13 @@ function PotForm({
             </select>
           </div>
         </section>
+
         <section className="form-section-card">
           <h3>Keimung</h3>
 
           <div className="form-inline-grid">
             <div className="form-field">
-              <label>Keimtemperatur min (°C)</label>
+              <label>Temperatur min (°C)</label>
               <input
                 type="number"
                 value={formData.germinationTempMin}
@@ -52,7 +66,7 @@ function PotForm({
             </div>
 
             <div className="form-field">
-              <label>Keimtemperatur max (°C)</label>
+              <label>Temperatur max (°C)</label>
               <input
                 type="number"
                 value={formData.germinationTempMax}
@@ -63,7 +77,7 @@ function PotForm({
             </div>
 
             <div className="form-field">
-              <label>Keimdauer min (Tage)</label>
+              <label>Dauer min (Tage)</label>
               <input
                 type="number"
                 value={formData.germinationDaysMin}
@@ -74,7 +88,7 @@ function PotForm({
             </div>
 
             <div className="form-field">
-              <label>Keimdauer max (Tage)</label>
+              <label>Dauer max (Tage)</label>
               <input
                 type="number"
                 value={formData.germinationDaysMax}
@@ -85,19 +99,10 @@ function PotForm({
             </div>
           </div>
         </section>
+
         <section className="form-section-card">
           <h3>Aussaat</h3>
 
-          <div className="form-field">
-            <label>Aussaattiefe (cm)</label>
-            <input
-              type="number"
-              value={formData.sowingDepthCm}
-              onChange={(e) =>
-                handleFormChange("sowingDepthCm", e.target.value)
-              }
-            />
-          </div>
           <div className="form-inline-grid">
             <div className="form-field">
               <label>Aussaatdatum</label>
@@ -107,6 +112,7 @@ function PotForm({
                 onChange={(e) => handleFormChange("sowingDate", e.target.value)}
               />
             </div>
+
             <div className="form-field">
               <label>Nachgesät am</label>
               <input
@@ -118,6 +124,31 @@ function PotForm({
               />
             </div>
           </div>
+
+          <div className="form-inline-grid">
+            <div className="form-field">
+              <label>Aussaattiefe (cm)</label>
+              <input
+                type="number"
+                value={formData.sowingDepthCm}
+                onChange={(e) =>
+                  handleFormChange("sowingDepthCm", e.target.value)
+                }
+              />
+            </div>
+
+            <div className="form-field">
+              <label>Profil-ID</label>
+              <input
+                type="text"
+                value={formData.seedProfileId || ""}
+                onChange={(e) =>
+                  handleFormChange("seedProfileId", e.target.value)
+                }
+              />
+            </div>
+          </div>
+
           <div className="form-inline-grid">
             <div className="form-field">
               <label>Aussaat laut Packung von</label>
@@ -155,9 +186,10 @@ function PotForm({
 
         <section className="form-section-card">
           <h3>Nach draußen</h3>
+
           <div className="form-inline-grid">
             <div className="form-field">
-              <label>Nach draußen stellen von</label>
+              <label>Von</label>
               <select
                 value={formData.outdoorFromMonth}
                 onChange={(e) =>
@@ -173,7 +205,7 @@ function PotForm({
             </div>
 
             <div className="form-field">
-              <label>Nach draußen stellen bis</label>
+              <label>Bis</label>
               <select
                 value={formData.outdoorToMonth}
                 onChange={(e) =>
@@ -189,6 +221,7 @@ function PotForm({
             </div>
           </div>
         </section>
+
         <section className="form-section-card form-section-wide">
           <h3>Beobachtungen</h3>
 
@@ -201,6 +234,7 @@ function PotForm({
           </div>
         </section>
       </div>
+
       <div className="form-actions">
         <button onClick={handleAddPot} className="button">
           {editingPotId ? "Änderungen speichern" : "Hinzufügen"}

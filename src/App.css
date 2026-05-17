@@ -1077,6 +1077,24 @@ h2 {
   max-width: 1100px;
 }
 
+.form-header-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.form-header-row h2 {
+  margin-bottom: 4px;
+}
+
+.form-subtitle {
+  margin: 0;
+  color: #333333;
+  font-size: 14px;
+}
+
 .form-section-wide {
   grid-column: 1 / -1;
 }
