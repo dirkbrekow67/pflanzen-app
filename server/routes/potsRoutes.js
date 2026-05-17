@@ -33,6 +33,13 @@ router.post("/", (req, res) => {
       outdoorToMonth,
       seedProfileId,
       potNotes,
+      harvestFromMonth,
+      harvestToMonth,
+      sowingDepthNote,
+      rowSpacingCm,
+      plantSpacingCm,
+      sowingWidthCm,
+      sowingNotes,
     } = req.body;
 
     const stmt = db.prepare(`
@@ -53,9 +60,16 @@ router.post("/", (req, res) => {
         outdoorFromMonth,
         outdoorToMonth,
         seedProfileId,
-        potNotes
+        potNotes,
+        harvestFromMonth,
+        harvestToMonth,
+        sowingDepthNote,
+        rowSpacingCm,
+        plantSpacingCm,
+        sowingWidthCm,
+        sowingNotes
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     stmt.run(
@@ -76,6 +90,13 @@ router.post("/", (req, res) => {
       outdoorToMonth,
       seedProfileId,
       potNotes,
+      harvestFromMonth,
+      harvestToMonth,
+      sowingDepthNote,
+      rowSpacingCm,
+      plantSpacingCm,
+      sowingWidthCm,
+      sowingNotes,
     );
 
     res.json({
@@ -111,6 +132,13 @@ router.put("/:id", (req, res) => {
       outdoorToMonth,
       seedProfileId,
       potNotes,
+      harvestFromMonth,
+      harvestToMonth,
+      sowingDepthNote,
+      rowSpacingCm,
+      plantSpacingCm,
+      sowingWidthCm,
+      sowingNotes,
     } = req.body;
 
     db.prepare(
@@ -131,7 +159,14 @@ router.put("/:id", (req, res) => {
           outdoorFromMonth = ?,
           outdoorToMonth = ?,
           seedProfileId = ?,
-          potNotes = ?
+          potNotes = ?,
+          harvestFromMonth = ?,
+          harvestToMonth = ?,
+          sowingDepthNote = ?,
+          rowSpacingCm = ?,
+          plantSpacingCm = ?,
+          sowingWidthCm = ?,
+          sowingNotes = ?
       WHERE id = ?
     `,
     ).run(
@@ -151,6 +186,13 @@ router.put("/:id", (req, res) => {
       outdoorToMonth,
       seedProfileId,
       potNotes,
+      harvestFromMonth,
+      harvestToMonth,
+      sowingDepthNote,
+      rowSpacingCm,
+      plantSpacingCm,
+      sowingWidthCm,
+      sowingNotes,
       id,
     );
 

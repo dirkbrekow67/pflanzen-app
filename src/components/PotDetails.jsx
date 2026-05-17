@@ -15,6 +15,15 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
 
   const qrValue = `${QR_BASE_URL}/pot/${pot.id}`;
 
+  const hasSowingExtras =
+    pot.sowingDepthNote ||
+    pot.sowingNotes ||
+    pot.rowSpacingCm ||
+    pot.plantSpacingCm ||
+    pot.sowingWidthCm;
+
+  const hasHarvestData = pot.harvestFromMonth || pot.harvestToMonth;
+
   return (
     <div className="pot-detail-card">
       <div className="pot-detail-header">
@@ -23,7 +32,9 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
 
           <div className="pot-detail-badges">
             <span
-              className={`pot-status-badge ${pot.status === "empty" ? "empty" : "active"}`}
+              className={`pot-status-badge ${
+                pot.status === "empty" ? "empty" : "active"
+              }`}
             >
               {formatPotStatus(pot.status)}
             </span>
@@ -74,6 +85,22 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
       <div className="pot-detail-grid">
         <div className="pot-detail-main">
           <section className="detail-section detail-section-card">
+            <h3>Grunddaten</h3>
+
+            <div className="detail-fact-grid">
+              <p>
+                <span className="detail-label">Samenprofil</span>
+                <strong>{pot.seedProfileId || "-"}</strong>
+              </p>
+
+              <p>
+                <span className="detail-label">Status</span>
+                <strong>{formatPotStatus(pot.status)}</strong>
+              </p>
+            </div>
+          </section>
+
+          <section className="detail-section detail-section-card">
             <h3>Keimung</h3>
 
             <div className="detail-fact-grid">
@@ -111,7 +138,44 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
                   {monthLabels[pot.sowingToMonth] || "-"}
                 </strong>
               </p>
+
+              {pot.rowSpacingCm && (
+                <p>
+                  <span className="detail-label">Reihenabstand</span>
+                  <strong>{pot.rowSpacingCm} cm</strong>
+                </p>
+              )}
+
+              {pot.plantSpacingCm && (
+                <p>
+                  <span className="detail-label">Pflanzenabstand</span>
+                  <strong>{pot.plantSpacingCm} cm</strong>
+                </p>
+              )}
+
+              {pot.sowingWidthCm && (
+                <p>
+                  <span className="detail-label">Aussaatbreite</span>
+                  <strong>{pot.sowingWidthCm} cm</strong>
+                </p>
+              )}
             </div>
+
+            {hasSowingExtras && (
+              <div className="detail-note-block">
+                {pot.sowingDepthNote && (
+                  <p className="detail-note">
+                    <strong>Hinweis zur Aussaat:</strong> {pot.sowingDepthNote}
+                  </p>
+                )}
+
+                {pot.sowingNotes && (
+                  <p className="detail-note">
+                    <strong>Weitere Aussaat-Hinweise:</strong> {pot.sowingNotes}
+                  </p>
+                )}
+              </div>
+            )}
           </section>
 
           <section className="detail-section detail-section-card">
@@ -127,6 +191,22 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
               </p>
             </div>
           </section>
+
+          {hasHarvestData && (
+            <section className="detail-section detail-section-card">
+              <h3>Ernte</h3>
+
+              <div className="detail-fact-grid">
+                <p>
+                  <span className="detail-label">Zeitraum</span>
+                  <strong>
+                    {monthLabels[pot.harvestFromMonth] || "-"} bis{" "}
+                    {monthLabels[pot.harvestToMonth] || "-"}
+                  </strong>
+                </p>
+              </div>
+            </section>
+          )}
 
           <section className="detail-section detail-section-card">
             <h3>Beobachtungen</h3>

@@ -34,6 +34,9 @@ function HomePage({
         <Link to="/seeds" className="button-link">
           Samenbibliothek öffnen
         </Link>
+        <Link to="/planning" className="button-link">
+          Pflanzplanung öffnen
+        </Link>
         <button
           type="button"
           className="button"

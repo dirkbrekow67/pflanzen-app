@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { months } from "../constants/months";
 
 function PotForm({
@@ -7,6 +8,8 @@ function PotForm({
   formError,
   editingPotId,
 }) {
+  const [showSowingExtras, setShowSowingExtras] = useState(false);
+
   return (
     <div className="card pot-form-card">
       <div className="form-header-row">
@@ -101,7 +104,17 @@ function PotForm({
         </section>
 
         <section className="form-section-card">
-          <h3>Aussaat</h3>
+          <div className="form-section-header-row">
+            <h3>Aussaat</h3>
+
+            <button
+              type="button"
+              className="button button-compact"
+              onClick={() => setShowSowingExtras((current) => !current)}
+            >
+              {showSowingExtras ? "Zusatzdaten ausblenden" : "Zusatzdaten"}
+            </button>
+          </div>
 
           <div className="form-inline-grid">
             <div className="form-field">
@@ -153,11 +166,15 @@ function PotForm({
             <div className="form-field">
               <label>Aussaat laut Packung von</label>
               <select
-                value={formData.sowingFromMonth}
+                value={formData.sowingFromMonth ?? ""}
                 onChange={(e) =>
-                  handleFormChange("sowingFromMonth", Number(e.target.value))
+                  handleFormChange(
+                    "sowingFromMonth",
+                    e.target.value ? Number(e.target.value) : "",
+                  )
                 }
               >
+                <option value="">Bitte auswählen</option>
                 {months.map((month) => (
                   <option key={month.value} value={month.value}>
                     {month.label}
@@ -169,11 +186,15 @@ function PotForm({
             <div className="form-field">
               <label>Aussaat laut Packung bis</label>
               <select
-                value={formData.sowingToMonth}
+                value={formData.sowingToMonth ?? ""}
                 onChange={(e) =>
-                  handleFormChange("sowingToMonth", Number(e.target.value))
+                  handleFormChange(
+                    "sowingToMonth",
+                    e.target.value ? Number(e.target.value) : "",
+                  )
                 }
               >
+                <option value="">Bitte auswählen</option>
                 {months.map((month) => (
                   <option key={month.value} value={month.value}>
                     {month.label}
@@ -182,6 +203,66 @@ function PotForm({
               </select>
             </div>
           </div>
+
+          {showSowingExtras && (
+            <div className="form-extra-area">
+              <div className="form-inline-grid">
+                <div className="form-field">
+                  <label>Reihenabstand (cm)</label>
+                  <input
+                    type="number"
+                    value={formData.rowSpacingCm || ""}
+                    onChange={(e) =>
+                      handleFormChange("rowSpacingCm", e.target.value)
+                    }
+                  />
+                </div>
+
+                <div className="form-field">
+                  <label>Pflanzenabstand (cm)</label>
+                  <input
+                    type="number"
+                    value={formData.plantSpacingCm || ""}
+                    onChange={(e) =>
+                      handleFormChange("plantSpacingCm", e.target.value)
+                    }
+                  />
+                </div>
+
+                <div className="form-field">
+                  <label>Aussaatbreite (cm)</label>
+                  <input
+                    type="number"
+                    value={formData.sowingWidthCm || ""}
+                    onChange={(e) =>
+                      handleFormChange("sowingWidthCm", e.target.value)
+                    }
+                  />
+                </div>
+              </div>
+
+              <div className="form-field">
+                <label>Hinweis zur Aussaat</label>
+                <input
+                  type="text"
+                  value={formData.sowingDepthNote || ""}
+                  onChange={(e) =>
+                    handleFormChange("sowingDepthNote", e.target.value)
+                  }
+                />
+              </div>
+
+              <div className="form-field">
+                <label>Weitere Hinweise zur Aussaat</label>
+                <textarea
+                  value={formData.sowingNotes || ""}
+                  onChange={(e) =>
+                    handleFormChange("sowingNotes", e.target.value)
+                  }
+                />
+              </div>
+            </div>
+          )}
         </section>
 
         <section className="form-section-card">
@@ -191,11 +272,15 @@ function PotForm({
             <div className="form-field">
               <label>Von</label>
               <select
-                value={formData.outdoorFromMonth}
+                value={formData.outdoorFromMonth ?? ""}
                 onChange={(e) =>
-                  handleFormChange("outdoorFromMonth", Number(e.target.value))
+                  handleFormChange(
+                    "outdoorFromMonth",
+                    e.target.value ? Number(e.target.value) : "",
+                  )
                 }
               >
+                <option value="">Bitte auswählen</option>
                 {months.map((month) => (
                   <option key={month.value} value={month.value}>
                     {month.label}
@@ -207,11 +292,61 @@ function PotForm({
             <div className="form-field">
               <label>Bis</label>
               <select
-                value={formData.outdoorToMonth}
+                value={formData.outdoorToMonth ?? ""}
                 onChange={(e) =>
-                  handleFormChange("outdoorToMonth", Number(e.target.value))
+                  handleFormChange(
+                    "outdoorToMonth",
+                    e.target.value ? Number(e.target.value) : "",
+                  )
                 }
               >
+                <option value="">Bitte auswählen</option>
+                {months.map((month) => (
+                  <option key={month.value} value={month.value}>
+                    {month.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section className="form-section-card">
+          <h3>Ernte</h3>
+
+          <div className="form-inline-grid">
+            <div className="form-field">
+              <label>Von</label>
+              <select
+                value={formData.harvestFromMonth || ""}
+                onChange={(e) =>
+                  handleFormChange(
+                    "harvestFromMonth",
+                    e.target.value ? Number(e.target.value) : "",
+                  )
+                }
+              >
+                <option value="">Bitte auswählen</option>
+                {months.map((month) => (
+                  <option key={month.value} value={month.value}>
+                    {month.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-field">
+              <label>Bis</label>
+              <select
+                value={formData.harvestToMonth || ""}
+                onChange={(e) =>
+                  handleFormChange(
+                    "harvestToMonth",
+                    e.target.value ? Number(e.target.value) : "",
+                  )
+                }
+              >
+                <option value="">Bitte auswählen</option>
                 {months.map((month) => (
                   <option key={month.value} value={month.value}>
                     {month.label}

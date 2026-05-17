@@ -453,10 +453,17 @@ function App() {
       germinationDaysMin: selectedSeedProfile.germinationDaysMin,
       germinationDaysMax: selectedSeedProfile.germinationDaysMax,
       sowingDepthCm: selectedSeedProfile.sowingDepthCm,
+      sowingDepthNote: selectedSeedProfile.sowingDepthNote || "",
+      sowingWidthCm: selectedSeedProfile.sowingWidthCm || "",
+      sowingNotes: selectedSeedProfile.sowingNotes || "",
+      rowSpacingCm: selectedSeedProfile.rowSpacingCm || "",
+      plantSpacingCm: selectedSeedProfile.plantSpacingCm || "",
       sowingFromMonth: selectedSeedProfile.sowingFromMonth,
       sowingToMonth: selectedSeedProfile.sowingToMonth,
       outdoorFromMonth: selectedSeedProfile.outdoorFromMonth,
       outdoorToMonth: selectedSeedProfile.outdoorToMonth,
+      harvestFromMonth: selectedSeedProfile.harvestFromMonth || "",
+      harvestToMonth: selectedSeedProfile.harvestToMonth || "",
       seedProfileId: selectedSeedProfile.id,
     });
 

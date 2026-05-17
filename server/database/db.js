@@ -20,9 +20,58 @@ CREATE TABLE IF NOT EXISTS pots (
   outdoorFromMonth INTEGER,
   outdoorToMonth INTEGER,
   seedProfileId TEXT,
-  potNotes TEXT
+  potNotes TEXT,
+  harvestFromMonth INTEGER,
+  harvestToMonth INTEGER,
+  sowingDepthNote TEXT,
+  rowSpacingCm REAL,
+  plantSpacingCm REAL,
+  sowingWidthCm REAL,
+  sowingNotes TEXT
 );
 `);
+
+try {
+  db.prepare("ALTER TABLE pots ADD COLUMN harvestFromMonth INTEGER").run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare("ALTER TABLE pots ADD COLUMN harvestToMonth INTEGER").run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare("ALTER TABLE pots ADD COLUMN sowingDepthNote TEXT").run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare("ALTER TABLE pots ADD COLUMN rowSpacingCm REAL").run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare("ALTER TABLE pots ADD COLUMN plantSpacingCm REAL").run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare("ALTER TABLE pots ADD COLUMN sowingWidthCm REAL").run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare("ALTER TABLE pots ADD COLUMN sowingNotes TEXT").run();
+} catch {
+  // Spalte existiert bereits
+}
 
 db.exec(`
 CREATE TABLE IF NOT EXISTS pot_history (
