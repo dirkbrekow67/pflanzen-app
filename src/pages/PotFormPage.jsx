@@ -1,5 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import PotForm from "../components/PotForm";
+import { monthLabels } from "../constants/months";
+import { formatLifecycle } from "../utils/formatHelpers";
 
 function PotFormPage({
   formData,
@@ -40,12 +42,21 @@ function PotFormPage({
         </Link>
       </div>
 
-      <section className="card">
-        <h2>Samenprofil laden</h2>
-        <p>
-          Wähle ein Profil aus der Samenbibliothek und übernimm die Stammdaten
-          ins Formular.
-        </p>
+      <section className="card pot-profile-loader">
+        <div className="pot-profile-loader-header">
+          <div>
+            <h2>Samenprofil laden</h2>
+
+            <p>
+              Wähle ein Profil aus der Samenbibliothek und übernimm die
+              wichtigsten Stammdaten in den Topf.
+            </p>
+          </div>
+
+          <Link to="/seeds" className="button-link">
+            Samenbibliothek öffnen
+          </Link>
+        </div>
 
         <div className="form-field">
           <label>Samenprofil</label>
@@ -65,51 +76,144 @@ function PotFormPage({
           </select>
         </div>
 
-        <button onClick={handleApplySeedProfile} className="button">
+        <button
+          type="button"
+          onClick={handleApplySeedProfile}
+          className="button"
+          disabled={!selectedSeedProfileId}
+        >
           Profil ins Formular übernehmen
         </button>
       </section>
+
       {selectedSeedProfile && (
-        <div className="seed-profile-summary">
-          <h3>Ausgewähltes Samenprofil</h3>
+        <section className="seed-profile-summary">
+          <div className="seed-profile-summary-header">
+            <div>
+              <h3>Ausgewähltes Samenprofil</h3>
 
-          <p>
-            <strong>Pflanze:</strong> {selectedSeedProfile.plantName || "-"}
-            {selectedSeedProfile.variety
-              ? ` – ${selectedSeedProfile.variety}`
-              : ""}
-          </p>
+              <p>
+                <strong>{selectedSeedProfile.plantName || "-"}</strong>
+                {selectedSeedProfile.variety
+                  ? ` – ${selectedSeedProfile.variety}`
+                  : ""}
+              </p>
+            </div>
 
-          <p>
-            <strong>Hersteller:</strong>{" "}
-            {selectedSeedProfile.manufacturer || "Unbekannt"}
-          </p>
+            <span className="pot-profile-badge">{selectedSeedProfile.id}</span>
+          </div>
 
-          <p>
-            <strong>Reihenabstand:</strong>{" "}
-            {selectedSeedProfile.rowSpacingCm || "-"} cm
-          </p>
+          <div className="seed-profile-summary-grid">
+            <p>
+              <span className="detail-label">Hersteller</span>
+              <strong>{selectedSeedProfile.manufacturer || "-"}</strong>
+            </p>
 
-          <p>
-            <strong>Pflanzenabstand:</strong>{" "}
-            {selectedSeedProfile.plantSpacingCm || "-"} cm
-          </p>
+            <p>
+              <span className="detail-label">Händler</span>
+              <strong>{selectedSeedProfile.retailer || "-"}</strong>
+            </p>
 
-          <p>
-            <strong>Aussaatbreite:</strong>{" "}
-            {selectedSeedProfile.sowingWidthCm || "-"} cm
-          </p>
+            <p>
+              <span className="detail-label">Lebenszyklus</span>
+              <strong>{formatLifecycle(selectedSeedProfile.lifecycle)}</strong>
+            </p>
 
-          <p>
-            <strong>Hinweis zur Tiefe:</strong>{" "}
-            {selectedSeedProfile.sowingDepthNote || "-"}
-          </p>
+            <p>
+              <span className="detail-label">Aussaat</span>
+              <strong>
+                {monthLabels[selectedSeedProfile.sowingFromMonth] || "-"} bis{" "}
+                {monthLabels[selectedSeedProfile.sowingToMonth] || "-"}
+              </strong>
+            </p>
 
-          <p>
-            <strong>Weitere Aussaat-Hinweise:</strong>{" "}
-            {selectedSeedProfile.sowingNotes || "-"}
-          </p>
-        </div>
+            <p>
+              <span className="detail-label">Keimdauer</span>
+              <strong>
+                {selectedSeedProfile.germinationDaysMin || "-"} bis{" "}
+                {selectedSeedProfile.germinationDaysMax || "-"} Tage
+              </strong>
+            </p>
+
+            <p>
+              <span className="detail-label">Keimtemperatur</span>
+              <strong>
+                {selectedSeedProfile.germinationTempMin || "-"} bis{" "}
+                {selectedSeedProfile.germinationTempMax || "-"} °C
+              </strong>
+            </p>
+
+            <p>
+              <span className="detail-label">Aussaattiefe</span>
+              <strong>{selectedSeedProfile.sowingDepthCm ?? "-"} cm</strong>
+            </p>
+
+            <p>
+              <span className="detail-label">Nach draußen</span>
+              <strong>
+                {monthLabels[selectedSeedProfile.outdoorFromMonth] || "-"} bis{" "}
+                {monthLabels[selectedSeedProfile.outdoorToMonth] || "-"}
+              </strong>
+            </p>
+
+            <p>
+              <span className="detail-label">Reihenabstand</span>
+              <strong>{selectedSeedProfile.rowSpacingCm || "-"} cm</strong>
+            </p>
+
+            <p>
+              <span className="detail-label">Pflanzenabstand</span>
+              <strong>{selectedSeedProfile.plantSpacingCm || "-"} cm</strong>
+            </p>
+
+            <p>
+              <span className="detail-label">Aussaatbreite</span>
+              <strong>{selectedSeedProfile.sowingWidthCm || "-"} cm</strong>
+            </p>
+
+            <p>
+              <span className="detail-label">Ernte</span>
+              <strong>
+                {monthLabels[selectedSeedProfile.harvestFromMonth] || "-"} bis{" "}
+                {monthLabels[selectedSeedProfile.harvestToMonth] || "-"}
+              </strong>
+            </p>
+          </div>
+
+          {(selectedSeedProfile.sowingDepthNote ||
+            selectedSeedProfile.sowingNotes ||
+            selectedSeedProfile.experience ||
+            selectedSeedProfile.profileNotes) && (
+            <div className="seed-profile-summary-notes">
+              {selectedSeedProfile.sowingDepthNote && (
+                <p>
+                  <strong>Hinweis zur Aussaattiefe:</strong>{" "}
+                  {selectedSeedProfile.sowingDepthNote}
+                </p>
+              )}
+
+              {selectedSeedProfile.sowingNotes && (
+                <p>
+                  <strong>Aussaat-Hinweise:</strong>{" "}
+                  {selectedSeedProfile.sowingNotes}
+                </p>
+              )}
+
+              {selectedSeedProfile.experience && (
+                <p>
+                  <strong>Erfahrungen:</strong> {selectedSeedProfile.experience}
+                </p>
+              )}
+
+              {selectedSeedProfile.profileNotes && (
+                <p>
+                  <strong>Bemerkungen:</strong>{" "}
+                  {selectedSeedProfile.profileNotes}
+                </p>
+              )}
+            </div>
+          )}
+        </section>
       )}
 
       <PotForm

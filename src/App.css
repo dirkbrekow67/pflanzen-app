@@ -1081,8 +1081,29 @@ h2 {
   grid-column: 1 / -1;
 }
 
+.pot-profile-loader {
+  max-width: 1100px;
+}
+
+.pot-profile-loader-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.pot-profile-loader-header h2 {
+  margin-bottom: 6px;
+}
+
+.pot-profile-loader-header p {
+  margin: 0;
+  color: #333333;
+}
+
 .seed-profile-summary {
-  padding: 14px;
+  padding: 16px;
   border: 1px solid #cfe8cf;
   border-radius: 10px;
   background: #eef9ee;
@@ -1092,14 +1113,42 @@ h2 {
   margin: 16px auto 24px auto;
 }
 
+.seed-profile-summary-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
 .seed-profile-summary h3 {
-  margin-top: 0;
+  margin: 0 0 4px 0;
   color: green;
 }
 
 .seed-profile-summary p {
   margin: 6px 0;
   font-size: 14px;
+}
+
+.seed-profile-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.seed-profile-summary-grid p {
+  margin: 0;
+  padding: 10px;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.seed-profile-summary-notes {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #ffffff;
 }
 
 .dashboard-actions {
@@ -1288,6 +1337,14 @@ h2 {
   }
   .pot-detail-overview,
   .detail-fact-grid {
+    grid-template-columns: 1fr;
+  }
+  .pot-profile-loader-header,
+  .seed-profile-summary-header {
+    flex-direction: column;
+  }
+
+  .seed-profile-summary-grid {
     grid-template-columns: 1fr;
   }
 }
