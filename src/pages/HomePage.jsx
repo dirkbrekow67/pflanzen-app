@@ -1,3 +1,5 @@
+// src/pages/HomePage.jsx
+
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import PotCard from "../components/PotCard";
@@ -44,6 +46,19 @@ function HomePage({
         >
           {showManagement ? "Verwaltung ausblenden" : "Verwaltung anzeigen"}
         </button>
+      </section>
+      <section className="card-light planning-dashboard-box">
+        <div>
+          <h2>Pflanzplanung</h2>
+          <p>
+            Jahresübersicht für Aussaat, Auspflanzen nach draußen und Ernte auf
+            Grundlage der gespeicherten Samenprofile.
+          </p>
+        </div>
+
+        <Link to="/planning" className="button-link">
+          Pflanzplanung öffnen
+        </Link>
       </section>
       {reminders?.length > 0 && (
         <section className="card-light reminder-box">
