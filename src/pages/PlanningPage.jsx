@@ -242,27 +242,30 @@ function PlanningPage({ seedProfiles }) {
           </button>
         </div>
 
-        <div className="planning-search">
-          <label>Suche</label>
-          <input
-            type="text"
-            value={planningSearch}
-            onChange={(event) => setPlanningSearch(event.target.value)}
-            placeholder="Pflanze, Sorte, Hersteller oder Profil-ID suchen..."
-          />
-        </div>
-        <div className="planning-search">
-          <label>Planungsmonat</label>
-          <select
-            value={selectedMonth}
-            onChange={(event) => setSelectedMonth(Number(event.target.value))}
-          >
-            {months.map((month) => (
-              <option key={month.value} value={month.value}>
-                {month.label}
-              </option>
-            ))}
-          </select>
+        <div className="planning-filter-input-row">
+          <div className="planning-search">
+            <label>Suche</label>
+            <input
+              type="text"
+              value={planningSearch}
+              onChange={(event) => setPlanningSearch(event.target.value)}
+              placeholder="Pflanze, Sorte, Hersteller oder Profil-ID suchen..."
+            />
+          </div>
+
+          <div className="planning-search planning-month-select">
+            <label>Planungsmonat</label>
+            <select
+              value={selectedMonth}
+              onChange={(event) => setSelectedMonth(Number(event.target.value))}
+            >
+              {months.map((month) => (
+                <option key={month.value} value={month.value}>
+                  {month.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <p className="planning-result-count">

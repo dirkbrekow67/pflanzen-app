@@ -1501,6 +1501,23 @@ h2 {
   margin-top: 12px;
 }
 
+.planning-filter-input-row {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 16px;
+  align-items: end;
+}
+
+.planning-month-select select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #999999;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #111111;
+  box-sizing: border-box;
+}
+
 .planning-search label {
   display: block;
   margin-bottom: 6px;
@@ -1665,6 +1682,10 @@ h2 {
   .planning-current-item {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .planning-filter-input-row {
+    grid-template-columns: 1fr;
   }
 }
 
