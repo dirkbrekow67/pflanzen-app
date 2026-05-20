@@ -1,6 +1,11 @@
 // src/pages/SeedFormPage.jsx
 
-import { Link, useNavigate, useParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "../utils/appConfig";
 import SeedForm from "../components/SeedForm";
@@ -17,13 +22,23 @@ function SeedFormPage({
 }) {
   const navigate = useNavigate();
 
+  const [searchParams] = useSearchParams();
+
+  const backTarget =
+    searchParams.get("back") === "planning" ? "/planning" : "/seeds";
+
+  const backLabel =
+    searchParams.get("back") === "planning"
+      ? "← Zur Pflanzplanung"
+      : "← Zur Samenbibliothek";
+
   const [seedPhotoType, setSeedPhotoType] = useState("pack_front");
   const [seedPhotoMessage, setSeedPhotoMessage] = useState("");
   const [seedPhotos, setSeedPhotos] = useState([]);
   const [selectedPhotoPreview, setSelectedPhotoPreview] = useState(null);
   const { seedProfileId } = useParams();
 
-  const currentSeedProfileId = editingSeedProfileId || seedProfileId;
+  const currentSeedProfileId = seedProfileId || editingSeedProfileId;
 
   useEffect(() => {
     if (!currentSeedProfileId) {
@@ -95,7 +110,7 @@ function SeedFormPage({
     });
 
     if (success) {
-      navigate("/seeds");
+      navigate(backTarget);
     }
   }
 
@@ -298,12 +313,12 @@ function SeedFormPage({
       <h1>Samenprofil anlegen / bearbeiten</h1>
 
       <div className="page-actions button-row">
-        <Link to="/seeds" className="button-link">
-          ← Zur Samenbibliothek
+        <Link to={backTarget} className="button-link">
+          {backLabel}
         </Link>
 
-        <Link to="/planning" className="button-link">
-          ← Zur Pflanzplanung
+        <Link to="/" className="button-link">
+          ← Zur Übersicht
         </Link>
       </div>
 

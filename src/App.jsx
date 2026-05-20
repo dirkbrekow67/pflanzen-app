@@ -2,7 +2,7 @@
 
 // 1. externe Bibliotheken
 import { useEffect, useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 // 2. interne Komponenten
 import HomePage from "./pages/HomePage";
 import PotPage from "./pages/PotPage";
@@ -35,6 +35,8 @@ import { API_BASE_URL } from "./utils/appConfig";
 import "./App.css";
 
 function App() {
+  const location = useLocation();
+
   useEffect(() => {
     fetch(`${API_BASE_URL}/api/health`)
       .then((res) => res.json())
@@ -341,14 +343,12 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const currentPath = window.location.pathname;
-
-    if (!currentPath.startsWith("/seeds/edit/")) {
+    if (!location.pathname.startsWith("/seeds/edit/")) {
       return;
     }
 
     const seedProfileIdFromPath = decodeURIComponent(
-      currentPath.replace("/seeds/edit/", ""),
+      location.pathname.replace("/seeds/edit/", ""),
     );
 
     if (!seedProfileIdFromPath || customSeedProfiles.length === 0) {
@@ -380,7 +380,7 @@ function App() {
     });
 
     setEditingSeedProfileId(profileFromRoute.id);
-  }, [customSeedProfiles]);
+  }, [location.pathname, customSeedProfiles]);
 
   useEffect(() => {
     localStorage.setItem("hiddenReminders", JSON.stringify(hiddenReminders));

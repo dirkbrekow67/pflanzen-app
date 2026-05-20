@@ -208,7 +208,7 @@ function PlanningPage({ seedProfiles }) {
                   <tr key={profile.id}>
                     <td>
                       <Link
-                        to={`/seeds/edit/${profile.id}`}
+                        to={`/seeds/edit/${profile.id}?back=planning`}
                         className="planning-profile-link"
                       >
                         <strong>{profile.plantName || "-"}</strong>
@@ -226,7 +226,7 @@ function PlanningPage({ seedProfiles }) {
                         <td key={`${profile.id}-${month.value}`}>
                           {markers.length > 0 ? (
                             <Link
-                              to={`/seeds/edit/${profile.id}`}
+                              to={`/seeds/edit/${profile.id}?back=planning`}
                               className="planning-marker-link"
                               title={`${profile.plantName || profile.id} öffnen`}
                             >
@@ -281,7 +281,7 @@ function PlanningPage({ seedProfiles }) {
                   <tr key={profile.id}>
                     <td>
                       <Link
-                        to={`/seeds/edit/${profile.id}`}
+                        to={`/seeds/edit/${profile.id}?back=planning`}
                         className="planning-profile-link"
                       >
                         <strong>{profile.plantName || "-"}</strong>
@@ -307,7 +307,7 @@ function PlanningPage({ seedProfiles }) {
 
                     <td>
                       <Link
-                        to={`/seeds/edit/${profile.id}`}
+                        to={`/seeds/edit/${profile.id}?back=planning`}
                         className="planning-profile-link"
                       >
                         <span className="pot-profile-badge">{profile.id}</span>
