@@ -1480,6 +1480,40 @@ h2 {
   color: #333333;
 }
 
+.planning-filter-bar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.planning-search {
+  margin-top: 12px;
+}
+
+.planning-search label {
+  display: block;
+  margin-bottom: 6px;
+  color: #111111;
+  font-weight: 700;
+  text-align: left;
+}
+
+.planning-search input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #999999;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #111111;
+  box-sizing: border-box;
+}
+
+.planning-result-count {
+  margin: 12px 0 0 0;
+  color: #333333;
+}
+
 @media (max-width: 800px) {
   .pot-detail-header {
     flex-direction: column;
