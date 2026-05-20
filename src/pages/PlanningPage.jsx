@@ -41,6 +41,22 @@ function PlanningPage({ seedProfiles }) {
     return true;
   }
 
+  function getEarliestPlanningMonth(profile) {
+    const monthValues = [
+      profile.sowingFromMonth,
+      profile.outdoorFromMonth,
+      profile.harvestFromMonth,
+    ]
+      .map((value) => Number(value))
+      .filter((value) => value >= 1 && value <= 12);
+
+    if (monthValues.length === 0) {
+      return 99;
+    }
+
+    return Math.min(...monthValues);
+  }
+
   function getPlanningMarkers(profile, month) {
     const markers = [];
 
@@ -71,23 +87,43 @@ function PlanningPage({ seedProfiles }) {
     return markers;
   }
 
-  const filteredPlanningProfiles = activeSeedProfiles.filter((profile) => {
-    const matchesFilter = hasPlanningType(profile, planningFilter);
+  const filteredPlanningProfiles = activeSeedProfiles
+    .filter((profile) => {
+      const matchesFilter = hasPlanningType(profile, planningFilter);
 
-    const searchText = [
-      profile.plantName,
-      profile.variety,
-      profile.manufacturer,
-      profile.retailer,
-      profile.id,
-    ]
-      .join(" ")
-      .toLowerCase();
+      const searchText = [
+        profile.plantName,
+        profile.variety,
+        profile.manufacturer,
+        profile.retailer,
+        profile.id,
+      ]
+        .join(" ")
+        .toLowerCase();
 
-    const matchesSearch = searchText.includes(planningSearch.toLowerCase());
+      const matchesSearch = searchText.includes(planningSearch.toLowerCase());
 
-    return matchesFilter && matchesSearch;
-  });
+      return matchesFilter && matchesSearch;
+    })
+    .sort((a, b) => {
+      const monthCompare =
+        getEarliestPlanningMonth(a) - getEarliestPlanningMonth(b);
+
+      if (monthCompare !== 0) {
+        return monthCompare;
+      }
+
+      const plantCompare = (a.plantName || "").localeCompare(
+        b.plantName || "",
+        "de",
+      );
+
+      if (plantCompare !== 0) {
+        return plantCompare;
+      }
+
+      return (a.id || "").localeCompare(b.id || "", "de");
+    });
 
   const currentMonthValue = new Date().getMonth() + 1;
   const currentMonthLabel = monthLabels[currentMonthValue] || "aktueller Monat";
