@@ -1534,6 +1534,33 @@ h2 {
   outline-offset: 2px;
 }
 
+.planning-current-list {
+  display: grid;
+  gap: 10px;
+}
+
+.planning-current-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #dddddd;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #111111;
+  text-decoration: none;
+}
+
+.planning-current-item:hover {
+  border-color: green;
+  background: #f7fff7;
+}
+
+.planning-current-item small {
+  color: #555555;
+}
+
 @media (max-width: 800px) {
   .pot-detail-header {
     flex-direction: column;
@@ -1605,6 +1632,11 @@ h2 {
   }
 
   .planning-dashboard-box {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .planning-current-item {
     flex-direction: column;
     align-items: flex-start;
   }

@@ -89,6 +89,24 @@ function PlanningPage({ seedProfiles }) {
     return matchesFilter && matchesSearch;
   });
 
+  const currentMonthValue = new Date().getMonth() + 1;
+  const currentMonthLabel = monthLabels[currentMonthValue] || "aktueller Monat";
+
+  const currentMonthProfiles = filteredPlanningProfiles
+    .map((profile) => ({
+      profile,
+      markers: getPlanningMarkers(profile, currentMonthValue),
+    }))
+    .filter((item) => item.markers.length > 0);
+
+  function getMarkerLabel(marker) {
+    if (marker === "A") return "Aussaat";
+    if (marker === "D") return "Nach draußen";
+    if (marker === "E") return "Ernte";
+
+    return marker;
+  }
+
   return (
     <div className="container">
       <h1>Pflanzplanung 🌱</h1>
@@ -181,6 +199,48 @@ function PlanningPage({ seedProfiles }) {
           Angezeigte Samenprofile:{" "}
           <strong>{filteredPlanningProfiles.length}</strong>
         </p>
+      </section>
+
+      <section className="card planning-card">
+        <h2>Aktuell im {currentMonthLabel}</h2>
+
+        {currentMonthProfiles.length === 0 && (
+          <p>
+            Für den aktuellen Monat sind nach dem aktuellen Filter keine
+            Einträge vorhanden.
+          </p>
+        )}
+
+        {currentMonthProfiles.length > 0 && (
+          <div className="planning-current-list">
+            {currentMonthProfiles.map(({ profile, markers }) => (
+              <Link
+                key={profile.id}
+                to={`/seeds/edit/${profile.id}?back=planning`}
+                className="planning-current-item"
+              >
+                <div>
+                  <strong>{profile.plantName || "-"}</strong>
+                  <br />
+                  <small>
+                    {profile.variety || "-"} · {profile.id}
+                  </small>
+                </div>
+
+                <div className="planning-marker-list">
+                  {markers.map((marker) => (
+                    <span
+                      key={marker}
+                      className={`planning-marker planning-marker-${marker.toLowerCase()}`}
+                    >
+                      {getMarkerLabel(marker)}
+                    </span>
+                  ))}
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="card planning-card">
