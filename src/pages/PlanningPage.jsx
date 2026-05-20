@@ -1,12 +1,12 @@
 // src/pages/PlanningPage.jsx
 
-import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { months, monthLabels } from "../constants/months";
 
 function PlanningPage({ seedProfiles }) {
-  const [planningFilter, setPlanningFilter] = useState("all");
-  const [planningSearch, setPlanningSearch] = useState("");
+  const activeSeedProfiles = (seedProfiles || []).filter(
+    (profile) => profile.profileStatus !== "nicht-brauchbar",
+  );
 
   function isMonthInRange(month, fromMonth, toMonth) {
     if (!fromMonth || !toMonth) return false;
@@ -21,47 +21,20 @@ function PlanningPage({ seedProfiles }) {
     return month >= from || month <= to;
   }
 
-  function hasPlanningType(profile, type) {
-    if (type === "sowing") {
-      return Boolean(profile.sowingFromMonth && profile.sowingToMonth);
-    }
-
-    if (type === "outdoor") {
-      return Boolean(profile.outdoorFromMonth && profile.outdoorToMonth);
-    }
-
-    if (type === "harvest") {
-      return Boolean(profile.harvestFromMonth && profile.harvestToMonth);
-    }
-
-    return true;
-  }
-
   function getPlanningMarkers(profile, month) {
     const markers = [];
 
-    const showSowing = planningFilter === "all" || planningFilter === "sowing";
-    const showOutdoor =
-      planningFilter === "all" || planningFilter === "outdoor";
-    const showHarvest =
-      planningFilter === "all" || planningFilter === "harvest";
-
-    if (
-      showSowing &&
-      isMonthInRange(month, profile.sowingFromMonth, profile.sowingToMonth)
-    ) {
+    if (isMonthInRange(month, profile.sowingFromMonth, profile.sowingToMonth)) {
       markers.push("A");
     }
 
     if (
-      showOutdoor &&
       isMonthInRange(month, profile.outdoorFromMonth, profile.outdoorToMonth)
     ) {
       markers.push("D");
     }
 
     if (
-      showHarvest &&
       isMonthInRange(month, profile.harvestFromMonth, profile.harvestToMonth)
     ) {
       markers.push("E");
@@ -69,31 +42,6 @@ function PlanningPage({ seedProfiles }) {
 
     return markers;
   }
-
-  const visibleSeedProfiles = useMemo(() => {
-    return (seedProfiles || [])
-      .filter((profile) => profile.profileStatus !== "nicht-brauchbar")
-      .filter((profile) => hasPlanningType(profile, planningFilter))
-      .filter((profile) => {
-        const searchValue = planningSearch.trim().toLowerCase();
-
-        if (!searchValue) return true;
-
-        const searchableText = [
-          profile.plantName,
-          profile.variety,
-          profile.manufacturer,
-          profile.id,
-        ]
-          .join(" ")
-          .toLowerCase();
-
-        return searchableText.includes(searchValue);
-      })
-      .sort((a, b) =>
-        (a.plantName || "").localeCompare(b.plantName || "", "de"),
-      );
-  }, [seedProfiles, planningFilter, planningSearch]);
 
   return (
     <div className="container">
@@ -110,7 +58,9 @@ function PlanningPage({ seedProfiles }) {
 
         <p>
           Diese Übersicht zeigt alle aktiven Samenprofile als Monatsplanung.
-          Markiert werden Aussaat, Auspflanzen nach draußen und Ernte.
+          Markiert werden Aussaat, Auspflanzen nach draußen und Ernte. Über den
+          Pflanzennamen oder die Profil-ID gelangst du direkt zum passenden
+          Samenprofil.
         </p>
 
         <div className="planning-legend">
@@ -127,74 +77,15 @@ function PlanningPage({ seedProfiles }) {
       </section>
 
       <section className="card planning-card">
-        <h2>Filter</h2>
-
-        <div className="planning-filter-bar">
-          <button
-            type="button"
-            className={`button ${
-              planningFilter === "all" ? "filter-active" : ""
-            }`}
-            onClick={() => setPlanningFilter("all")}
-          >
-            Alle
-          </button>
-
-          <button
-            type="button"
-            className={`button ${
-              planningFilter === "sowing" ? "filter-active" : ""
-            }`}
-            onClick={() => setPlanningFilter("sowing")}
-          >
-            Aussaat
-          </button>
-
-          <button
-            type="button"
-            className={`button ${
-              planningFilter === "outdoor" ? "filter-active" : ""
-            }`}
-            onClick={() => setPlanningFilter("outdoor")}
-          >
-            Nach draußen
-          </button>
-
-          <button
-            type="button"
-            className={`button ${
-              planningFilter === "harvest" ? "filter-active" : ""
-            }`}
-            onClick={() => setPlanningFilter("harvest")}
-          >
-            Ernte
-          </button>
-        </div>
-
-        <div className="planning-search">
-          <label htmlFor="planning-search">Suche</label>
-          <input
-            id="planning-search"
-            type="text"
-            value={planningSearch}
-            onChange={(event) => setPlanningSearch(event.target.value)}
-            placeholder="Pflanze, Sorte, Hersteller oder Profil-ID suchen..."
-          />
-        </div>
-
-        <p className="planning-result-count">
-          Angezeigte Samenprofile: <strong>{visibleSeedProfiles.length}</strong>
-        </p>
-      </section>
-
-      <section className="card planning-card">
         <h2>Jahresübersicht</h2>
 
-        {visibleSeedProfiles.length === 0 && (
-          <p>Für den aktuellen Filter sind keine Samenprofile vorhanden.</p>
+        {activeSeedProfiles.length === 0 && (
+          <p>
+            Es sind noch keine aktiven Samenprofile für die Planung vorhanden.
+          </p>
         )}
 
-        {visibleSeedProfiles.length > 0 && (
+        {activeSeedProfiles.length > 0 && (
           <div className="planning-table-wrapper">
             <table className="planning-table planning-month-table">
               <thead>
@@ -208,12 +99,17 @@ function PlanningPage({ seedProfiles }) {
               </thead>
 
               <tbody>
-                {visibleSeedProfiles.map((profile) => (
+                {activeSeedProfiles.map((profile) => (
                   <tr key={profile.id}>
                     <td>
-                      <strong>{profile.plantName || "-"}</strong>
-                      <br />
-                      <small>{profile.id}</small>
+                      <Link
+                        to={`/seeds/edit/${profile.id}`}
+                        className="planning-profile-link"
+                      >
+                        <strong>{profile.plantName || "-"}</strong>
+                        <br />
+                        <small>{profile.id}</small>
+                      </Link>
                     </td>
 
                     <td>{profile.variety || "-"}</td>
@@ -224,16 +120,22 @@ function PlanningPage({ seedProfiles }) {
                       return (
                         <td key={`${profile.id}-${month.value}`}>
                           {markers.length > 0 ? (
-                            <div className="planning-marker-list">
-                              {markers.map((marker) => (
-                                <span
-                                  key={marker}
-                                  className={`planning-marker planning-marker-${marker.toLowerCase()}`}
-                                >
-                                  {marker}
-                                </span>
-                              ))}
-                            </div>
+                            <Link
+                              to={`/seeds/edit/${profile.id}`}
+                              className="planning-marker-link"
+                              title={`${profile.plantName || profile.id} öffnen`}
+                            >
+                              <div className="planning-marker-list">
+                                {markers.map((marker) => (
+                                  <span
+                                    key={marker}
+                                    className={`planning-marker planning-marker-${marker.toLowerCase()}`}
+                                  >
+                                    {marker}
+                                  </span>
+                                ))}
+                              </div>
+                            </Link>
                           ) : (
                             "-"
                           )}
@@ -251,11 +153,13 @@ function PlanningPage({ seedProfiles }) {
       <section className="card planning-card">
         <h2>Samenprofile nach Planungsdaten</h2>
 
-        {visibleSeedProfiles.length === 0 && (
-          <p>Für den aktuellen Filter sind keine Samenprofile vorhanden.</p>
+        {activeSeedProfiles.length === 0 && (
+          <p>
+            Es sind noch keine aktiven Samenprofile für die Planung vorhanden.
+          </p>
         )}
 
-        {visibleSeedProfiles.length > 0 && (
+        {activeSeedProfiles.length > 0 && (
           <div className="planning-table-wrapper">
             <table className="planning-table">
               <thead>
@@ -270,10 +174,15 @@ function PlanningPage({ seedProfiles }) {
               </thead>
 
               <tbody>
-                {visibleSeedProfiles.map((profile) => (
+                {activeSeedProfiles.map((profile) => (
                   <tr key={profile.id}>
                     <td>
-                      <strong>{profile.plantName || "-"}</strong>
+                      <Link
+                        to={`/seeds/edit/${profile.id}`}
+                        className="planning-profile-link"
+                      >
+                        <strong>{profile.plantName || "-"}</strong>
+                      </Link>
                     </td>
 
                     <td>{profile.variety || "-"}</td>
@@ -294,7 +203,12 @@ function PlanningPage({ seedProfiles }) {
                     </td>
 
                     <td>
-                      <span className="pot-profile-badge">{profile.id}</span>
+                      <Link
+                        to={`/seeds/edit/${profile.id}`}
+                        className="planning-profile-link"
+                      >
+                        <span className="pot-profile-badge">{profile.id}</span>
+                      </Link>
                     </td>
                   </tr>
                 ))}
