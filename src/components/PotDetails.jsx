@@ -1,7 +1,26 @@
+// src/components/PotDetails.jsx
+
 import { QRCode } from "react-qr-code";
 import { QR_BASE_URL } from "../utils/appConfig";
 import { monthLabels } from "../constants/months";
 import { formatLifecycle, formatPotStatus } from "../utils/formatHelpers";
+
+function hasValue(value) {
+  return value !== null && value !== undefined && value !== "";
+}
+
+function formatValue(value, unit = "") {
+  if (!hasValue(value)) return "-";
+
+  return unit ? `${value} ${unit}` : value;
+}
+
+function formatMonthRange(fromMonth, toMonth) {
+  const fromLabel = monthLabels[fromMonth] || "-";
+  const toLabel = monthLabels[toMonth] || "-";
+
+  return `${fromLabel} bis ${toLabel}`;
+}
 
 function PotDetails({ pot, onEditPot, onClearPot }) {
   if (!pot) {
@@ -16,13 +35,17 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
   const qrValue = `${QR_BASE_URL}/pot/${pot.id}`;
 
   const hasSowingExtras =
-    pot.sowingDepthNote ||
-    pot.sowingNotes ||
-    pot.rowSpacingCm ||
-    pot.plantSpacingCm ||
-    pot.sowingWidthCm;
+    hasValue(pot.sowingDepthNote) ||
+    hasValue(pot.sowingNotes) ||
+    hasValue(pot.rowSpacingCm) ||
+    hasValue(pot.plantSpacingCm) ||
+    hasValue(pot.sowingWidthCm);
 
-  const hasHarvestData = pot.harvestFromMonth || pot.harvestToMonth;
+  const hasHarvestData =
+    hasValue(pot.harvestFromMonth) || hasValue(pot.harvestToMonth);
+
+  const hasOutdoorData =
+    hasValue(pot.outdoorFromMonth) || hasValue(pot.outdoorToMonth);
 
   return (
     <div className="pot-detail-card">
@@ -107,16 +130,16 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
               <p>
                 <span className="detail-label">Temperatur</span>
                 <strong>
-                  {pot.germinationTempMin || "-"} bis{" "}
-                  {pot.germinationTempMax || "-"} °C
+                  {formatValue(pot.germinationTempMin)} bis{" "}
+                  {formatValue(pot.germinationTempMax, "°C")}
                 </strong>
               </p>
 
               <p>
                 <span className="detail-label">Dauer</span>
                 <strong>
-                  {pot.germinationDaysMin || "-"} bis{" "}
-                  {pot.germinationDaysMax || "-"} Tage
+                  {formatValue(pot.germinationDaysMin)} bis{" "}
+                  {formatValue(pot.germinationDaysMax, "Tage")}
                 </strong>
               </p>
             </div>
@@ -127,49 +150,52 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
 
             <div className="detail-fact-grid">
               <p>
+                <span className="detail-label">Aussaatdatum</span>
+                <strong>{pot.sowingDate || "-"}</strong>
+              </p>
+
+              <p>
+                <span className="detail-label">Nachgesät am</span>
+                <strong>{pot.resowingDate || "-"}</strong>
+              </p>
+
+              <p>
                 <span className="detail-label">Aussaattiefe</span>
-                <strong>{pot.sowingDepthCm ?? "-"} cm</strong>
+                <strong>{formatValue(pot.sowingDepthCm, "cm")}</strong>
               </p>
 
               <p>
                 <span className="detail-label">Packungszeitraum</span>
                 <strong>
-                  {monthLabels[pot.sowingFromMonth] || "-"} bis{" "}
-                  {monthLabels[pot.sowingToMonth] || "-"}
+                  {formatMonthRange(pot.sowingFromMonth, pot.sowingToMonth)}
                 </strong>
               </p>
 
-              {pot.rowSpacingCm && (
-                <p>
-                  <span className="detail-label">Reihenabstand</span>
-                  <strong>{pot.rowSpacingCm} cm</strong>
-                </p>
-              )}
+              <p>
+                <span className="detail-label">Reihenabstand</span>
+                <strong>{formatValue(pot.rowSpacingCm, "cm")}</strong>
+              </p>
 
-              {pot.plantSpacingCm && (
-                <p>
-                  <span className="detail-label">Pflanzenabstand</span>
-                  <strong>{pot.plantSpacingCm} cm</strong>
-                </p>
-              )}
+              <p>
+                <span className="detail-label">Pflanzenabstand</span>
+                <strong>{formatValue(pot.plantSpacingCm, "cm")}</strong>
+              </p>
 
-              {pot.sowingWidthCm && (
-                <p>
-                  <span className="detail-label">Aussaatbreite</span>
-                  <strong>{pot.sowingWidthCm} cm</strong>
-                </p>
-              )}
+              <p>
+                <span className="detail-label">Aussaatbreite</span>
+                <strong>{formatValue(pot.sowingWidthCm, "cm")}</strong>
+              </p>
             </div>
 
             {hasSowingExtras && (
               <div className="detail-note-block">
-                {pot.sowingDepthNote && (
+                {hasValue(pot.sowingDepthNote) && (
                   <p className="detail-note">
                     <strong>Hinweis zur Aussaat:</strong> {pot.sowingDepthNote}
                   </p>
                 )}
 
-                {pot.sowingNotes && (
+                {hasValue(pot.sowingNotes) && (
                   <p className="detail-note">
                     <strong>Weitere Aussaat-Hinweise:</strong> {pot.sowingNotes}
                   </p>
@@ -185,28 +211,28 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
               <p>
                 <span className="detail-label">Zeitraum</span>
                 <strong>
-                  {monthLabels[pot.outdoorFromMonth] || "-"} bis{" "}
-                  {monthLabels[pot.outdoorToMonth] || "-"}
+                  {hasOutdoorData
+                    ? formatMonthRange(pot.outdoorFromMonth, pot.outdoorToMonth)
+                    : "-"}
                 </strong>
               </p>
             </div>
           </section>
 
-          {hasHarvestData && (
-            <section className="detail-section detail-section-card">
-              <h3>Ernte</h3>
+          <section className="detail-section detail-section-card">
+            <h3>Ernte</h3>
 
-              <div className="detail-fact-grid">
-                <p>
-                  <span className="detail-label">Zeitraum</span>
-                  <strong>
-                    {monthLabels[pot.harvestFromMonth] || "-"} bis{" "}
-                    {monthLabels[pot.harvestToMonth] || "-"}
-                  </strong>
-                </p>
-              </div>
-            </section>
-          )}
+            <div className="detail-fact-grid">
+              <p>
+                <span className="detail-label">Zeitraum</span>
+                <strong>
+                  {hasHarvestData
+                    ? formatMonthRange(pot.harvestFromMonth, pot.harvestToMonth)
+                    : "-"}
+                </strong>
+              </p>
+            </div>
+          </section>
 
           <section className="detail-section detail-section-card">
             <h3>Beobachtungen</h3>

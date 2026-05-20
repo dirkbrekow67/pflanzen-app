@@ -1,3 +1,5 @@
+// src/App.jsx
+
 // 1. externe Bibliotheken
 import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
