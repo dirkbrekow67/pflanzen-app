@@ -164,10 +164,8 @@ function PlanningPage({ seedProfiles }) {
     return marker;
   }
 
-  function getMarkerLabelsForMonth(profile, month) {
-    return getPlanningMarkers(profile, month)
-      .map((marker) => getMarkerLabel(marker))
-      .join(" / ");
+  function getMarkersForMonth(profile, month) {
+    return getPlanningMarkers(profile, month);
   }
 
   return (
@@ -471,7 +469,29 @@ function PlanningPage({ seedProfiles }) {
                     </td>
 
                     <td>
-                      {getMarkerLabelsForMonth(profile, selectedMonth) || "-"}
+                      {(() => {
+                        const monthMarkers = getMarkersForMonth(
+                          profile,
+                          selectedMonth,
+                        );
+
+                        if (monthMarkers.length === 0) {
+                          return "-";
+                        }
+
+                        return (
+                          <div className="planning-marker-list">
+                            {monthMarkers.map((marker) => (
+                              <span
+                                key={marker}
+                                className={`planning-marker planning-marker-${marker.toLowerCase()}`}
+                              >
+                                {getMarkerLabel(marker)}
+                              </span>
+                            ))}
+                          </div>
+                        );
+                      })()}
                     </td>
 
                     <td>
