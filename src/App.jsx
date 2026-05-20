@@ -341,6 +341,48 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const currentPath = window.location.pathname;
+
+    if (!currentPath.startsWith("/seeds/edit/")) {
+      return;
+    }
+
+    const seedProfileIdFromPath = decodeURIComponent(
+      currentPath.replace("/seeds/edit/", ""),
+    );
+
+    if (!seedProfileIdFromPath || customSeedProfiles.length === 0) {
+      return;
+    }
+
+    const profileFromRoute = customSeedProfiles.find(
+      (profile) => profile.id === seedProfileIdFromPath,
+    );
+
+    if (!profileFromRoute) {
+      return;
+    }
+
+    setNewSeedProfile({
+      ...emptySeedProfile,
+      ...profileFromRoute,
+      variety: profileFromRoute.variety || "",
+      manufacturer: profileFromRoute.manufacturer || "",
+      retailer: profileFromRoute.retailer || "",
+      experience: profileFromRoute.experience || "",
+      profileStatus: profileFromRoute.profileStatus || "testen",
+      profileNotes: profileFromRoute.profileNotes || "",
+      sowingDepthNote: profileFromRoute.sowingDepthNote || "",
+      rowSpacingCm: profileFromRoute.rowSpacingCm || "",
+      plantSpacingCm: profileFromRoute.plantSpacingCm || "",
+      sowingWidthCm: profileFromRoute.sowingWidthCm || "",
+      sowingNotes: profileFromRoute.sowingNotes || "",
+    });
+
+    setEditingSeedProfileId(profileFromRoute.id);
+  }, [customSeedProfiles]);
+
+  useEffect(() => {
     localStorage.setItem("hiddenReminders", JSON.stringify(hiddenReminders));
   }, [hiddenReminders]);
 

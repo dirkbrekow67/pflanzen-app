@@ -1,3 +1,5 @@
+// src/pages/SeedFormPage.jsx
+
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "../utils/appConfig";
@@ -295,9 +297,13 @@ function SeedFormPage({
     <div className="container">
       <h1>Samenprofil anlegen / bearbeiten</h1>
 
-      <div className="page-actions">
+      <div className="page-actions button-row">
         <Link to="/seeds" className="button-link">
           ← Zur Samenbibliothek
+        </Link>
+
+        <Link to="/planning" className="button-link">
+          ← Zur Pflanzplanung
         </Link>
       </div>
 
