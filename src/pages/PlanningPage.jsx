@@ -164,6 +164,12 @@ function PlanningPage({ seedProfiles }) {
     return marker;
   }
 
+  function getMarkerLabelsForMonth(profile, month) {
+    return getPlanningMarkers(profile, month)
+      .map((marker) => getMarkerLabel(marker))
+      .join(" / ");
+  }
+
   return (
     <div className="container">
       <h1>Pflanzplanung 🌱</h1>
@@ -430,6 +436,7 @@ function PlanningPage({ seedProfiles }) {
                   <th>Aussaat</th>
                   <th>Nach draußen</th>
                   <th>Ernte</th>
+                  <th>Im {currentMonthLabel}</th>
                   <th>Profil</th>
                 </tr>
               </thead>
@@ -461,6 +468,10 @@ function PlanningPage({ seedProfiles }) {
                     <td>
                       {monthLabels[profile.harvestFromMonth] || "-"} bis{" "}
                       {monthLabels[profile.harvestToMonth] || "-"}
+                    </td>
+
+                    <td>
+                      {getMarkerLabelsForMonth(profile, selectedMonth) || "-"}
                     </td>
 
                     <td>
