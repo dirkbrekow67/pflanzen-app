@@ -337,7 +337,16 @@ function PlanningPage({ seedProfiles }) {
                   <th>Pflanze</th>
                   <th>Sorte</th>
                   {months.map((month) => (
-                    <th key={month.value}>{month.label.slice(0, 3)}</th>
+                    <th
+                      key={month.value}
+                      className={
+                        month.value === selectedMonth
+                          ? "planning-selected-month"
+                          : ""
+                      }
+                    >
+                      {month.label.slice(0, 3)}
+                    </th>
                   ))}
                 </tr>
               </thead>
@@ -362,7 +371,14 @@ function PlanningPage({ seedProfiles }) {
                       const markers = getPlanningMarkers(profile, month.value);
 
                       return (
-                        <td key={`${profile.id}-${month.value}`}>
+                        <td
+                          key={`${profile.id}-${month.value}`}
+                          className={
+                            month.value === selectedMonth
+                              ? "planning-selected-month"
+                              : ""
+                          }
+                        >
                           {markers.length > 0 ? (
                             <Link
                               to={`/seeds/edit/${profile.id}?back=planning`}

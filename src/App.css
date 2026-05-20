@@ -1421,6 +1421,16 @@ h2 {
   white-space: nowrap;
 }
 
+.planning-month-table th.planning-selected-month,
+.planning-month-table td.planning-selected-month {
+  background: #eef9ee;
+}
+
+.planning-month-table th.planning-selected-month {
+  color: darkgreen;
+  border-bottom: 2px solid green;
+}
+
 .planning-month-table th:first-child,
 .planning-month-table td:first-child,
 .planning-month-table th:nth-child(2),
