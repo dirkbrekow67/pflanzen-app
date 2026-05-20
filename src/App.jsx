@@ -11,6 +11,7 @@ import SeedLibraryPage from "./pages/SeedLibraryPage";
 import StatisticsPage from "./pages/StatisticsPage";
 import PotFormPage from "./pages/PotFormPage";
 import SeedFormPage from "./pages/SeedFormPage";
+import PlanningPage from "./pages/PlanningPage";
 // 3. Daten / Assets
 import {
   emptySeedProfile,
@@ -738,7 +739,12 @@ function App() {
             />
           }
         />
+
         <Route path="/statistics" element={<StatisticsPage />} />
+        <Route
+          path="/planning"
+          element={<PlanningPage seedProfiles={customSeedProfiles} />}
+        />
         <Route
           path="/pots/new"
           element={
