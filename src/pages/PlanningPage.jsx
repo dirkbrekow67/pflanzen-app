@@ -8,6 +8,8 @@ function PlanningPage({ seedProfiles }) {
   const [planningFilter, setPlanningFilter] = useState("all");
   const [planningSearch, setPlanningSearch] = useState("");
 
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+
   const activeSeedProfiles = (seedProfiles || []).filter(
     (profile) => profile.profileStatus !== "nicht-brauchbar",
   );
@@ -125,8 +127,9 @@ function PlanningPage({ seedProfiles }) {
       return (a.id || "").localeCompare(b.id || "", "de");
     });
 
-  const currentMonthValue = new Date().getMonth() + 1;
-  const currentMonthLabel = monthLabels[currentMonthValue] || "aktueller Monat";
+  const currentMonthValue = selectedMonth;
+  const currentMonthLabel =
+    monthLabels[currentMonthValue] || "ausgewählter Monat";
 
   const currentMonthProfiles = filteredPlanningProfiles
     .map((profile) => ({
@@ -247,6 +250,19 @@ function PlanningPage({ seedProfiles }) {
             onChange={(event) => setPlanningSearch(event.target.value)}
             placeholder="Pflanze, Sorte, Hersteller oder Profil-ID suchen..."
           />
+        </div>
+        <div className="planning-search">
+          <label>Planungsmonat</label>
+          <select
+            value={selectedMonth}
+            onChange={(event) => setSelectedMonth(Number(event.target.value))}
+          >
+            {months.map((month) => (
+              <option key={month.value} value={month.value}>
+                {month.label}
+              </option>
+            ))}
+          </select>
         </div>
 
         <p className="planning-result-count">
