@@ -28,3 +28,4 @@ dist-ssr
 # Uploads (Fotos)
 server/uploads/*
 !server/uploads/.gitkeep.DS_Store
+.env
