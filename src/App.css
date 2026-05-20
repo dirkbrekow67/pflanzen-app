@@ -1431,6 +1431,22 @@ h2 {
   border-bottom: 2px solid green;
 }
 
+.planning-month-header-button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+
+.planning-month-header-button:hover {
+  background: #eef9ee;
+  color: darkgreen;
+}
+
 .planning-month-table th:first-child,
 .planning-month-table td:first-child,
 .planning-month-table th:nth-child(2),
@@ -1537,8 +1553,12 @@ h2 {
 }
 
 .planning-result-count {
-  margin: 12px 0 0 0;
+  margin: 14px 0 0 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #ffffff;
   color: #333333;
+  text-align: center;
 }
 
 .planning-profile-link {
@@ -1563,7 +1583,7 @@ h2 {
 
 .planning-current-list {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .planning-current-item {
@@ -1571,7 +1591,7 @@ h2 {
   justify-content: space-between;
   gap: 16px;
   align-items: center;
-  padding: 12px;
+  padding: 9px 12px;
   border: 1px solid #dddddd;
   border-radius: 10px;
   background: #ffffff;
@@ -1588,20 +1608,69 @@ h2 {
   color: #555555;
 }
 
+.planning-current-item strong {
+  display: inline-block;
+  margin-bottom: 2px;
+}
+
 .planning-current-groups {
   display: grid;
-  gap: 18px;
+  gap: 14px;
 }
 
 .planning-current-group {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .planning-current-group h3 {
   margin: 0;
   color: #111111;
   text-align: left;
+  font-size: 14px;
+}
+
+.planning-month-summary {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.planning-section-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.planning-section-header h2 {
+  margin: 0;
+}
+
+.planning-muted-text {
+  margin: 0;
+  color: #555555;
+  text-align: center;
+}
+
+.planning-section-header .button {
+  margin: 0;
+}
+
+.planning-row-muted {
+  opacity: 0.65;
+}
+
+.planning-row-muted td {
+  background: #fafafa;
+}
+
+.planning-missing-value {
+  color: #777777;
+  font-style: italic;
 }
 
 @media (max-width: 800px) {

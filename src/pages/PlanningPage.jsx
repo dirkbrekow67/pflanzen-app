@@ -10,6 +10,8 @@ function PlanningPage({ seedProfiles }) {
 
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
 
+  const [showPlanningDetails, setShowPlanningDetails] = useState(false);
+
   const activeSeedProfiles = (seedProfiles || []).filter(
     (profile) => profile.profileStatus !== "nicht-brauchbar",
   );
@@ -164,8 +166,48 @@ function PlanningPage({ seedProfiles }) {
     return marker;
   }
 
+  function getPlanningFilterLabel() {
+    if (planningFilter === "sowing") return "Aussaat";
+    if (planningFilter === "outdoor") return "Nach draußen";
+    if (planningFilter === "harvest") return "Ernte";
+
+    return "Alle";
+  }
+
+  function getCurrentMonthCount(marker) {
+    return currentMonthProfiles.filter((item) => item.markers.includes(marker))
+      .length;
+  }
+
   function getMarkersForMonth(profile, month) {
     return getPlanningMarkers(profile, month);
+  }
+
+  function hasAnyPlanningData(profile) {
+    return Boolean(
+      profile.sowingFromMonth ||
+      profile.sowingToMonth ||
+      profile.outdoorFromMonth ||
+      profile.outdoorToMonth ||
+      profile.harvestFromMonth ||
+      profile.harvestToMonth,
+    );
+  }
+
+  function formatMonthRange(fromMonth, toMonth) {
+    if (!fromMonth && !toMonth) return "keine Angabe";
+
+    return `${monthLabels[fromMonth] || "-"} bis ${monthLabels[toMonth] || "-"}`;
+  }
+
+  function renderMonthRange(fromMonth, toMonth) {
+    const value = formatMonthRange(fromMonth, toMonth);
+
+    if (value === "keine Angabe") {
+      return <span className="planning-missing-value">keine Angabe</span>;
+    }
+
+    return value;
   }
 
   return (
@@ -273,13 +315,28 @@ function PlanningPage({ seedProfiles }) {
         </div>
 
         <p className="planning-result-count">
-          Angezeigte Samenprofile:{" "}
+          Filter: <strong>{getPlanningFilterLabel()}</strong> · Monat:{" "}
+          <strong>{currentMonthLabel}</strong> · Treffer:{" "}
           <strong>{filteredPlanningProfiles.length}</strong>
         </p>
       </section>
 
       <section className="card planning-card">
         <h2>Aktuell im {currentMonthLabel}</h2>
+
+        <div className="planning-month-summary">
+          <span className="planning-marker planning-marker-a">
+            {getCurrentMonthCount("A")} Aussaat
+          </span>
+
+          <span className="planning-marker planning-marker-d">
+            {getCurrentMonthCount("D")} Nach draußen
+          </span>
+
+          <span className="planning-marker planning-marker-e">
+            {getCurrentMonthCount("E")} Ernte
+          </span>
+        </div>
 
         {currentMonthProfiles.length === 0 && (
           <p>
@@ -352,7 +409,14 @@ function PlanningPage({ seedProfiles }) {
                           : ""
                       }
                     >
-                      {month.label.slice(0, 3)}
+                      <button
+                        type="button"
+                        className="planning-month-header-button"
+                        onClick={() => setSelectedMonth(month.value)}
+                        title={`${month.label} als Planungsmonat anzeigen`}
+                      >
+                        {month.label.slice(0, 3)}
+                      </button>
                     </th>
                   ))}
                 </tr>
@@ -360,7 +424,12 @@ function PlanningPage({ seedProfiles }) {
 
               <tbody>
                 {filteredPlanningProfiles.map((profile) => (
-                  <tr key={profile.id}>
+                  <tr
+                    key={profile.id}
+                    className={
+                      !hasAnyPlanningData(profile) ? "planning-row-muted" : ""
+                    }
+                  >
                     <td>
                       <Link
                         to={`/seeds/edit/${profile.id}?back=planning`}
@@ -418,95 +487,124 @@ function PlanningPage({ seedProfiles }) {
       </section>
 
       <section className="card planning-card">
-        <h2>Samenprofile nach Planungsdaten</h2>
+        <div className="planning-section-header">
+          <h2>Detailübersicht</h2>
 
-        {filteredPlanningProfiles.length === 0 && (
-          <p>Für den aktuellen Filter sind keine Samenprofile vorhanden.</p>
+          <button
+            type="button"
+            className="button button-compact"
+            onClick={() => setShowPlanningDetails((prev) => !prev)}
+          >
+            {showPlanningDetails ? "Details ausblenden" : "Details anzeigen"}
+          </button>
+        </div>
+
+        {!showPlanningDetails && (
+          <p className="planning-muted-text">
+            Details zu Aussaat, Auspflanzen, Ernte und zum ausgewählten Monat
+            können bei Bedarf eingeblendet werden.
+          </p>
         )}
 
-        {filteredPlanningProfiles.length > 0 && (
-          <div className="planning-table-wrapper">
-            <table className="planning-table">
-              <thead>
-                <tr>
-                  <th>Pflanze</th>
-                  <th>Sorte</th>
-                  <th>Aussaat</th>
-                  <th>Nach draußen</th>
-                  <th>Ernte</th>
-                  <th>Im {currentMonthLabel}</th>
-                  <th>Profil</th>
-                </tr>
-              </thead>
+        {showPlanningDetails && (
+          <>
+            {filteredPlanningProfiles.length === 0 && (
+              <p>Für den aktuellen Filter sind keine Samenprofile vorhanden.</p>
+            )}
 
-              <tbody>
-                {filteredPlanningProfiles.map((profile) => (
-                  <tr key={profile.id}>
-                    <td>
-                      <Link
-                        to={`/seeds/edit/${profile.id}?back=planning`}
-                        className="planning-profile-link"
-                      >
-                        <strong>{profile.plantName || "-"}</strong>
-                      </Link>
-                    </td>
+            {filteredPlanningProfiles.length > 0 && (
+              <div className="planning-table-wrapper">
+                <table className="planning-table">
+                  <thead>
+                    <tr>
+                      <th>Pflanze</th>
+                      <th>Sorte</th>
+                      <th>Aussaat</th>
+                      <th>Nach draußen</th>
+                      <th>Ernte</th>
+                      <th>Im {currentMonthLabel}</th>
+                      <th>Profil</th>
+                    </tr>
+                  </thead>
 
-                    <td>{profile.variety || "-"}</td>
+                  <tbody>
+                    {filteredPlanningProfiles.map((profile) => (
+                      <tr key={profile.id}>
+                        <td>
+                          <Link
+                            to={`/seeds/edit/${profile.id}?back=planning`}
+                            className="planning-profile-link"
+                          >
+                            <strong>{profile.plantName || "-"}</strong>
+                          </Link>
+                        </td>
 
-                    <td>
-                      {monthLabels[profile.sowingFromMonth] || "-"} bis{" "}
-                      {monthLabels[profile.sowingToMonth] || "-"}
-                    </td>
+                        <td>{profile.variety || "-"}</td>
 
-                    <td>
-                      {monthLabels[profile.outdoorFromMonth] || "-"} bis{" "}
-                      {monthLabels[profile.outdoorToMonth] || "-"}
-                    </td>
+                        <td>
+                          {renderMonthRange(
+                            profile.sowingFromMonth,
+                            profile.sowingToMonth,
+                          )}
+                        </td>
 
-                    <td>
-                      {monthLabels[profile.harvestFromMonth] || "-"} bis{" "}
-                      {monthLabels[profile.harvestToMonth] || "-"}
-                    </td>
+                        <td>
+                          {renderMonthRange(
+                            profile.outdoorFromMonth,
+                            profile.outdoorToMonth,
+                          )}
+                        </td>
 
-                    <td>
-                      {(() => {
-                        const monthMarkers = getMarkersForMonth(
-                          profile,
-                          selectedMonth,
-                        );
+                        <td>
+                          {renderMonthRange(
+                            profile.harvestFromMonth,
+                            profile.harvestToMonth,
+                          )}
+                        </td>
 
-                        if (monthMarkers.length === 0) {
-                          return "-";
-                        }
+                        <td>
+                          {(() => {
+                            const monthMarkers = getMarkersForMonth(
+                              profile,
+                              selectedMonth,
+                            );
 
-                        return (
-                          <div className="planning-marker-list">
-                            {monthMarkers.map((marker) => (
-                              <span
-                                key={marker}
-                                className={`planning-marker planning-marker-${marker.toLowerCase()}`}
-                              >
-                                {getMarkerLabel(marker)}
-                              </span>
-                            ))}
-                          </div>
-                        );
-                      })()}
-                    </td>
+                            if (monthMarkers.length === 0) {
+                              return "-";
+                            }
 
-                    <td>
-                      <Link
-                        to={`/seeds/edit/${profile.id}?back=planning`}
-                        className="planning-profile-link"
-                      >
-                        <span className="pot-profile-badge">{profile.id}</span>
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                            return (
+                              <div className="planning-marker-list">
+                                {monthMarkers.map((marker) => (
+                                  <span
+                                    key={marker}
+                                    className={`planning-marker planning-marker-${marker.toLowerCase()}`}
+                                  >
+                                    {getMarkerLabel(marker)}
+                                  </span>
+                                ))}
+                              </div>
+                            );
+                          })()}
+                        </td>
+
+                        <td>
+                          <Link
+                            to={`/seeds/edit/${profile.id}?back=planning`}
+                            className="planning-profile-link"
+                          >
+                            <span className="pot-profile-badge">
+                              {profile.id}
+                            </span>
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
         )}
       </section>
     </div>
