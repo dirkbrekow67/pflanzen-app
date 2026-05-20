@@ -61,6 +61,28 @@ function PlanningPage({ seedProfiles }) {
     return Math.min(...monthValues);
   }
 
+  function sortProfilesByPlantName(a, b) {
+    const plantCompare = (a.profile.plantName || "").localeCompare(
+      b.profile.plantName || "",
+      "de",
+    );
+
+    if (plantCompare !== 0) {
+      return plantCompare;
+    }
+
+    const varietyCompare = (a.profile.variety || "").localeCompare(
+      b.profile.variety || "",
+      "de",
+    );
+
+    if (varietyCompare !== 0) {
+      return varietyCompare;
+    }
+
+    return (a.profile.id || "").localeCompare(b.profile.id || "", "de");
+  }
+
   function getPlanningMarkers(profile, month) {
     const markers = [];
 
@@ -144,17 +166,23 @@ function PlanningPage({ seedProfiles }) {
     {
       marker: "A",
       title: "Aussaat",
-      items: currentMonthProfiles.filter((item) => item.markers.includes("A")),
+      items: currentMonthProfiles
+        .filter((item) => item.markers.includes("A"))
+        .sort(sortProfilesByPlantName),
     },
     {
       marker: "D",
       title: "Nach draußen",
-      items: currentMonthProfiles.filter((item) => item.markers.includes("D")),
+      items: currentMonthProfiles
+        .filter((item) => item.markers.includes("D"))
+        .sort(sortProfilesByPlantName),
     },
     {
       marker: "E",
       title: "Ernte",
-      items: currentMonthProfiles.filter((item) => item.markers.includes("E")),
+      items: currentMonthProfiles
+        .filter((item) => item.markers.includes("E"))
+        .sort(sortProfilesByPlantName),
     },
   ].filter((group) => group.items.length > 0);
 
@@ -164,6 +192,16 @@ function PlanningPage({ seedProfiles }) {
     if (marker === "E") return "Ernte";
 
     return marker;
+  }
+
+  function getMarkerTitle(profile, month, markers) {
+    const plantName = profile.plantName || profile.id || "Samenprofil";
+    const monthLabel = monthLabels[month] || "Monat";
+    const markerLabels = markers
+      .map((marker) => getMarkerLabel(marker))
+      .join(", ");
+
+    return `${plantName} · ${monthLabel}: ${markerLabels}`;
   }
 
   function getPlanningFilterLabel() {
@@ -368,7 +406,8 @@ function PlanningPage({ seedProfiles }) {
                         <strong>{profile.plantName || "-"}</strong>
                         <br />
                         <small>
-                          {profile.variety || "-"} · {profile.id}
+                          Sorte: {profile.variety || "keine Angabe"} ·{" "}
+                          {profile.id}
                         </small>
                       </div>
 
@@ -459,7 +498,11 @@ function PlanningPage({ seedProfiles }) {
                             <Link
                               to={`/seeds/edit/${profile.id}?back=planning`}
                               className="planning-marker-link"
-                              title={`${profile.plantName || profile.id} öffnen`}
+                              title={getMarkerTitle(
+                                profile,
+                                month.value,
+                                markers,
+                              )}
                             >
                               <div className="planning-marker-list">
                                 {markers.map((marker) => (
@@ -473,7 +516,7 @@ function PlanningPage({ seedProfiles }) {
                               </div>
                             </Link>
                           ) : (
-                            "-"
+                            <span className="planning-empty-cell">–</span>
                           )}
                         </td>
                       );
