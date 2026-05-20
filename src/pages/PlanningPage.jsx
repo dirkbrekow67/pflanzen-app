@@ -99,6 +99,24 @@ function PlanningPage({ seedProfiles }) {
     }))
     .filter((item) => item.markers.length > 0);
 
+  const currentMonthGroups = [
+    {
+      marker: "A",
+      title: "Aussaat",
+      items: currentMonthProfiles.filter((item) => item.markers.includes("A")),
+    },
+    {
+      marker: "D",
+      title: "Nach draußen",
+      items: currentMonthProfiles.filter((item) => item.markers.includes("D")),
+    },
+    {
+      marker: "E",
+      title: "Ernte",
+      items: currentMonthProfiles.filter((item) => item.markers.includes("E")),
+    },
+  ].filter((group) => group.items.length > 0);
+
   function getMarkerLabel(marker) {
     if (marker === "A") return "Aussaat";
     if (marker === "D") return "Nach draußen";
@@ -211,33 +229,42 @@ function PlanningPage({ seedProfiles }) {
           </p>
         )}
 
-        {currentMonthProfiles.length > 0 && (
-          <div className="planning-current-list">
-            {currentMonthProfiles.map(({ profile, markers }) => (
-              <Link
-                key={profile.id}
-                to={`/seeds/edit/${profile.id}?back=planning`}
-                className="planning-current-item"
-              >
-                <div>
-                  <strong>{profile.plantName || "-"}</strong>
-                  <br />
-                  <small>
-                    {profile.variety || "-"} · {profile.id}
-                  </small>
-                </div>
+        {currentMonthGroups.length > 0 && (
+          <div className="planning-current-groups">
+            {currentMonthGroups.map((group) => (
+              <div key={group.marker} className="planning-current-group">
+                <h3>
+                  <span
+                    className={`planning-marker planning-marker-${group.marker.toLowerCase()}`}
+                  >
+                    {group.title}
+                  </span>
+                </h3>
 
-                <div className="planning-marker-list">
-                  {markers.map((marker) => (
-                    <span
-                      key={marker}
-                      className={`planning-marker planning-marker-${marker.toLowerCase()}`}
+                <div className="planning-current-list">
+                  {group.items.map(({ profile }) => (
+                    <Link
+                      key={`${group.marker}-${profile.id}`}
+                      to={`/seeds/edit/${profile.id}?back=planning`}
+                      className="planning-current-item"
                     >
-                      {getMarkerLabel(marker)}
-                    </span>
+                      <div>
+                        <strong>{profile.plantName || "-"}</strong>
+                        <br />
+                        <small>
+                          {profile.variety || "-"} · {profile.id}
+                        </small>
+                      </div>
+
+                      <span
+                        className={`planning-marker planning-marker-${group.marker.toLowerCase()}`}
+                      >
+                        {getMarkerLabel(group.marker)}
+                      </span>
+                    </Link>
                   ))}
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         )}
