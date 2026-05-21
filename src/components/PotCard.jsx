@@ -1,9 +1,24 @@
 // src/components/PotCard.jsx
 
-function PotCard({ id, plantName, sowingDate, status, onSelect, isSelected }) {
+function PotCard({
+  id,
+  plantName,
+  sowingDate,
+  status,
+  prickedDate,
+  sourcePotId,
+  onSelect,
+  isSelected,
+}) {
   const effectiveStatus = status === "empty" ? "empty" : "active";
 
   const statusLabel = effectiveStatus === "empty" ? "Frei" : "Belegt";
+
+  function formatDateGerman(value) {
+    if (!value) return "";
+
+    return new Date(value).toLocaleDateString("de-DE");
+  }
 
   return (
     <div
@@ -24,6 +39,12 @@ function PotCard({ id, plantName, sowingDate, status, onSelect, isSelected }) {
       </div>
       <div className="pot-card-meta">
         <span>Aussaat: {sowingDate || "-"}</span>
+
+        {prickedDate && (
+          <span>Pikiert am: {formatDateGerman(prickedDate)}</span>
+        )}
+
+        {sourcePotId && <span>Aus: {sourcePotId}</span>}
 
         {isSelected && <span className="pot-selected-label">Ausgewählt</span>}
       </div>

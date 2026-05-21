@@ -312,6 +312,8 @@ function HomePage({
                   plantName={pot.plantName}
                   sowingDate={pot.sowingDate}
                   status={pot.status}
+                  prickedDate={pot.prickedDate}
+                  sourcePotId={pot.sourcePotId}
                   isSelected={selectedLabelIds.includes(pot.id)}
                 />
               </Link>

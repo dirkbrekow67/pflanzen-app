@@ -784,6 +784,8 @@ function App() {
               pots={pots}
               handleEditPot={handleEditPot}
               handleClearPot={handleClearPot}
+              loadPots={loadPots}
+              loadReminders={loadReminders}
             />
           }
         />

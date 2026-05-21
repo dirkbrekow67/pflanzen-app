@@ -5,17 +5,25 @@ import { useEffect, useState } from "react";
 import PotDetails from "../components/PotDetails";
 import { API_BASE_URL } from "../utils/appConfig";
 
-function PotPage({ pots, handleEditPot, handleClearPot }) {
+function PotPage({
+  pots,
+  handleEditPot,
+  handleClearPot,
+  loadPots,
+  loadReminders,
+}) {
   const [history, setHistory] = useState([]);
   const [photos, setPhotos] = useState([]);
   const [photoType, setPhotoType] = useState("progress");
   const [photoMessage, setPhotoMessage] = useState("");
+  const [prickingMessage, setPrickingMessage] = useState("");
   const [showPrickingDialog, setShowPrickingDialog] = useState(false);
   const [prickingDate, setPrickingDate] = useState(
     new Date().toISOString().split("T")[0],
   );
   const [seedlingsCount, setSeedlingsCount] = useState("");
   const [selectedTargetPotIds, setSelectedTargetPotIds] = useState([]);
+  const [confirmReleaseSourcePot, setConfirmReleaseSourcePot] = useState(false);
   const { potId } = useParams();
 
   // Sucht anhand der URL den passenden Topf aus der Liste
@@ -54,6 +62,8 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
     setPrickingDate(new Date().toISOString().split("T")[0]);
     setSeedlingsCount(selectedPot.seedlingsCount || "");
     setSelectedTargetPotIds([]);
+    setPrickingMessage("");
+    setConfirmReleaseSourcePot(false);
     setShowPrickingDialog(true);
   }
 
@@ -61,6 +71,8 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
     setShowPrickingDialog(false);
     setSeedlingsCount("");
     setSelectedTargetPotIds([]);
+    setPrickingMessage("");
+    setConfirmReleaseSourcePot(false);
   }
 
   function toggleTargetPotSelection(targetPotId) {
@@ -69,6 +81,152 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
         ? currentIds.filter((id) => id !== targetPotId)
         : [...currentIds, targetPotId],
     );
+  }
+
+  async function handlePreparePricking() {
+    if (!selectedPot) return;
+
+    const totalSeedlings = Number(seedlingsCount);
+    const targetCount = selectedTargetPotIds.length;
+    const plantsRemainingInSourcePot = totalSeedlings - targetCount;
+
+    if (!Number.isInteger(totalSeedlings) || totalSeedlings < 1) {
+      setPrickingMessage("Bitte die Anzahl entstandener Pflanzen eintragen.");
+      return;
+    }
+
+    if (targetCount === 0) {
+      setPrickingMessage("Bitte mindestens einen freien Ziel-Topf auswählen.");
+      return;
+    }
+
+    if (targetCount > totalSeedlings) {
+      setPrickingMessage(
+        "Es wurden mehr Ziel-Töpfe ausgewählt als entstandene Pflanzen vorhanden sind.",
+      );
+      return;
+    }
+
+    if (targetCount === totalSeedlings && !confirmReleaseSourcePot) {
+      setPrickingMessage(
+        "Alle entstandenen Pflanzen werden auf Ziel-Töpfe verteilt. Der Ursprungstopf würde dadurch freigegeben. Bitte bewusst bestätigen.",
+      );
+      return;
+    }
+
+    if (!prickingDate) {
+      setPrickingMessage("Bitte ein Pikierdatum eintragen.");
+      return;
+    }
+
+    try {
+      const sourcePotUpdate =
+        plantsRemainingInSourcePot === 0
+          ? {
+              ...selectedPot,
+              status: "empty",
+              seedlingsCount: totalSeedlings,
+              plantsInPot: 0,
+              prickedDate: prickingDate,
+              potNotes: selectedPot.potNotes
+                ? `${selectedPot.potNotes}\nVollständig pikiert am ${prickingDate}`
+                : `Vollständig pikiert am ${prickingDate}`,
+            }
+          : {
+              ...selectedPot,
+              seedlingsCount: totalSeedlings,
+              plantsInPot: plantsRemainingInSourcePot,
+              prickedDate: prickingDate,
+            };
+
+      const sourceResponse = await fetch(
+        `${API_BASE_URL}/api/pots/${selectedPot.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(sourcePotUpdate),
+        },
+      );
+
+      if (!sourceResponse.ok) {
+        throw new Error("Ursprungstopf konnte nicht aktualisiert werden.");
+      }
+
+      await Promise.all(
+        selectedTargetPotIds.map((targetPotId) => {
+          const targetPot = pots.find((pot) => pot.id === targetPotId);
+
+          const targetPotUpdate = {
+            ...selectedPot,
+            ...targetPot,
+            id: targetPotId,
+            plantName: selectedPot.plantName,
+            status: "active",
+            sowingDate: selectedPot.sowingDate || "",
+            resowingDate: selectedPot.resowingDate || "",
+            lifecycle: selectedPot.lifecycle || "",
+            sowingFromMonth: selectedPot.sowingFromMonth || "",
+            sowingToMonth: selectedPot.sowingToMonth || "",
+            germinationTempMin: selectedPot.germinationTempMin || "",
+            germinationTempMax: selectedPot.germinationTempMax || "",
+            germinationDaysMin: selectedPot.germinationDaysMin || "",
+            germinationDaysMax: selectedPot.germinationDaysMax || "",
+            sowingDepthCm: selectedPot.sowingDepthCm || "",
+            outdoorFromMonth: selectedPot.outdoorFromMonth || "",
+            outdoorToMonth: selectedPot.outdoorToMonth || "",
+            seedProfileId: selectedPot.seedProfileId || "",
+            potNotes: `Pikiert aus ${selectedPot.id}`,
+            harvestFromMonth: selectedPot.harvestFromMonth || "",
+            harvestToMonth: selectedPot.harvestToMonth || "",
+            sowingDepthNote: selectedPot.sowingDepthNote || "",
+            rowSpacingCm: selectedPot.rowSpacingCm || "",
+            plantSpacingCm: selectedPot.plantSpacingCm || "",
+            sowingWidthCm: selectedPot.sowingWidthCm || "",
+            sowingNotes: selectedPot.sowingNotes || "",
+            sowingMode: "single",
+            seedCount: "",
+            seedlingsCount: "",
+            plantsInPot: 1,
+            prickedDate: prickingDate,
+            sourcePotId: selectedPot.id,
+          };
+
+          return fetch(`${API_BASE_URL}/api/pots/${targetPotId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(targetPotUpdate),
+          }).then((response) => {
+            if (!response.ok) {
+              throw new Error(
+                `Ziel-Topf ${targetPotId} konnte nicht belegt werden.`,
+              );
+            }
+
+            return response;
+          });
+        }),
+      );
+
+      loadPots();
+      loadReminders();
+
+      setShowPrickingDialog(false);
+      setSelectedTargetPotIds([]);
+      setConfirmReleaseSourcePot(false);
+      setPrickingMessage("");
+      setPhotoMessage(
+        plantsRemainingInSourcePot === 0
+          ? `Pikieren abgeschlossen: ${targetCount} Ziel-Topf/Topf(e) belegt, Ursprungstopf wurde freigegeben.`
+          : `Pikieren vorbereitet: ${targetCount} Ziel-Topf/Topf(e) belegt, ${plantsRemainingInSourcePot} Pflanze(n) bleiben im Ursprungstopf.`,
+      );
+    } catch (error) {
+      console.error("Fehler beim Pikieren:", error);
+      setPrickingMessage("Pikieren konnte nicht gespeichert werden.");
+    }
   }
 
   async function handlePhotoUpload(event) {
@@ -166,12 +324,27 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
               Ausgewählte Ziel-Töpfe:{" "}
               <strong>{selectedTargetPotIds.length}</strong>
             </p>
+            {Number(seedlingsCount) > 0 &&
+              selectedTargetPotIds.length === Number(seedlingsCount) && (
+                <label className="label-select-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={confirmReleaseSourcePot}
+                    onChange={(event) =>
+                      setConfirmReleaseSourcePot(event.target.checked)
+                    }
+                  />
+                  Ursprungstopf nach dem Pikieren freigeben
+                </label>
+              )}
+            {prickingMessage && <p className="error-box">{prickingMessage}</p>}
 
             <div className="filter-bar">
               <button
                 type="button"
                 className="button"
                 disabled={selectedTargetPotIds.length === 0}
+                onClick={handlePreparePricking}
               >
                 Pikieren vorbereiten
               </button>
