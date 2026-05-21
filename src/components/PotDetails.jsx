@@ -22,6 +22,19 @@ function formatMonthRange(fromMonth, toMonth) {
   return `${fromLabel} bis ${toLabel}`;
 }
 
+function formatSowingMode(value) {
+  if (value === "multi") return "Mehrere Samen im Topf";
+  if (value === "broadcast") return "Flächige Aussaat / Kräuter";
+
+  return "Einzelsaat / eine Pflanze je Topf";
+}
+
+function formatDateGerman(value) {
+  if (!hasValue(value)) return "-";
+
+  return new Date(value).toLocaleDateString("de-DE");
+}
+
 function PotDetails({ pot, onEditPot, onClearPot }) {
   if (!pot) {
     return (
@@ -39,7 +52,13 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
     hasValue(pot.sowingNotes) ||
     hasValue(pot.rowSpacingCm) ||
     hasValue(pot.plantSpacingCm) ||
-    hasValue(pot.sowingWidthCm);
+    hasValue(pot.sowingWidthCm) ||
+    hasValue(pot.sowingMode) ||
+    hasValue(pot.seedCount) ||
+    hasValue(pot.seedlingsCount) ||
+    hasValue(pot.plantsInPot) ||
+    hasValue(pot.prickedDate) ||
+    hasValue(pot.sourcePotId);
 
   const hasHarvestData =
     hasValue(pot.harvestFromMonth) || hasValue(pot.harvestToMonth);
@@ -184,6 +203,36 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
               <p>
                 <span className="detail-label">Aussaatbreite</span>
                 <strong>{formatValue(pot.sowingWidthCm, "cm")}</strong>
+              </p>
+
+              <p>
+                <span className="detail-label">Aussaat-Art</span>
+                <strong>{formatSowingMode(pot.sowingMode)}</strong>
+              </p>
+
+              <p>
+                <span className="detail-label">Ausgesäte Samen</span>
+                <strong>{formatValue(pot.seedCount)}</strong>
+              </p>
+
+              <p>
+                <span className="detail-label">Entstandene Pflanzen</span>
+                <strong>{formatValue(pot.seedlingsCount)}</strong>
+              </p>
+
+              <p>
+                <span className="detail-label">Pflanzen im Topf</span>
+                <strong>{formatValue(pot.plantsInPot)}</strong>
+              </p>
+
+              <p>
+                <span className="detail-label">Pikiert am</span>
+                <strong>{formatDateGerman(pot.prickedDate)}</strong>
+              </p>
+
+              <p>
+                <span className="detail-label">Ursprungstopf</span>
+                <strong>{pot.sourcePotId || "-"}</strong>
               </p>
             </div>
 

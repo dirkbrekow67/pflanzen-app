@@ -1,3 +1,5 @@
+// server/routes/potPhotoRoutes.js
+
 import express from "express";
 import db from "../database/db.js";
 import upload from "../utils/upload.js";

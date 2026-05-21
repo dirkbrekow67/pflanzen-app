@@ -241,6 +241,87 @@ function PotForm({
                     }
                   />
                 </div>
+                <div className="form-field-compact">
+                  <label>Aussaat-Art</label>
+                  <select
+                    value={formData.sowingMode || "single"}
+                    onChange={(e) =>
+                      handleFormChange("sowingMode", e.target.value)
+                    }
+                  >
+                    <option value="single">
+                      Einzelsaat / eine Pflanze je Topf
+                    </option>
+                    <option value="multi">Mehrere Samen im Topf</option>
+                    <option value="broadcast">
+                      Flächige Aussaat / Kräuter
+                    </option>
+                  </select>
+                </div>
+
+                {formData.sowingMode !== "broadcast" && (
+                  <>
+                    <div className="form-field-compact">
+                      <label>Anzahl ausgesäter Samen</label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="1"
+                        value={formData.seedCount || ""}
+                        onChange={(e) =>
+                          handleFormChange("seedCount", e.target.value)
+                        }
+                        placeholder="z. B. 4"
+                      />
+                    </div>
+
+                    <div className="form-field-compact">
+                      <label>Entstandene Pflanzen</label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="1"
+                        value={formData.seedlingsCount || ""}
+                        onChange={(e) =>
+                          handleFormChange("seedlingsCount", e.target.value)
+                        }
+                        placeholder="z. B. 3"
+                      />
+                    </div>
+
+                    <div className="form-field-compact">
+                      <label>Pflanzen im aktuellen Topf</label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="1"
+                        value={formData.plantsInPot || ""}
+                        onChange={(e) =>
+                          handleFormChange("plantsInPot", e.target.value)
+                        }
+                        placeholder="z. B. 1"
+                      />
+                    </div>
+                  </>
+                )}
+
+                <div className="form-field-compact">
+                  <label>Pikierdatum</label>
+                  <input
+                    type="date"
+                    value={formData.prickedDate || ""}
+                    onChange={(e) =>
+                      handleFormChange("prickedDate", e.target.value)
+                    }
+                  />
+                </div>
+
+                {formData.sowingMode === "broadcast" && (
+                  <p className="form-muted-text">
+                    Bei flächiger Aussaat oder Kräutern muss die Anzahl der
+                    Samen und Pflanzen nicht erfasst werden.
+                  </p>
+                )}
               </div>
 
               <div className="form-field">

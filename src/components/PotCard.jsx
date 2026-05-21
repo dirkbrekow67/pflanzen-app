@@ -1,3 +1,5 @@
+// src/components/PotCard.jsx
+
 function PotCard({ id, plantName, sowingDate, status, onSelect, isSelected }) {
   const effectiveStatus = status === "empty" ? "empty" : "active";
 
