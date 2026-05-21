@@ -1,3 +1,5 @@
+// server/routes/potsRoutes.js
+
 import express from "express";
 import db from "../database/db.js";
 
@@ -40,6 +42,12 @@ router.post("/", (req, res) => {
       plantSpacingCm,
       sowingWidthCm,
       sowingNotes,
+      sowingMode,
+      seedCount,
+      seedlingsCount,
+      plantsInPot,
+      prickedDate,
+      sourcePotId,
     } = req.body;
 
     const stmt = db.prepare(`
@@ -67,9 +75,15 @@ router.post("/", (req, res) => {
         rowSpacingCm,
         plantSpacingCm,
         sowingWidthCm,
-        sowingNotes
+        sowingNotes,
+        sowingMode,
+        seedCount,
+        seedlingsCount,
+        plantsInPot,
+        prickedDate,
+        sourcePotId
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     stmt.run(
@@ -97,6 +111,12 @@ router.post("/", (req, res) => {
       plantSpacingCm,
       sowingWidthCm,
       sowingNotes,
+      sowingMode,
+      seedCount,
+      seedlingsCount,
+      plantsInPot,
+      prickedDate,
+      sourcePotId,
     );
 
     res.json({
@@ -139,6 +159,12 @@ router.put("/:id", (req, res) => {
       plantSpacingCm,
       sowingWidthCm,
       sowingNotes,
+      sowingMode,
+      seedCount,
+      seedlingsCount,
+      plantsInPot,
+      prickedDate,
+      sourcePotId,
     } = req.body;
 
     db.prepare(
@@ -166,7 +192,13 @@ router.put("/:id", (req, res) => {
           rowSpacingCm = ?,
           plantSpacingCm = ?,
           sowingWidthCm = ?,
-          sowingNotes = ?
+          sowingNotes = ?,
+          sowingMode = ?,
+          seedCount = ?,
+          seedlingsCount = ?,
+          plantsInPot = ?,
+          prickedDate = ?,
+          sourcePotId = ?
       WHERE id = ?
     `,
     ).run(
@@ -193,6 +225,12 @@ router.put("/:id", (req, res) => {
       plantSpacingCm,
       sowingWidthCm,
       sowingNotes,
+      sowingMode,
+      seedCount,
+      seedlingsCount,
+      plantsInPot,
+      prickedDate,
+      sourcePotId,
       id,
     );
 

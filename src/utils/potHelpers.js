@@ -23,6 +23,12 @@ export const emptyFormData = {
   plantSpacingCm: "",
   sowingWidthCm: "",
   sowingNotes: "",
+  sowingMode: "single",
+  seedCount: "",
+  seedlingsCount: "",
+  plantsInPot: "",
+  prickedDate: "",
+  sourcePotId: "",
 };
 
 export const clearedPotData = {
@@ -30,6 +36,11 @@ export const clearedPotData = {
   resowingDate: "",
   status: "empty",
   potNotes: "",
+  seedCount: "",
+  seedlingsCount: "",
+  plantsInPot: "",
+  prickedDate: "",
+  sourcePotId: "",
 };
 
 // Ergänzt bei älteren Töpfen einen fehlenden Status und fehlende neue Felder
@@ -89,6 +100,14 @@ export function buildPotData(formData) {
     sowingWidthCm:
       formData.sowingWidthCm === "" ? "" : Number(formData.sowingWidthCm),
     sowingNotes: formData.sowingNotes || "",
+    sowingMode: formData.sowingMode || "single",
+    seedCount: formData.seedCount === "" ? "" : Number(formData.seedCount),
+    seedlingsCount:
+      formData.seedlingsCount === "" ? "" : Number(formData.seedlingsCount),
+    plantsInPot:
+      formData.plantsInPot === "" ? "" : Number(formData.plantsInPot),
+    prickedDate: formData.prickedDate || "",
+    sourcePotId: formData.sourcePotId || "",
   };
 }
 
@@ -137,6 +156,26 @@ export function validatePotForm(formData) {
     Number(formData.harvestFromMonth) > Number(formData.harvestToMonth)
   ) {
     return "Der Erntezeitraum ist ungültig: Von-Monat darf nicht nach dem Bis-Monat liegen.";
+  }
+
+  if (formData.seedCount !== "" && Number(formData.seedCount) < 0) {
+    return "Die Anzahl ausgesäter Samen darf nicht negativ sein.";
+  }
+
+  if (formData.seedlingsCount !== "" && Number(formData.seedlingsCount) < 0) {
+    return "Die Anzahl entstandener Pflanzen darf nicht negativ sein.";
+  }
+
+  if (formData.plantsInPot !== "" && Number(formData.plantsInPot) < 0) {
+    return "Die Anzahl Pflanzen im Topf darf nicht negativ sein.";
+  }
+
+  if (
+    formData.seedCount !== "" &&
+    formData.seedlingsCount !== "" &&
+    Number(formData.seedlingsCount) > Number(formData.seedCount)
+  ) {
+    return "Die Anzahl entstandener Pflanzen darf nicht größer sein als die Anzahl ausgesäter Samen.";
   }
 
   return "";

@@ -1,3 +1,5 @@
+// server/database/db.js
+
 import Database from "better-sqlite3";
 
 const db = new Database("./server/database/pflanzen.db");
@@ -27,7 +29,13 @@ CREATE TABLE IF NOT EXISTS pots (
   rowSpacingCm REAL,
   plantSpacingCm REAL,
   sowingWidthCm REAL,
-  sowingNotes TEXT
+  sowingNotes TEXT,
+  sowingMode TEXT,
+  seedCount INTEGER,
+  seedlingsCount INTEGER,
+  plantsInPot INTEGER,
+  prickedDate TEXT,
+  sourcePotId TEXT
 );
 `);
 
@@ -69,6 +77,42 @@ try {
 
 try {
   db.prepare("ALTER TABLE pots ADD COLUMN sowingNotes TEXT").run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare("ALTER TABLE pots ADD COLUMN sowingMode TEXT").run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare("ALTER TABLE pots ADD COLUMN seedCount INTEGER").run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare("ALTER TABLE pots ADD COLUMN seedlingsCount INTEGER").run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare("ALTER TABLE pots ADD COLUMN plantsInPot INTEGER").run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare("ALTER TABLE pots ADD COLUMN prickedDate TEXT").run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare("ALTER TABLE pots ADD COLUMN sourcePotId TEXT").run();
 } catch {
   // Spalte existiert bereits
 }
