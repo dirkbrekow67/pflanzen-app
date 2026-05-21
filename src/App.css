@@ -1723,6 +1723,17 @@ h2 {
   font-style: italic;
 }
 
+.pricking-target-list {
+  display: grid;
+  gap: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 8px;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
 @media (max-width: 800px) {
   .pot-detail-header {
     flex-direction: column;

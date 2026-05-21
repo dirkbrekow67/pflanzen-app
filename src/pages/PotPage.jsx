@@ -10,10 +10,20 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
   const [photos, setPhotos] = useState([]);
   const [photoType, setPhotoType] = useState("progress");
   const [photoMessage, setPhotoMessage] = useState("");
+  const [showPrickingDialog, setShowPrickingDialog] = useState(false);
+  const [prickingDate, setPrickingDate] = useState(
+    new Date().toISOString().split("T")[0],
+  );
+  const [seedlingsCount, setSeedlingsCount] = useState("");
+  const [selectedTargetPotIds, setSelectedTargetPotIds] = useState([]);
   const { potId } = useParams();
 
   // Sucht anhand der URL den passenden Topf aus der Liste
   const selectedPot = pots.find((pot) => pot.id === potId);
+
+  const emptyTargetPots = pots.filter(
+    (pot) => (pot.status || "active") === "empty" && pot.id !== potId,
+  );
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -36,6 +46,29 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
 
     handleEditPot(selectedPot);
     navigate(`/pot/${selectedPot.id}/edit`);
+  }
+
+  function openPrickingDialog() {
+    if (!selectedPot) return;
+
+    setPrickingDate(new Date().toISOString().split("T")[0]);
+    setSeedlingsCount(selectedPot.seedlingsCount || "");
+    setSelectedTargetPotIds([]);
+    setShowPrickingDialog(true);
+  }
+
+  function closePrickingDialog() {
+    setShowPrickingDialog(false);
+    setSeedlingsCount("");
+    setSelectedTargetPotIds([]);
+  }
+
+  function toggleTargetPotSelection(targetPotId) {
+    setSelectedTargetPotIds((currentIds) =>
+      currentIds.includes(targetPotId)
+        ? currentIds.filter((id) => id !== targetPotId)
+        : [...currentIds, targetPotId],
+    );
   }
 
   async function handlePhotoUpload(event) {
@@ -75,6 +108,85 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
 
   return (
     <div className="container">
+      {showPrickingDialog && selectedPot && (
+        <div className="modal-backdrop">
+          <div className="modal-card">
+            <h2>Pikieren vorbereiten</h2>
+
+            <p>
+              Ursprungstopf: <strong>{selectedPot.id}</strong> –{" "}
+              <strong>{selectedPot.plantName || "-"}</strong>
+            </p>
+
+            <div className="form-field">
+              <label>Pikierdatum</label>
+              <input
+                type="date"
+                value={prickingDate}
+                onChange={(event) => setPrickingDate(event.target.value)}
+              />
+            </div>
+
+            <div className="form-field">
+              <label>Entstandene Pflanzen insgesamt</label>
+              <input
+                type="number"
+                min="0"
+                step="1"
+                value={seedlingsCount}
+                onChange={(event) => setSeedlingsCount(event.target.value)}
+                placeholder="z. B. 3"
+              />
+            </div>
+
+            <div className="form-field">
+              <label>Freie Ziel-Töpfe</label>
+
+              {emptyTargetPots.length === 0 && (
+                <p>Es sind aktuell keine freien Töpfe vorhanden.</p>
+              )}
+
+              {emptyTargetPots.length > 0 && (
+                <div className="pricking-target-list">
+                  {emptyTargetPots.map((targetPot) => (
+                    <label key={targetPot.id} className="label-select-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={selectedTargetPotIds.includes(targetPot.id)}
+                        onChange={() => toggleTargetPotSelection(targetPot.id)}
+                      />
+                      {targetPot.id}
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <p className="form-muted-text">
+              Ausgewählte Ziel-Töpfe:{" "}
+              <strong>{selectedTargetPotIds.length}</strong>
+            </p>
+
+            <div className="filter-bar">
+              <button
+                type="button"
+                className="button"
+                disabled={selectedTargetPotIds.length === 0}
+              >
+                Pikieren vorbereiten
+              </button>
+
+              <button
+                type="button"
+                className="button"
+                onClick={closePrickingDialog}
+              >
+                Abbrechen
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <h1>{selectedPot ? `Topf ${selectedPot.id}` : "Topfdetails"}</h1>
       <div className="page-actions-large">
         <Link to="/" className="button-link">
@@ -91,11 +203,31 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
           </Link>
         </div>
       ) : (
-        <PotDetails
-          pot={selectedPot}
-          onEditPot={handleEditAndGoBack}
-          onClearPot={handleClearPot}
-        />
+        <>
+          <PotDetails
+            pot={selectedPot}
+            onEditPot={handleEditAndGoBack}
+            onClearPot={handleClearPot}
+          />
+          {selectedPot.status !== "empty" && (
+            <div className="card-light page-actions-large">
+              <h2>Pikieren</h2>
+              <p>
+                Mehrere Jungpflanzen aus diesem Ursprungstopf können auf freie
+                Ziel-Töpfe verteilt werden. Der Ursprungstopf bleibt dabei
+                belegt.
+              </p>
+
+              <button
+                type="button"
+                className="button"
+                onClick={openPrickingDialog}
+              >
+                Pikieren
+              </button>
+            </div>
+          )}
+        </>
       )}
 
       {selectedPot && (
