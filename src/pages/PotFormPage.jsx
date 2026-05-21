@@ -1,4 +1,7 @@
-import { Link, useNavigate } from "react-router-dom";
+// src/pages/PotFormPage.jsx
+
+import { useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import PotForm from "../components/PotForm";
 import { monthLabels } from "../constants/months";
 import { formatLifecycle } from "../utils/formatHelpers";
@@ -13,8 +16,23 @@ function PotFormPage({
   selectedSeedProfileId,
   setSelectedSeedProfileId,
   handleApplySeedProfile,
+  handleEditPotById,
 }) {
   const navigate = useNavigate();
+
+  const { potId } = useParams();
+
+  useEffect(() => {
+    if (!potId) {
+      return;
+    }
+
+    if (editingPotId === potId) {
+      return;
+    }
+
+    handleEditPotById(potId);
+  }, [potId, editingPotId, handleEditPotById]);
 
   const selectedSeedProfile = seedProfiles.find(
     (profile) => profile.id === selectedSeedProfileId,

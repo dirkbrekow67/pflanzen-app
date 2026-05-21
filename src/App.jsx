@@ -465,17 +465,46 @@ function App() {
   }
 
   // Lädt die Daten des ausgewählten Topfs in das Formular und startet den Bearbeiten-Modus
-  function handleEditPot(pot) {
+  // Lädt die Daten des ausgewählten Topfs in das Formular und startet den Bearbeiten-Modus
+  function loadPotIntoForm(pot) {
     setFormData({
       ...emptyFormData,
       ...pot,
       seedProfileId: pot.seedProfileId || "",
       resowingDate: pot.resowingDate || "",
       potNotes: pot.potNotes || "",
+      sowingDepthNote: pot.sowingDepthNote || "",
+      rowSpacingCm: pot.rowSpacingCm || "",
+      plantSpacingCm: pot.plantSpacingCm || "",
+      sowingWidthCm: pot.sowingWidthCm || "",
+      sowingNotes: pot.sowingNotes || "",
+      sowingMode: pot.sowingMode || "single",
+      seedCount: pot.seedCount ?? "",
+      seedlingsCount: pot.seedlingsCount ?? "",
+      plantsInPot: pot.plantsInPot ?? "",
+      prickedDate: pot.prickedDate || "",
+      sourcePotId: pot.sourcePotId || "",
     });
 
     setEditingPotId(pot.id);
+    setSelectedSeedProfileId(pot.seedProfileId || "");
     setFormError("");
+  }
+
+  function handleEditPot(pot) {
+    loadPotIntoForm(pot);
+  }
+
+  function handleEditPotById(potId) {
+    const potToEdit = pots.find((pot) => pot.id === potId);
+
+    if (!potToEdit) {
+      setFormError("Der ausgewählte Topf wurde nicht gefunden.");
+      return false;
+    }
+
+    loadPotIntoForm(potToEdit);
+    return true;
   }
 
   // Übernimmt die Stammdaten eines Samenprofils in das Formular
@@ -800,6 +829,24 @@ function App() {
               selectedSeedProfileId={selectedSeedProfileId}
               setSelectedSeedProfileId={setSelectedSeedProfileId}
               handleApplySeedProfile={handleApplySeedProfile}
+              handleEditPotById={handleEditPotById}
+            />
+          }
+        />
+        <Route
+          path="/pot/:potId/edit"
+          element={
+            <PotFormPage
+              formData={formData}
+              handleFormChange={handleFormChange}
+              handleAddPot={handleAddPot}
+              formError={formError}
+              editingPotId={editingPotId}
+              seedProfiles={customSeedProfiles}
+              selectedSeedProfileId={selectedSeedProfileId}
+              setSelectedSeedProfileId={setSelectedSeedProfileId}
+              handleApplySeedProfile={handleApplySeedProfile}
+              handleEditPotById={handleEditPotById}
             />
           }
         />

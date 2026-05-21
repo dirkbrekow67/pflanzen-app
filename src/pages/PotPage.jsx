@@ -1,3 +1,5 @@
+// src/pages/PotPage.jsx
+
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import PotDetails from "../components/PotDetails";
@@ -31,8 +33,9 @@ function PotPage({ pots, handleEditPot, handleClearPot }) {
   // Lädt die Topfdaten ins Formular und wechselt zurück zur Übersichtsseite
   function handleEditAndGoBack() {
     if (!selectedPot) return;
+
     handleEditPot(selectedPot);
-    navigate("/pots/new");
+    navigate(`/pot/${selectedPot.id}/edit`);
   }
 
   async function handlePhotoUpload(event) {
