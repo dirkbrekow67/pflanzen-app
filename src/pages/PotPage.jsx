@@ -469,12 +469,26 @@ function PotPage({
           {isPrickedTargetPot && (
             <div className="card-light page-actions-large">
               <h2>Pikiertes Ziel</h2>
+
               <p>
                 Dieser Topf wurde bereits aus{" "}
                 <strong>{selectedPot.sourcePotId}</strong> pikiert. Eine erneute
                 Verteilung über den normalen Pikierdialog ist für diesen Topf
                 nicht vorgesehen.
               </p>
+
+              <div className="filter-bar">
+                <Link
+                  to={`/pot/${selectedPot.sourcePotId}`}
+                  className="button-link"
+                >
+                  Ursprungstopf öffnen
+                </Link>
+
+                <Link to="/" className="button-link">
+                  Zur Topfliste
+                </Link>
+              </div>
             </div>
           )}
         </>
