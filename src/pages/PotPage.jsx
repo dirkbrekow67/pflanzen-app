@@ -65,6 +65,14 @@ function PotPage({
     selectedPot.status !== "empty" &&
     Boolean(selectedPot.sourcePotId);
 
+  const prickedTargetPots = selectedPot
+    ? pots.filter(
+        (pot) =>
+          pot.sourcePotId === selectedPot.id &&
+          (pot.status || "active") !== "empty",
+      )
+    : [];
+
   const emptyTargetPots = pots.filter(
     (pot) => (pot.status || "active") === "empty" && pot.id !== potId,
   );
@@ -463,6 +471,29 @@ function PotPage({
               >
                 Pikieren
               </button>
+            </div>
+          )}
+
+          {prickedTargetPots.length > 0 && (
+            <div className="card-light page-actions-large">
+              <h2>Pikierte Ziel-Töpfe</h2>
+
+              <p>
+                Aus diesem Ursprungstopf wurden bereits folgende Ziel-Töpfe
+                belegt:
+              </p>
+
+              <div className="filter-bar">
+                {prickedTargetPots.map((targetPot) => (
+                  <Link
+                    key={targetPot.id}
+                    to={`/pot/${targetPot.id}`}
+                    className="button-link"
+                  >
+                    {targetPot.id}
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
 
