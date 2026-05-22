@@ -137,7 +137,6 @@ function PotPage({
 
     const totalSeedlings = Number(seedlingsCount);
     const targetCount = selectedTargetPotIds.length;
-    const plantsRemainingInSourcePot = totalSeedlings - targetCount;
 
     if (!Number.isInteger(totalSeedlings) || totalSeedlings < 1) {
       setPrickingMessage("Bitte die Anzahl entstandener Pflanzen eintragen.");
@@ -169,123 +168,26 @@ function PotPage({
     }
 
     try {
-      const sourcePotUpdate =
-        plantsRemainingInSourcePot === 0
-          ? {
-              ...selectedPot,
-              status: "empty",
-              seedlingsCount: totalSeedlings,
-              plantsInPot: 0,
-              prickedDate: prickingDate,
-              potNotes: selectedPot.potNotes
-                ? `${selectedPot.potNotes}\nVollständig pikiert am ${prickingDate}`
-                : `Vollständig pikiert am ${prickingDate}`,
-            }
-          : {
-              ...selectedPot,
-              seedlingsCount: totalSeedlings,
-              plantsInPot: plantsRemainingInSourcePot,
-              prickedDate: prickingDate,
-            };
-
-      const sourceResponse = await fetch(
-        `${API_BASE_URL}/api/pots/${selectedPot.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(sourcePotUpdate),
-        },
-      );
-
-      if (!sourceResponse.ok) {
-        throw new Error("Ursprungstopf konnte nicht aktualisiert werden.");
-      }
-
-      const historyResponse = await fetch(`${API_BASE_URL}/api/pot-history`, {
+      const response = await fetch(`${API_BASE_URL}/api/pricking`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          potId: selectedPot.id,
-          plantName: selectedPot.plantName || "",
-          seedProfileId: selectedPot.seedProfileId || "",
-          sowingDate: selectedPot.sowingDate || "",
-          resowingDate: selectedPot.resowingDate || "",
-          potNotes: selectedPot.potNotes || "",
-          startedAt: selectedPot.sowingDate || "",
-          endedAt: prickingDate,
-          endReason:
-            plantsRemainingInSourcePot === 0 ? "pikiert" : "teilpikiert",
-          endReasonNote:
-            plantsRemainingInSourcePot === 0
-              ? `Vollständig pikiert in ${targetCount} Ziel-Topf/Topf(e)`
-              : `${targetCount} Jungpflanze(n) pikiert in Ziel-Topf/Topf(e); ${plantsRemainingInSourcePot} Pflanze(n) verbleiben im Ursprungstopf`,
+          sourcePotId: selectedPot.id,
+          targetPotIds: selectedTargetPotIds,
+          prickingDate,
+          totalSeedlings,
         }),
       });
 
-      if (!historyResponse.ok) {
-        throw new Error("Pikier-Historie konnte nicht gespeichert werden.");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error || "Pikieren konnte nicht gespeichert werden.",
+        );
       }
-
-      await Promise.all(
-        selectedTargetPotIds.map((targetPotId) => {
-          const targetPot = pots.find((pot) => pot.id === targetPotId);
-
-          const targetPotUpdate = {
-            ...selectedPot,
-            ...targetPot,
-            id: targetPotId,
-            plantName: selectedPot.plantName,
-            status: "active",
-            sowingDate: selectedPot.sowingDate || "",
-            resowingDate: selectedPot.resowingDate || "",
-            lifecycle: selectedPot.lifecycle || "",
-            sowingFromMonth: selectedPot.sowingFromMonth || "",
-            sowingToMonth: selectedPot.sowingToMonth || "",
-            germinationTempMin: selectedPot.germinationTempMin || "",
-            germinationTempMax: selectedPot.germinationTempMax || "",
-            germinationDaysMin: selectedPot.germinationDaysMin || "",
-            germinationDaysMax: selectedPot.germinationDaysMax || "",
-            sowingDepthCm: selectedPot.sowingDepthCm || "",
-            outdoorFromMonth: selectedPot.outdoorFromMonth || "",
-            outdoorToMonth: selectedPot.outdoorToMonth || "",
-            seedProfileId: selectedPot.seedProfileId || "",
-            potNotes: `Pikiert aus ${selectedPot.id}`,
-            harvestFromMonth: selectedPot.harvestFromMonth || "",
-            harvestToMonth: selectedPot.harvestToMonth || "",
-            sowingDepthNote: selectedPot.sowingDepthNote || "",
-            rowSpacingCm: selectedPot.rowSpacingCm || "",
-            plantSpacingCm: selectedPot.plantSpacingCm || "",
-            sowingWidthCm: selectedPot.sowingWidthCm || "",
-            sowingNotes: selectedPot.sowingNotes || "",
-            sowingMode: "single",
-            seedCount: "",
-            seedlingsCount: "",
-            plantsInPot: 1,
-            prickedDate: prickingDate,
-            sourcePotId: selectedPot.id,
-          };
-
-          return fetch(`${API_BASE_URL}/api/pots/${targetPotId}`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(targetPotUpdate),
-          }).then((response) => {
-            if (!response.ok) {
-              throw new Error(
-                `Ziel-Topf ${targetPotId} konnte nicht belegt werden.`,
-              );
-            }
-
-            return response;
-          });
-        }),
-      );
 
       loadPots();
       loadReminders();
@@ -295,14 +197,17 @@ function PotPage({
       setConfirmReleaseSourcePot(false);
       setPrickingMessage("");
       setPhotoType("pricking");
+
       setPhotoMessage(
-        plantsRemainingInSourcePot === 0
-          ? `Pikieren abgeschlossen: ${targetCount} Ziel-Topf/Topf(e) belegt, Ursprungstopf wurde freigegeben.`
-          : `Pikieren vorbereitet: ${targetCount} Ziel-Topf/Topf(e) belegt, ${plantsRemainingInSourcePot} Pflanze(n) bleiben im Ursprungstopf.`,
+        data.plantsRemainingInSourcePot === 0
+          ? `Pikieren abgeschlossen: ${data.targetCount} Ziel-Topf/Topf(e) belegt, Ursprungstopf wurde freigegeben.`
+          : `Pikieren vorbereitet: ${data.targetCount} Ziel-Topf/Topf(e) belegt, ${data.plantsRemainingInSourcePot} Pflanze(n) bleiben im Ursprungstopf.`,
       );
     } catch (error) {
       console.error("Fehler beim Pikieren:", error);
-      setPrickingMessage("Pikieren konnte nicht gespeichert werden.");
+      setPrickingMessage(
+        error.message || "Pikieren konnte nicht gespeichert werden.",
+      );
     }
   }
 

@@ -1,3 +1,4 @@
+// server/index.js
 import express from "express";
 import cors from "cors";
 import fs from "fs";
@@ -8,6 +9,7 @@ import potHistoryRoutes from "./routes/potHistoryRoutes.js";
 import seedProfilesRoutes from "./routes/seedProfilesRoutes.js";
 import statisticsRoutes from "./routes/statisticsRoutes.js";
 import remindersRoutes from "./routes/remindersRoutes.js";
+import prickingRoutes from "./routes/prickingRoutes.js";
 import healthRoutes from "./routes/healthRoutes.js";
 import scannerRoutes from "./routes/scannerRoutes.js";
 import dotenv from "dotenv";
@@ -36,6 +38,7 @@ app.use("/api/pot-history", potHistoryRoutes);
 app.use("/api/seed-profiles", seedProfilesRoutes);
 app.use("/api/statistics", statisticsRoutes);
 app.use("/api/reminders", remindersRoutes);
+app.use("/api/pricking", prickingRoutes);
 app.use("/api/health", healthRoutes);
 app.use("/api/scanner", scannerRoutes);
 
