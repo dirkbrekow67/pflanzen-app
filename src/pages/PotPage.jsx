@@ -51,12 +51,15 @@ function PotPage({
   const [photoMessage, setPhotoMessage] = useState("");
   const [prickingMessage, setPrickingMessage] = useState("");
   const [showPrickingDialog, setShowPrickingDialog] = useState(false);
+  const [prickingGuideSourcePotId, setPrickingGuideSourcePotId] = useState("");
   const [prickingDate, setPrickingDate] = useState(
     new Date().toISOString().split("T")[0],
   );
   const [seedlingsCount, setSeedlingsCount] = useState("");
   const [selectedTargetPotIds, setSelectedTargetPotIds] = useState([]);
   const [confirmReleaseSourcePot, setConfirmReleaseSourcePot] = useState(false);
+  const [prickingGuideTargetIds, setPrickingGuideTargetIds] = useState([]);
+  const [prickingGuideIndex, setPrickingGuideIndex] = useState(0);
   const { potId } = useParams();
 
   // Sucht anhand der URL den passenden Topf aus der Liste
@@ -77,6 +80,21 @@ function PotPage({
           (pot.status || "active") !== "empty",
       )
     : [];
+
+  const currentGuideTargetId = prickingGuideTargetIds[prickingGuideIndex] || "";
+
+  const currentGuideTargetPot = currentGuideTargetId
+    ? pots.find((pot) => pot.id === currentGuideTargetId)
+    : null;
+
+  const hasActivePrickingGuide =
+    prickingGuideTargetIds.length > 0 && Boolean(currentGuideTargetId);
+
+  const isCurrentGuideTargetPage =
+    hasActivePrickingGuide && selectedPot?.id === currentGuideTargetId;
+
+  const nextGuideTargetId =
+    prickingGuideTargetIds[prickingGuideIndex + 1] || "";
 
   const emptyTargetPots = pots.filter(
     (pot) => (pot.status || "active") === "empty" && pot.id !== potId,
@@ -130,6 +148,46 @@ function PotPage({
         ? currentIds.filter((id) => id !== targetPotId)
         : [...currentIds, targetPotId],
     );
+  }
+
+  function openCurrentGuideTarget() {
+    if (!currentGuideTargetId) return;
+
+    setPhotoType("pricking");
+    navigate(`/pot/${currentGuideTargetId}`);
+  }
+
+  function skipCurrentGuideTarget() {
+    if (prickingGuideIndex + 1 >= prickingGuideTargetIds.length) {
+      setPrickingGuideTargetIds([]);
+      setPrickingGuideIndex(0);
+
+      const sourcePotId = prickingGuideSourcePotId;
+
+      setPrickingGuideSourcePotId("");
+
+      if (sourcePotId) {
+        navigate(`/pot/${sourcePotId}`);
+      }
+
+      return;
+    }
+
+    const nextIndex = prickingGuideIndex + 1;
+    const nextTargetId = prickingGuideTargetIds[nextIndex];
+
+    setPrickingGuideIndex(nextIndex);
+    setPhotoType("pricking");
+
+    if (nextTargetId) {
+      navigate(`/pot/${nextTargetId}`);
+    }
+  }
+
+  function stopPrickingGuide() {
+    setPrickingGuideTargetIds([]);
+    setPrickingGuideIndex(0);
+    setPrickingGuideSourcePotId("");
   }
 
   async function handlePreparePricking() {
@@ -197,6 +255,9 @@ function PotPage({
       setConfirmReleaseSourcePot(false);
       setPrickingMessage("");
       setPhotoType("pricking");
+      setPrickingGuideTargetIds(data.targetPotIds || selectedTargetPotIds);
+      setPrickingGuideIndex(0);
+      setPrickingGuideSourcePotId(selectedPot.id);
 
       setPhotoMessage(
         data.plantsRemainingInSourcePot === 0
@@ -236,6 +297,12 @@ function PotPage({
 
       console.log("Upload erfolgreich:", data);
       setPhotoMessage("Foto wurde gespeichert.");
+
+      if (hasActivePrickingGuide) {
+        skipCurrentGuideTarget();
+        return;
+      }
+
       fetch(`${API_BASE_URL}/api/photos/${selectedPot.id}`)
         .then((res) => res.json())
         .then((data) => setPhotos(data))
@@ -446,6 +513,63 @@ function PotPage({
             </div>
           )}
         </>
+      )}
+
+      {selectedPot && hasActivePrickingGuide && (
+        <div className="card-light page-actions-large">
+          <h2>Nächster Schritt nach dem Pikieren</h2>
+
+          <p>
+            Ziel-Topf{" "}
+            <strong>
+              {prickingGuideIndex + 1} von {prickingGuideTargetIds.length}
+            </strong>
+            : <strong>{currentGuideTargetId}</strong>
+          </p>
+
+          <p>
+            Öffne den Ziel-Topf, prüfe die Jungpflanze und mache bei Bedarf
+            direkt ein Foto mit der Fotoart{" "}
+            <strong>Pikiert / nach dem Pikieren</strong>. Du kannst den Schritt
+            auch überspringen.
+          </p>
+
+          {currentGuideTargetPot && (
+            <p className="form-muted-text">
+              Pflanze: <strong>{currentGuideTargetPot.plantName || "-"}</strong>
+            </p>
+          )}
+
+          <div className="filter-bar">
+            {!isCurrentGuideTargetPage && (
+              <button
+                type="button"
+                className="button"
+                onClick={openCurrentGuideTarget}
+              >
+                Ziel-Topf öffnen
+              </button>
+            )}
+
+            <button
+              type="button"
+              className="button"
+              onClick={skipCurrentGuideTarget}
+            >
+              {nextGuideTargetId
+                ? "Weiter zum nächsten Ziel-Topf"
+                : "Führung abschließen"}
+            </button>
+
+            <button
+              type="button"
+              className="button"
+              onClick={stopPrickingGuide}
+            >
+              Führung beenden
+            </button>
+          </div>
+        </div>
       )}
 
       {selectedPot && (
