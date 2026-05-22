@@ -22,6 +22,7 @@ function formatPhotoType(value) {
 }
 
 function formatHistoryReason(value) {
+  if (value === "teilpikiert") return "Teilweise pikiert";
   if (value === "pikiert") return "Vollständig pikiert";
   if (value === "freigegeben") return "Freigegeben";
   if (value === "geerntet") return "Geerntet";
@@ -31,6 +32,10 @@ function formatHistoryReason(value) {
   if (value === "sonstiges") return "Sonstiges";
 
   return value || "-";
+}
+
+function isPrickingHistoryReason(value) {
+  return value === "teilpikiert" || value === "pikiert";
 }
 
 function PotPage({
@@ -198,29 +203,31 @@ function PotPage({
         throw new Error("Ursprungstopf konnte nicht aktualisiert werden.");
       }
 
-      if (plantsRemainingInSourcePot === 0) {
-        const historyResponse = await fetch(`${API_BASE_URL}/api/pot-history`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            potId: selectedPot.id,
-            plantName: selectedPot.plantName || "",
-            seedProfileId: selectedPot.seedProfileId || "",
-            sowingDate: selectedPot.sowingDate || "",
-            resowingDate: selectedPot.resowingDate || "",
-            potNotes: selectedPot.potNotes || "",
-            startedAt: selectedPot.sowingDate || "",
-            endedAt: prickingDate,
-            endReason: "pikiert",
-            endReasonNote: `Vollständig pikiert in ${targetCount} Ziel-Topf/Topf(e)`,
-          }),
-        });
+      const historyResponse = await fetch(`${API_BASE_URL}/api/pot-history`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          potId: selectedPot.id,
+          plantName: selectedPot.plantName || "",
+          seedProfileId: selectedPot.seedProfileId || "",
+          sowingDate: selectedPot.sowingDate || "",
+          resowingDate: selectedPot.resowingDate || "",
+          potNotes: selectedPot.potNotes || "",
+          startedAt: selectedPot.sowingDate || "",
+          endedAt: prickingDate,
+          endReason:
+            plantsRemainingInSourcePot === 0 ? "pikiert" : "teilpikiert",
+          endReasonNote:
+            plantsRemainingInSourcePot === 0
+              ? `Vollständig pikiert in ${targetCount} Ziel-Topf/Topf(e)`
+              : `${targetCount} Jungpflanze(n) pikiert in Ziel-Topf/Topf(e); ${plantsRemainingInSourcePot} Pflanze(n) verbleiben im Ursprungstopf`,
+        }),
+      });
 
-        if (!historyResponse.ok) {
-          throw new Error("Pikier-Historie konnte nicht gespeichert werden.");
-        }
+      if (!historyResponse.ok) {
+        throw new Error("Pikier-Historie konnte nicht gespeichert werden.");
       }
 
       await Promise.all(
@@ -483,14 +490,25 @@ function PotPage({
                 belegt:
               </p>
 
-              <div className="filter-bar">
+              <div className="pricked-target-list">
                 {prickedTargetPots.map((targetPot) => (
                   <Link
                     key={targetPot.id}
                     to={`/pot/${targetPot.id}`}
-                    className="button-link"
+                    className="pricked-target-card"
                   >
-                    {targetPot.id}
+                    <strong>{targetPot.id}</strong>
+
+                    <span>{targetPot.plantName || "-"}</span>
+
+                    <small>
+                      Pflanzen im Topf: {targetPot.plantsInPot || "-"}
+                      {targetPot.prickedDate
+                        ? ` · Pikiert am ${new Date(
+                            targetPot.prickedDate,
+                          ).toLocaleDateString("de-DE")}`
+                        : ""}
+                    </small>
                   </Link>
                 ))}
               </div>
@@ -619,11 +637,19 @@ function PotPage({
                   </p>
                 )}
 
-                <p>
-                  {formatDate(entry.startedAt)} – {formatDate(entry.endedAt)}
-                </p>
+                {isPrickingHistoryReason(entry.endReason) ? (
+                  <p>Ereignis am: {formatDate(entry.endedAt)}</p>
+                ) : (
+                  <p>
+                    {formatDate(entry.startedAt)} – {formatDate(entry.endedAt)}
+                  </p>
+                )}
 
-                <p>Standzeit: {days ? `${days} Tage` : "-"}</p>
+                <p>
+                  {isPrickingHistoryReason(entry.endReason)
+                    ? `Alter beim Pikieren: ${days ? `${days} Tage` : "-"}`
+                    : `Standzeit: ${days ? `${days} Tage` : "-"}`}
+                </p>
 
                 <p>Grund: {formatHistoryReason(entry.endReason)}</p>
 
