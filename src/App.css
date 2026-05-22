@@ -1734,6 +1734,37 @@ h2 {
   background: #ffffff;
 }
 
+.pricked-target-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.pricked-target-card {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid #dddddd;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #111111;
+  text-decoration: none;
+  text-align: left;
+}
+
+.pricked-target-card:hover {
+  border-color: green;
+  background: #f7fff7;
+}
+
+.pricked-target-card strong {
+  color: green;
+}
+
+.pricked-target-card small {
+  color: #555555;
+}
+
 @media (max-width: 800px) {
   .pot-detail-header {
     flex-direction: column;
