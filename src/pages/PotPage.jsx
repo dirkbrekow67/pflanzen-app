@@ -407,8 +407,9 @@ function PotPage({
         <>
           <div className="photo-upload">
             <p className="hint">
-              Optional: Foto aufnehmen oder hochladen. Es dient nur als Hilfe
-              für die spätere Entwicklungskontrolle.
+              Optional: Foto aufnehmen oder hochladen. Die Fotoart hilft später
+              bei der Zuordnung, z. B. Aussaat, Keimkontrolle, vor dem Pikieren,
+              nach dem Pikieren oder Entwicklung.
             </p>
             <div className="photo-type-select">
               <label>Fotoart</label>
@@ -418,6 +419,8 @@ function PotPage({
               >
                 <option value="sowing">Aussaat</option>
                 <option value="germination">Keimkontrolle</option>
+                <option value="before-pricking">Vor dem Pikieren</option>
+                <option value="pricking">Pikiert / nach dem Pikieren</option>
                 <option value="outdoor">Nach draußen</option>
                 <option value="progress">Entwicklung</option>
               </select>
@@ -460,9 +463,13 @@ function PotPage({
                         ? "Aussaat"
                         : photo.photoType === "germination"
                           ? "Keimkontrolle"
-                          : photo.photoType === "outdoor"
-                            ? "Nach draußen"
-                            : "Entwicklung"}
+                          : photo.photoType === "before-pricking"
+                            ? "Vor dem Pikieren"
+                            : photo.photoType === "pricking"
+                              ? "Pikiert / nach dem Pikieren"
+                              : photo.photoType === "outdoor"
+                                ? "Nach draußen"
+                                : "Entwicklung"}
                     </p>
                   </div>
                 ))}
