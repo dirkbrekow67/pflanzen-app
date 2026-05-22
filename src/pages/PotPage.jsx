@@ -154,6 +154,31 @@ function PotPage({
         throw new Error("Ursprungstopf konnte nicht aktualisiert werden.");
       }
 
+      if (plantsRemainingInSourcePot === 0) {
+        const historyResponse = await fetch(`${API_BASE_URL}/api/pot-history`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            potId: selectedPot.id,
+            plantName: selectedPot.plantName || "",
+            seedProfileId: selectedPot.seedProfileId || "",
+            sowingDate: selectedPot.sowingDate || "",
+            resowingDate: selectedPot.resowingDate || "",
+            potNotes: selectedPot.potNotes || "",
+            startedAt: selectedPot.sowingDate || "",
+            endedAt: prickingDate,
+            endReason: "pikiert",
+            endReasonNote: `Vollständig pikiert in ${targetCount} Ziel-Topf/Topf(e)`,
+          }),
+        });
+
+        if (!historyResponse.ok) {
+          throw new Error("Pikier-Historie konnte nicht gespeichert werden.");
+        }
+      }
+
       await Promise.all(
         selectedTargetPotIds.map((targetPotId) => {
           const targetPot = pots.find((pot) => pot.id === targetPotId);
@@ -346,7 +371,10 @@ function PotPage({
                 disabled={selectedTargetPotIds.length === 0}
                 onClick={handlePreparePricking}
               >
-                Pikieren vorbereiten
+                {Number(seedlingsCount) > 0 &&
+                selectedTargetPotIds.length === Number(seedlingsCount)
+                  ? "Pikieren abschließen"
+                  : "Pikieren vorbereiten"}
               </button>
 
               <button
