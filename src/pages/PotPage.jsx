@@ -57,6 +57,14 @@ function PotPage({
   // Sucht anhand der URL den passenden Topf aus der Liste
   const selectedPot = pots.find((pot) => pot.id === potId);
 
+  const canPrickPot =
+    selectedPot && selectedPot.status !== "empty" && !selectedPot.sourcePotId;
+
+  const isPrickedTargetPot =
+    selectedPot &&
+    selectedPot.status !== "empty" &&
+    Boolean(selectedPot.sourcePotId);
+
   const emptyTargetPots = pots.filter(
     (pot) => (pot.status || "active") === "empty" && pot.id !== potId,
   );
@@ -439,7 +447,7 @@ function PotPage({
             onEditPot={handleEditAndGoBack}
             onClearPot={handleClearPot}
           />
-          {selectedPot.status !== "empty" && (
+          {canPrickPot && (
             <div className="card-light page-actions-large">
               <h2>Pikieren</h2>
               <p>
@@ -455,6 +463,18 @@ function PotPage({
               >
                 Pikieren
               </button>
+            </div>
+          )}
+
+          {isPrickedTargetPot && (
+            <div className="card-light page-actions-large">
+              <h2>Pikiertes Ziel</h2>
+              <p>
+                Dieser Topf wurde bereits aus{" "}
+                <strong>{selectedPot.sourcePotId}</strong> pikiert. Eine erneute
+                Verteilung über den normalen Pikierdialog ist für diesen Topf
+                nicht vorgesehen.
+              </p>
             </div>
           )}
         </>
