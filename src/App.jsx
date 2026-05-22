@@ -465,7 +465,6 @@ function App() {
   }
 
   // Lädt die Daten des ausgewählten Topfs in das Formular und startet den Bearbeiten-Modus
-  // Lädt die Daten des ausgewählten Topfs in das Formular und startet den Bearbeiten-Modus
   function loadPotIntoForm(pot) {
     setFormData({
       ...emptyFormData,
