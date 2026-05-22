@@ -21,6 +21,18 @@ function formatPhotoType(value) {
   );
 }
 
+function formatHistoryReason(value) {
+  if (value === "pikiert") return "Vollständig pikiert";
+  if (value === "freigegeben") return "Freigegeben";
+  if (value === "geerntet") return "Geerntet";
+  if (value === "fehlgeschlagen") return "Fehlgeschlagen";
+  if (value === "umgetopft") return "Umgetopft";
+  if (value === "entsorgt") return "Entsorgt";
+  if (value === "sonstiges") return "Sonstiges";
+
+  return value || "-";
+}
+
 function PotPage({
   pots,
   handleEditPot,
@@ -548,10 +560,13 @@ function PotPage({
 
                 <p>Standzeit: {days ? `${days} Tage` : "-"}</p>
 
-                <p>
-                  Grund: {entry.endReason}
-                  {entry.endReasonNote && <span> ({entry.endReasonNote})</span>}
-                </p>
+                <p>Grund: {formatHistoryReason(entry.endReason)}</p>
+
+                {entry.endReasonNote && (
+                  <p>
+                    <small>Hinweis: {entry.endReasonNote}</small>
+                  </p>
+                )}
 
                 {entry.potNotes && (
                   <p>
