@@ -138,4 +138,82 @@ router.get("/", (req, res) => {
   }
 });
 
+router.get("/pricking", (req, res) => {
+  try {
+    const prickingSummary = db
+      .prepare(
+        `
+        SELECT
+          COUNT(*) AS totalPrickingEvents,
+          SUM(CASE WHEN endReason = 'teilpikiert' THEN 1 ELSE 0 END) AS partialPrickingEvents,
+          SUM(CASE WHEN endReason = 'pikiert' THEN 1 ELSE 0 END) AS completePrickingEvents,
+          ROUND(AVG(
+            CASE
+              WHEN startedAt IS NOT NULL
+                   AND startedAt != ''
+                   AND endedAt IS NOT NULL
+                   AND endedAt != ''
+              THEN julianday(endedAt) - julianday(startedAt) + 1
+              ELSE NULL
+            END
+          ), 1) AS averageAgeAtPrickingDays
+        FROM pot_history
+        WHERE endReason IN ('teilpikiert', 'pikiert')
+      `,
+      )
+      .get();
+
+    const prickedTargetSummary = db
+      .prepare(
+        `
+        SELECT
+          COUNT(*) AS activePrickedTargetPots,
+          SUM(CASE
+            WHEN plantsInPot IS NOT NULL
+                 AND plantsInPot != ''
+            THEN CAST(plantsInPot AS INTEGER)
+            ELSE 0
+          END) AS activePlantsInPrickedTargetPots
+        FROM pots
+        WHERE sourcePotId IS NOT NULL
+          AND sourcePotId != ''
+          AND COALESCE(status, 'active') != 'empty'
+      `,
+      )
+      .get();
+
+    const sourcePotSummary = db
+      .prepare(
+        `
+        SELECT
+          COUNT(DISTINCT sourcePotId) AS sourcePotsWithActiveTargets
+        FROM pots
+        WHERE sourcePotId IS NOT NULL
+          AND sourcePotId != ''
+          AND COALESCE(status, 'active') != 'empty'
+      `,
+      )
+      .get();
+
+    res.json({
+      totalPrickingEvents: prickingSummary.totalPrickingEvents || 0,
+      partialPrickingEvents: prickingSummary.partialPrickingEvents || 0,
+      completePrickingEvents: prickingSummary.completePrickingEvents || 0,
+      averageAgeAtPrickingDays:
+        prickingSummary.averageAgeAtPrickingDays || null,
+      activePrickedTargetPots:
+        prickedTargetSummary.activePrickedTargetPots || 0,
+      activePlantsInPrickedTargetPots:
+        prickedTargetSummary.activePlantsInPrickedTargetPots || 0,
+      sourcePotsWithActiveTargets:
+        sourcePotSummary.sourcePotsWithActiveTargets || 0,
+    });
+  } catch (error) {
+    console.error("Fehler bei Pikier-Statistik:", error);
+    res.status(500).json({
+      error: "Pikier-Statistik konnte nicht geladen werden.",
+    });
+  }
+});
+
 export default router;
