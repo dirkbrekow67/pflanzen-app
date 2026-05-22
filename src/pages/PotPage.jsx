@@ -5,6 +5,22 @@ import { useEffect, useState } from "react";
 import PotDetails from "../components/PotDetails";
 import { API_BASE_URL } from "../utils/appConfig";
 
+const photoTypeOptions = [
+  { value: "sowing", label: "Aussaat" },
+  { value: "germination", label: "Keimkontrolle" },
+  { value: "before-pricking", label: "Vor dem Pikieren" },
+  { value: "pricking", label: "Pikiert / nach dem Pikieren" },
+  { value: "outdoor", label: "Nach draußen" },
+  { value: "progress", label: "Entwicklung" },
+];
+
+function formatPhotoType(value) {
+  return (
+    photoTypeOptions.find((option) => option.value === value)?.label ||
+    "Entwicklung"
+  );
+}
+
 function PotPage({
   pots,
   handleEditPot,
@@ -243,6 +259,7 @@ function PotPage({
       setSelectedTargetPotIds([]);
       setConfirmReleaseSourcePot(false);
       setPrickingMessage("");
+      setPhotoType("pricking");
       setPhotoMessage(
         plantsRemainingInSourcePot === 0
           ? `Pikieren abgeschlossen: ${targetCount} Ziel-Topf/Topf(e) belegt, Ursprungstopf wurde freigegeben.`
@@ -445,12 +462,11 @@ function PotPage({
                 value={photoType}
                 onChange={(e) => setPhotoType(e.target.value)}
               >
-                <option value="sowing">Aussaat</option>
-                <option value="germination">Keimkontrolle</option>
-                <option value="before-pricking">Vor dem Pikieren</option>
-                <option value="pricking">Pikiert / nach dem Pikieren</option>
-                <option value="outdoor">Nach draußen</option>
-                <option value="progress">Entwicklung</option>
+                {photoTypeOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -486,19 +502,7 @@ function PotPage({
                         : "-"}
                     </p>
 
-                    <p>
-                      {photo.photoType === "sowing"
-                        ? "Aussaat"
-                        : photo.photoType === "germination"
-                          ? "Keimkontrolle"
-                          : photo.photoType === "before-pricking"
-                            ? "Vor dem Pikieren"
-                            : photo.photoType === "pricking"
-                              ? "Pikiert / nach dem Pikieren"
-                              : photo.photoType === "outdoor"
-                                ? "Nach draußen"
-                                : "Entwicklung"}
-                    </p>
+                    <p>{formatPhotoType(photo.photoType)}</p>
                   </div>
                 ))}
               </div>
