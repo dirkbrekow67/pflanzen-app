@@ -81,6 +81,31 @@ function PotPage({
       )
     : [];
 
+  const siblingPrickedTargetPots = isPrickedTargetPot
+    ? pots
+        .filter(
+          (pot) =>
+            pot.sourcePotId === selectedPot.sourcePotId &&
+            (pot.status || "active") !== "empty",
+        )
+        .sort((a, b) => a.id.localeCompare(b.id, "de"))
+    : [];
+
+  const currentSiblingTargetIndex = siblingPrickedTargetPots.findIndex(
+    (pot) => pot.id === selectedPot?.id,
+  );
+
+  const previousSiblingTargetPot =
+    currentSiblingTargetIndex > 0
+      ? siblingPrickedTargetPots[currentSiblingTargetIndex - 1]
+      : null;
+
+  const nextSiblingTargetPot =
+    currentSiblingTargetIndex >= 0 &&
+    currentSiblingTargetIndex + 1 < siblingPrickedTargetPots.length
+      ? siblingPrickedTargetPots[currentSiblingTargetIndex + 1]
+      : null;
+
   const currentGuideTargetId = prickingGuideTargetIds[prickingGuideIndex] || "";
 
   const currentGuideTargetPot = currentGuideTargetId
@@ -114,6 +139,12 @@ function PotPage({
       .then((data) => setPhotos(data))
       .catch((err) => console.error("Fotos Fehler:", err));
   }, [potId]);
+
+  useEffect(() => {
+    if (isPrickedTargetPot) {
+      setPhotoType("pricking");
+    }
+  }, [isPrickedTargetPot, potId]);
 
   // Lädt die Topfdaten ins Formular und wechselt zurück zur Übersichtsseite
   function handleEditAndGoBack() {
@@ -188,6 +219,14 @@ function PotPage({
     setPrickingGuideTargetIds([]);
     setPrickingGuideIndex(0);
     setPrickingGuideSourcePotId("");
+  }
+
+  function openNextPrickedTargetAfterPhoto() {
+    if (!nextSiblingTargetPot) return;
+
+    setPhotoMessage("");
+    setPhotoType("pricking");
+    navigate(`/pot/${nextSiblingTargetPot.id}`);
   }
 
   async function handlePreparePricking() {
@@ -296,11 +335,19 @@ function PotPage({
       }
 
       console.log("Upload erfolgreich:", data);
-      setPhotoMessage("Foto wurde gespeichert.");
 
       if (hasActivePrickingGuide) {
+        setPhotoMessage("Foto wurde gespeichert.");
         skipCurrentGuideTarget();
         return;
+      }
+
+      if (nextSiblingTargetPot && photoType === "pricking") {
+        setPhotoMessage(
+          `Foto wurde gespeichert. Nächster Ziel-Topf: ${nextSiblingTargetPot.id}`,
+        );
+      } else {
+        setPhotoMessage("Foto wurde gespeichert.");
       }
 
       fetch(`${API_BASE_URL}/api/photos/${selectedPot.id}`)
@@ -439,9 +486,18 @@ function PotPage({
               <h2>Pikieren</h2>
               <p>
                 Mehrere Jungpflanzen aus diesem Ursprungstopf können auf freie
-                Ziel-Töpfe verteilt werden. Der Ursprungstopf bleibt dabei
-                belegt.
+                Ziel-Töpfe verteilt werden.
+                {prickedTargetPots.length > 0
+                  ? ` Aus diesem Ursprungstopf wurden bereits ${prickedTargetPots.length} Ziel-Topf/Topf(e) belegt.`
+                  : ""}
               </p>
+
+              {prickedTargetPots.length > 0 && (
+                <p className="form-muted-text">
+                  Verbleibend im Ursprungstopf:{" "}
+                  <strong>{selectedPot.plantsInPot || "-"} Pflanze(n)</strong>
+                </p>
+              )}
 
               <button
                 type="button"
@@ -492,13 +548,42 @@ function PotPage({
               <h2>Pikiertes Ziel</h2>
 
               <p>
-                Dieser Topf wurde bereits aus{" "}
-                <strong>{selectedPot.sourcePotId}</strong> pikiert. Eine erneute
-                Verteilung über den normalen Pikierdialog ist für diesen Topf
-                nicht vorgesehen.
+                Dieser Topf wurde aus <strong>{selectedPot.sourcePotId}</strong>{" "}
+                pikiert und wird ab hier als eigenständiger Ziel-Topf
+                weitergeführt. Eine erneute Verteilung über den normalen
+                Pikierdialog ist für diesen Topf nicht vorgesehen.
               </p>
 
+              {siblingPrickedTargetPots.length > 1 && (
+                <p className="form-muted-text">
+                  Ziel-Topf{" "}
+                  <strong>
+                    {currentSiblingTargetIndex + 1} von{" "}
+                    {siblingPrickedTargetPots.length}
+                  </strong>{" "}
+                  aus Ursprungstopf <strong>{selectedPot.sourcePotId}</strong>
+                </p>
+              )}
+
               <div className="filter-bar">
+                {previousSiblingTargetPot && (
+                  <Link
+                    to={`/pot/${previousSiblingTargetPot.id}`}
+                    className="button-link"
+                  >
+                    Vorheriger Ziel-Topf {previousSiblingTargetPot.id}
+                  </Link>
+                )}
+
+                {nextSiblingTargetPot && (
+                  <Link
+                    to={`/pot/${nextSiblingTargetPot.id}`}
+                    className="button-link"
+                  >
+                    Nächster Ziel-Topf {nextSiblingTargetPot.id}
+                  </Link>
+                )}
+
                 <Link
                   to={`/pot/${selectedPot.sourcePotId}`}
                   className="button-link"
@@ -605,6 +690,21 @@ function PotPage({
               />
             </label>
             {photoMessage && <p className="photo-message">{photoMessage}</p>}
+
+            {photoMessage &&
+              photoMessage.startsWith("Foto wurde gespeichert") &&
+              nextSiblingTargetPot &&
+              photoType === "pricking" && (
+                <div className="filter-bar">
+                  <button
+                    type="button"
+                    className="button"
+                    onClick={openNextPrickedTargetAfterPhoto}
+                  >
+                    Nächsten Ziel-Topf {nextSiblingTargetPot.id} öffnen
+                  </button>
+                </div>
+              )}
           </div>
 
           {photos.length > 0 && (
