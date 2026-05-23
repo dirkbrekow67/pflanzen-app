@@ -35,7 +35,10 @@ CREATE TABLE IF NOT EXISTS pots (
   seedlingsCount INTEGER,
   plantsInPot INTEGER,
   prickedDate TEXT,
-  sourcePotId TEXT
+  sourcePotId TEXT,
+  sourcePlantName TEXT,
+  sourceSeedProfileId TEXT,
+  sourcePrickingDate TEXT
 );
 `);
 
@@ -113,6 +116,24 @@ try {
 
 try {
   db.prepare("ALTER TABLE pots ADD COLUMN sourcePotId TEXT").run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare("ALTER TABLE pots ADD COLUMN sourcePlantName TEXT").run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare("ALTER TABLE pots ADD COLUMN sourceSeedProfileId TEXT").run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare("ALTER TABLE pots ADD COLUMN sourcePrickingDate TEXT").run();
 } catch {
   // Spalte existiert bereits
 }

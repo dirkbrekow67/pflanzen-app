@@ -497,6 +497,9 @@ function App() {
       plantsInPot: pot.plantsInPot ?? "",
       prickedDate: pot.prickedDate || "",
       sourcePotId: pot.sourcePotId || "",
+      sourcePlantName: pot.sourcePlantName || "",
+      sourceSeedProfileId: pot.sourceSeedProfileId || "",
+      sourcePrickingDate: pot.sourcePrickingDate || "",
     });
 
     setEditingPotId(pot.id);

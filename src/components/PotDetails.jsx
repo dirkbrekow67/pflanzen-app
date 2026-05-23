@@ -234,6 +234,20 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
                 <span className="detail-label">Ursprungstopf</span>
                 <strong>{pot.sourcePotId || "-"}</strong>
               </p>
+              <p>
+                <span className="detail-label">Herkunft Pflanze</span>
+                <strong>{pot.sourcePlantName || "-"}</strong>
+              </p>
+
+              <p>
+                <span className="detail-label">Herkunft Samenprofil</span>
+                <strong>{pot.sourceSeedProfileId || "-"}</strong>
+              </p>
+
+              <p>
+                <span className="detail-label">Herkunft Pikierdatum</span>
+                <strong>{formatDateGerman(pot.sourcePrickingDate)}</strong>
+              </p>
             </div>
 
             {hasSowingExtras && (

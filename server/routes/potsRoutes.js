@@ -48,6 +48,9 @@ router.post("/", (req, res) => {
       plantsInPot,
       prickedDate,
       sourcePotId,
+      sourcePlantName,
+      sourceSeedProfileId,
+      sourcePrickingDate,
     } = req.body;
 
     const stmt = db.prepare(`
@@ -81,9 +84,12 @@ router.post("/", (req, res) => {
         seedlingsCount,
         plantsInPot,
         prickedDate,
-        sourcePotId
+        sourcePotId,
+        sourcePlantName,
+        sourceSeedProfileId,
+        sourcePrickingDate
       )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     stmt.run(
@@ -117,6 +123,9 @@ router.post("/", (req, res) => {
       plantsInPot,
       prickedDate,
       sourcePotId,
+      sourcePlantName,
+      sourceSeedProfileId,
+      sourcePrickingDate,
     );
 
     res.json({
@@ -165,6 +174,9 @@ router.put("/:id", (req, res) => {
       plantsInPot,
       prickedDate,
       sourcePotId,
+      sourcePlantName,
+      sourceSeedProfileId,
+      sourcePrickingDate,
     } = req.body;
 
     db.prepare(
@@ -198,7 +210,10 @@ router.put("/:id", (req, res) => {
           seedlingsCount = ?,
           plantsInPot = ?,
           prickedDate = ?,
-          sourcePotId = ?
+          sourcePotId = ?,
+          sourcePlantName = ?,
+          sourceSeedProfileId = ?,
+          sourcePrickingDate = ?
       WHERE id = ?
     `,
     ).run(
@@ -231,6 +246,9 @@ router.put("/:id", (req, res) => {
       plantsInPot,
       prickedDate,
       sourcePotId,
+      sourcePlantName,
+      sourceSeedProfileId,
+      sourcePrickingDate,
       id,
     );
 

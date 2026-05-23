@@ -29,6 +29,9 @@ export const emptyFormData = {
   plantsInPot: "",
   prickedDate: "",
   sourcePotId: "",
+  sourcePlantName: "",
+  sourceSeedProfileId: "",
+  sourcePrickingDate: "",
 };
 
 export const clearedPotData = {
@@ -41,6 +44,9 @@ export const clearedPotData = {
   plantsInPot: "",
   prickedDate: "",
   sourcePotId: "",
+  sourcePlantName: "",
+  sourceSeedProfileId: "",
+  sourcePrickingDate: "",
 };
 
 // Ergänzt bei älteren Töpfen einen fehlenden Status und fehlende neue Felder
@@ -108,6 +114,9 @@ export function buildPotData(formData) {
       formData.plantsInPot === "" ? "" : Number(formData.plantsInPot),
     prickedDate: formData.prickedDate || "",
     sourcePotId: formData.sourcePotId || "",
+    sourcePlantName: formData.sourcePlantName || "",
+    sourceSeedProfileId: formData.sourceSeedProfileId || "",
+    sourcePrickingDate: formData.sourcePrickingDate || "",
   };
 }
 

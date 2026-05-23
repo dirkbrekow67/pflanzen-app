@@ -117,7 +117,10 @@ router.post("/", (req, res) => {
           seedlingsCount = ?,
           plantsInPot = ?,
           prickedDate = ?,
-          sourcePotId = ?
+          sourcePotId = ?,
+          sourcePlantName = ?,
+          sourceSeedProfileId = ?,
+          sourcePrickingDate = ?
       WHERE id = ?
     `,
     ).run(
@@ -150,6 +153,9 @@ router.post("/", (req, res) => {
       plantsRemainingInSourcePot,
       prickingDate,
       sourcePot.sourcePotId || "",
+      sourcePot.sourcePlantName || "",
+      sourcePot.sourceSeedProfileId || "",
+      sourcePot.sourcePrickingDate || "",
       sourcePot.id,
     );
 
@@ -212,7 +218,10 @@ router.post("/", (req, res) => {
           seedlingsCount = ?,
           plantsInPot = ?,
           prickedDate = ?,
-          sourcePotId = ?
+          sourcePotId = ?,
+          sourcePlantName = ?,
+          sourceSeedProfileId = ?,
+          sourcePrickingDate = ?
       WHERE id = ?
     `);
 
@@ -247,6 +256,9 @@ router.post("/", (req, res) => {
         1,
         prickingDate,
         sourcePot.id,
+        sourcePot.plantName || "",
+        sourcePot.seedProfileId || "",
+        prickingDate,
         targetPot.id,
       );
     });
