@@ -73,6 +73,21 @@ function PotPage({
     selectedPot.status !== "empty" &&
     Boolean(selectedPot.sourcePotId);
 
+  const hasStoredSourceDetails =
+    selectedPot &&
+    (selectedPot.sourcePlantName ||
+      selectedPot.sourceSeedProfileId ||
+      selectedPot.sourcePrickingDate);
+
+  const isLegacyPrickedTargetPot =
+    isPrickedTargetPot && !hasStoredSourceDetails;
+
+  const sourceDisplayPlantName =
+    selectedPot?.sourcePlantName || selectedPot?.plantName || "-";
+
+  const sourceDisplayPrickingDate =
+    selectedPot?.sourcePrickingDate || selectedPot?.prickedDate || "";
+
   const prickedTargetPots = selectedPot
     ? pots.filter(
         (pot) =>
@@ -556,6 +571,50 @@ function PotPage({
                 weitergeführt. Eine erneute Verteilung über den normalen
                 Pikierdialog ist für diesen Topf nicht vorgesehen.
               </p>
+
+              <div className="detail-fact-grid">
+                <p>
+                  <span className="detail-label">Ursprungstopf</span>
+                  <strong>{selectedPot.sourcePotId || "-"}</strong>
+                </p>
+
+                <p>
+                  <span className="detail-label">Pflanze</span>
+                  <strong>{sourceDisplayPlantName}</strong>
+                </p>
+
+                <p>
+                  <span className="detail-label">Samenprofil Ursprung</span>
+                  <strong>{selectedPot.sourceSeedProfileId || "-"}</strong>
+                </p>
+
+                <p>
+                  <span className="detail-label">Pikiert am</span>
+                  <strong>
+                    {sourceDisplayPrickingDate
+                      ? new Date(sourceDisplayPrickingDate).toLocaleDateString(
+                          "de-DE",
+                        )
+                      : "-"}
+                  </strong>
+                </p>
+              </div>
+
+              {isLegacyPrickedTargetPot ? (
+                <p className="form-muted-text">
+                  Hinweis: Dieser Ziel-Topf stammt aus älteren Pikierdaten. Die
+                  Verbindung zum Ursprungstopf ist vorhanden, aber zusätzliche
+                  Herkunftsdaten wie Ursprungspflanze, Samenprofil und
+                  Herkunfts-Pikierdatum wurden damals noch nicht separat am
+                  Ziel-Topf gespeichert.
+                </p>
+              ) : (
+                <p className="form-muted-text">
+                  Die Herkunftsdaten sind am Ziel-Topf gespeichert. Sie bleiben
+                  lesbar, auch wenn der Ursprungstopf später freigegeben oder
+                  neu belegt wird.
+                </p>
+              )}
 
               {siblingPrickedTargetPots.length > 1 && (
                 <p className="form-muted-text">
