@@ -277,4 +277,62 @@ router.post("/", (req, res) => {
   }
 });
 
+router.get("/legacy-candidates", (req, res) => {
+  try {
+    const legacyCandidates = db
+      .prepare(
+        `
+        SELECT
+          p.id,
+          p.plantName,
+          p.status,
+          p.seedProfileId,
+          p.sowingDate,
+          p.prickedDate,
+          p.sourcePotId,
+          p.plantsInPot,
+          p.seedlingsCount,
+          p.potNotes
+        FROM pots p
+        WHERE p.prickedDate IS NOT NULL
+          AND p.prickedDate != ''
+          AND (p.sourcePotId IS NULL OR p.sourcePotId = '')
+          AND NOT EXISTS (
+            SELECT 1
+            FROM pot_history h
+            WHERE h.potId = p.id
+              AND h.endReason IN ('teilpikiert', 'pikiert')
+          )
+        ORDER BY p.prickedDate, p.id
+      `,
+      )
+      .all();
+
+    const reviewedCandidates = legacyCandidates.map((pot) => {
+      const plantName = (pot.plantName || "").toLowerCase();
+
+      const isLikelyAnnualTomato =
+        plantName.includes("tomate") || plantName.includes("tomaten");
+
+      return {
+        ...pot,
+        recommendation: isLikelyAnnualTomato
+          ? "nicht_nachträglich_rekonstruieren"
+          : "altbestand_ohne_ursprung",
+      };
+    });
+
+    res.json({
+      total: reviewedCandidates.length,
+      candidates: reviewedCandidates,
+    });
+  } catch (error) {
+    console.error("Fehler bei alten Pikierdaten:", error);
+
+    res.status(500).json({
+      error: "Alte Pikierdaten konnten nicht geprüft werden.",
+    });
+  }
+});
+
 export default router;
