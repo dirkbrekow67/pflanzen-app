@@ -338,6 +338,7 @@ function PotPage({
 
       if (hasActivePrickingGuide) {
         setPhotoMessage("Foto wurde gespeichert.");
+        loadReminders();
         skipCurrentGuideTarget();
         return;
       }
@@ -349,6 +350,8 @@ function PotPage({
       } else {
         setPhotoMessage("Foto wurde gespeichert.");
       }
+
+      loadReminders();
 
       fetch(`${API_BASE_URL}/api/photos/${selectedPot.id}`)
         .then((res) => res.json())
