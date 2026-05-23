@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import PotDetails from "../components/PotDetails";
 import { API_BASE_URL } from "../utils/appConfig";
 
+const PRICKING_GUIDE_STORAGE_KEY = "activePrickingGuide";
+
 const photoTypeOptions = [
   { value: "sowing", label: "Aussaat" },
   { value: "germination", label: "Keimkontrolle" },
@@ -51,15 +53,60 @@ function PotPage({
   const [photoMessage, setPhotoMessage] = useState("");
   const [prickingMessage, setPrickingMessage] = useState("");
   const [showPrickingDialog, setShowPrickingDialog] = useState(false);
-  const [prickingGuideSourcePotId, setPrickingGuideSourcePotId] = useState("");
   const [prickingDate, setPrickingDate] = useState(
     new Date().toISOString().split("T")[0],
   );
   const [seedlingsCount, setSeedlingsCount] = useState("");
   const [selectedTargetPotIds, setSelectedTargetPotIds] = useState([]);
   const [confirmReleaseSourcePot, setConfirmReleaseSourcePot] = useState(false);
-  const [prickingGuideTargetIds, setPrickingGuideTargetIds] = useState([]);
-  const [prickingGuideIndex, setPrickingGuideIndex] = useState(0);
+
+  const [prickingGuideSourcePotId, setPrickingGuideSourcePotId] = useState(
+    () => {
+      const saved = localStorage.getItem(PRICKING_GUIDE_STORAGE_KEY);
+
+      if (!saved) return "";
+
+      try {
+        const parsed = JSON.parse(saved);
+
+        return parsed.sourcePotId || "";
+      } catch {
+        return "";
+      }
+    },
+  );
+
+  const [prickingGuideTargetIds, setPrickingGuideTargetIds] = useState(() => {
+    const saved = localStorage.getItem(PRICKING_GUIDE_STORAGE_KEY);
+
+    if (!saved) return [];
+
+    try {
+      const parsed = JSON.parse(saved);
+
+      return Array.isArray(parsed.targetPotIds) ? parsed.targetPotIds : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [prickingGuideIndex, setPrickingGuideIndex] = useState(() => {
+    const saved = localStorage.getItem(PRICKING_GUIDE_STORAGE_KEY);
+
+    if (!saved) return 0;
+
+    try {
+      const parsed = JSON.parse(saved);
+      const parsedIndex = Number(parsed.currentIndex);
+
+      return Number.isInteger(parsedIndex) && parsedIndex >= 0
+        ? parsedIndex
+        : 0;
+    } catch {
+      return 0;
+    }
+  });
+
   const { potId } = useParams();
 
   // Sucht anhand der URL den passenden Topf aus der Liste
@@ -147,6 +194,10 @@ function PotPage({
   const isCurrentGuideTargetPage =
     hasActivePrickingGuide && selectedPot?.id === currentGuideTargetId;
 
+  function clearStoredPrickingGuide() {
+    localStorage.removeItem(PRICKING_GUIDE_STORAGE_KEY);
+  }
+
   const nextGuideTargetId =
     prickingGuideTargetIds[prickingGuideIndex + 1] || "";
 
@@ -179,6 +230,23 @@ function PotPage({
       setPhotoType("progress");
     }
   }, [isPrickedTargetPot, hasPrickedTargetPots, potId]);
+
+  useEffect(() => {
+    if (prickingGuideTargetIds.length === 0) {
+      clearStoredPrickingGuide();
+      return;
+    }
+
+    localStorage.setItem(
+      PRICKING_GUIDE_STORAGE_KEY,
+      JSON.stringify({
+        sourcePotId: prickingGuideSourcePotId,
+        targetPotIds: prickingGuideTargetIds,
+        currentIndex: prickingGuideIndex,
+        updatedAt: new Date().toISOString(),
+      }),
+    );
+  }, [prickingGuideSourcePotId, prickingGuideTargetIds, prickingGuideIndex]);
 
   // Lädt die Topfdaten ins Formular und wechselt zurück zur Übersichtsseite
   function handleEditAndGoBack() {
@@ -230,6 +298,7 @@ function PotPage({
       const sourcePotId = prickingGuideSourcePotId;
 
       setPrickingGuideSourcePotId("");
+      clearStoredPrickingGuide();
 
       if (sourcePotId) {
         navigate(`/pot/${sourcePotId}`);
@@ -253,6 +322,7 @@ function PotPage({
     setPrickingGuideTargetIds([]);
     setPrickingGuideIndex(0);
     setPrickingGuideSourcePotId("");
+    clearStoredPrickingGuide();
   }
 
   function openNextPrickedTargetAfterPhoto() {
@@ -327,10 +397,22 @@ function PotPage({
       setSelectedTargetPotIds([]);
       setConfirmReleaseSourcePot(false);
       setPrickingMessage("");
+      const nextGuideTargetIds = data.targetPotIds || selectedTargetPotIds;
+
       setPhotoType("pricking");
-      setPrickingGuideTargetIds(data.targetPotIds || selectedTargetPotIds);
+      setPrickingGuideTargetIds(nextGuideTargetIds);
       setPrickingGuideIndex(0);
       setPrickingGuideSourcePotId(selectedPot.id);
+
+      localStorage.setItem(
+        PRICKING_GUIDE_STORAGE_KEY,
+        JSON.stringify({
+          sourcePotId: selectedPot.id,
+          targetPotIds: nextGuideTargetIds,
+          currentIndex: 0,
+          updatedAt: new Date().toISOString(),
+        }),
+      );
 
       setPhotoMessage(
         data.plantsRemainingInSourcePot === 0
@@ -698,6 +780,11 @@ function PotPage({
             direkt ein Foto mit der Fotoart{" "}
             <strong>Pikiert / nach dem Pikieren</strong>. Du kannst den Schritt
             auch überspringen.
+          </p>
+
+          <p className="form-muted-text">
+            Diese Pikierführung bleibt gespeichert, bis sie abgeschlossen oder
+            bewusst beendet wird.
           </p>
 
           {currentGuideTargetPot && (
