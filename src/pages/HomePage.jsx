@@ -18,6 +18,8 @@ function HomePage({
   hideReminder,
   resetHiddenReminders,
   markReminderDone,
+  prickingConsistency,
+  loadPrickingConsistency,
 }) {
   const [showManagement, setShowManagement] = useState(false);
 
@@ -27,6 +29,14 @@ function HomePage({
 
   function getReminderKey(item) {
     return `${item.potId}-${item.type}`;
+  }
+
+  function formatConsistencySeverity(value) {
+    if (value === "error") return "Fehler";
+    if (value === "warning") return "Warnung";
+    if (value === "info") return "Hinweis";
+
+    return value || "-";
   }
 
   return (
@@ -245,10 +255,105 @@ function HomePage({
               >
                 Ausgeblendete / erledigte Hinweise wieder anzeigen
               </button>
+
+              <button
+                type="button"
+                onClick={loadPrickingConsistency}
+                className="button"
+              >
+                Pikierdaten prüfen
+              </button>
+
+              {prickingConsistency && (
+                <div className="form-muted-text">
+                  <p>
+                    Geprüfte Ziel-Töpfe:{" "}
+                    <strong>{prickingConsistency.totalTargetPots}</strong>
+                  </p>
+
+                  <p>
+                    Auffälligkeiten:{" "}
+                    <strong>{prickingConsistency.totalIssues}</strong>
+                  </p>
+
+                  <p>
+                    Fehler:{" "}
+                    <strong>
+                      {prickingConsistency.issueCounts?.error || 0}
+                    </strong>{" "}
+                    · Warnungen:{" "}
+                    <strong>
+                      {prickingConsistency.issueCounts?.warning || 0}
+                    </strong>{" "}
+                    · Hinweise:{" "}
+                    <strong>
+                      {prickingConsistency.issueCounts?.info || 0}
+                    </strong>
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </section>
       )}
+
+      {showManagement &&
+        prickingConsistency &&
+        prickingConsistency.issues?.length > 0 && (
+          <section className="card-light reminder-box">
+            <h2>Pikierdaten-Konsistenz</h2>
+
+            <div className="reminder-list">
+              {prickingConsistency.issues.map((issue, index) => (
+                <div
+                  key={`${issue.potId}-${issue.severity}-${index}`}
+                  className="reminder-item"
+                >
+                  <div className="reminder-header">
+                    <div>
+                      <p className="reminder-title">
+                        <strong>{issue.potId}</strong> –{" "}
+                        {issue.plantName || "-"}
+                      </p>
+
+                      <p className="reminder-message">
+                        {formatConsistencySeverity(issue.severity)}:{" "}
+                        {issue.message}
+                      </p>
+                    </div>
+
+                    <div className="reminder-days">
+                      {issue.sourcePotId || "-"}
+                    </div>
+                  </div>
+
+                  {issue.recommendation && (
+                    <div className="reminder-details">
+                      <p>
+                        <small>{issue.recommendation}</small>
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="filter-bar reminder-actions">
+                    <Link to={`/pot/${issue.potId}`} className="button-link">
+                      Ziel-Topf öffnen
+                    </Link>
+
+                    {issue.sourcePotId && (
+                      <Link
+                        to={`/pot/${issue.sourcePotId}`}
+                        className="button-link"
+                      >
+                        Ursprungstopf öffnen
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
       <section className="topf-section">
         <div className="topf-section-header">

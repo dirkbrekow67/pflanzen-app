@@ -347,4 +347,163 @@ router.get("/legacy-candidates", (req, res) => {
   }
 });
 
+router.get("/consistency", (req, res) => {
+  try {
+    const pots = db.prepare("SELECT * FROM pots ORDER BY id").all();
+
+    const potById = new Map(pots.map((pot) => [pot.id, pot]));
+
+    const targetPots = pots.filter(
+      (pot) =>
+        pot.sourcePotId &&
+        pot.sourcePotId !== "" &&
+        (pot.status || "active") !== "empty",
+    );
+
+    const issues = [];
+
+    targetPots.forEach((targetPot) => {
+      const sourcePot = potById.get(targetPot.sourcePotId);
+
+      if (!sourcePot) {
+        issues.push({
+          severity: "error",
+          potId: targetPot.id,
+          plantName: targetPot.plantName || "",
+          sourcePotId: targetPot.sourcePotId,
+          message:
+            "Der Ziel-Topf verweist auf einen Ursprungstopf, der nicht mehr vorhanden ist.",
+          recommendation:
+            "Ursprung manuell prüfen. Herkunftsdaten am Ziel-Topf nachtragen oder Ziel-Topf als Altbestand kennzeichnen.",
+        });
+
+        return;
+      }
+
+      if (!targetPot.prickedDate) {
+        issues.push({
+          severity: "warning",
+          potId: targetPot.id,
+          plantName: targetPot.plantName || "",
+          sourcePotId: targetPot.sourcePotId,
+          message:
+            "Der Ziel-Topf hat einen Ursprungstopf, aber kein Pikierdatum.",
+          recommendation:
+            "Pikierdatum prüfen und nachtragen, wenn es fachlich bekannt ist.",
+        });
+      }
+
+      const hasStoredSourceDetails =
+        targetPot.sourcePlantName ||
+        targetPot.sourceSeedProfileId ||
+        targetPot.sourcePrickingDate;
+
+      if (!hasStoredSourceDetails) {
+        issues.push({
+          severity: "info",
+          potId: targetPot.id,
+          plantName: targetPot.plantName || "",
+          sourcePotId: targetPot.sourcePotId,
+          message:
+            "Der Ziel-Topf stammt aus älteren Pikierdaten. Zusätzliche Herkunftsdaten sind am Ziel-Topf noch nicht separat gespeichert.",
+          recommendation:
+            "Kein akuter Fehler. Bei Bedarf Herkunftsdaten später manuell ergänzen. Neue Pikierungen speichern diese Daten automatisch.",
+        });
+      }
+
+      if (
+        targetPot.sourcePrickingDate &&
+        targetPot.prickedDate &&
+        targetPot.sourcePrickingDate !== targetPot.prickedDate
+      ) {
+        issues.push({
+          severity: "warning",
+          potId: targetPot.id,
+          plantName: targetPot.plantName || "",
+          sourcePotId: targetPot.sourcePotId,
+          message:
+            "Das Herkunfts-Pikierdatum weicht vom Pikierdatum des Ziel-Topfs ab.",
+          recommendation:
+            "Pikierdaten prüfen. In der Regel sollten beide Werte identisch sein.",
+        });
+      }
+
+      if (
+        targetPot.sourcePlantName &&
+        targetPot.plantName &&
+        targetPot.sourcePlantName !== targetPot.plantName
+      ) {
+        issues.push({
+          severity: "warning",
+          potId: targetPot.id,
+          plantName: targetPot.plantName || "",
+          sourcePotId: targetPot.sourcePotId,
+          message:
+            "Die gespeicherte Herkunftspflanze weicht vom aktuellen Pflanzennamen des Ziel-Topfs ab.",
+          recommendation:
+            "Prüfen, ob der Ziel-Topf nachträglich umbenannt wurde oder ob Herkunftsdaten falsch gespeichert sind.",
+        });
+      }
+
+      if (sourcePot.status === "empty" && !hasStoredSourceDetails) {
+        issues.push({
+          severity: "info",
+          potId: targetPot.id,
+          plantName: targetPot.plantName || "",
+          sourcePotId: targetPot.sourcePotId,
+          message:
+            "Der Ursprungstopf ist inzwischen frei. Da es sich um ältere Pikierdaten handelt, ist die Herkunft nur eingeschränkt am Ziel-Topf dokumentiert.",
+          recommendation:
+            "Für Altbestand akzeptabel. Bei neuen Pikierungen bleiben Herkunftsdaten am Ziel-Topf erhalten.",
+        });
+      }
+
+      if (
+        sourcePot.status !== "empty" &&
+        sourcePot.plantName &&
+        targetPot.plantName &&
+        sourcePot.plantName !== targetPot.plantName &&
+        !targetPot.sourcePlantName
+      ) {
+        issues.push({
+          severity: "warning",
+          potId: targetPot.id,
+          plantName: targetPot.plantName || "",
+          sourcePotId: targetPot.sourcePotId,
+          message:
+            "Der Ursprungstopf ist aktiv, enthält aber eine andere Pflanze. Bei älteren Daten kann das auf eine spätere Wiederbelegung hinweisen.",
+          recommendation:
+            "Prüfen, ob der Ursprungstopf nach der Pikierung neu belegt wurde. Künftig gespeicherte Herkunftsdaten verhindern diese Unklarheit.",
+        });
+      }
+    });
+
+    const issueCounts = issues.reduce(
+      (counts, issue) => ({
+        ...counts,
+        [issue.severity]: (counts[issue.severity] || 0) + 1,
+      }),
+      {
+        error: 0,
+        warning: 0,
+        info: 0,
+      },
+    );
+
+    res.json({
+      checkedAt: new Date().toISOString(),
+      totalTargetPots: targetPots.length,
+      totalIssues: issues.length,
+      issueCounts,
+      issues,
+    });
+  } catch (error) {
+    console.error("Fehler bei der Pikier-Konsistenzprüfung:", error);
+
+    res.status(500).json({
+      error: "Pikier-Konsistenz konnte nicht geprüft werden.",
+    });
+  }
+});
+
 export default router;

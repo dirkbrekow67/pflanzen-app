@@ -89,6 +89,8 @@ function App() {
 
   const [reminders, setReminders] = useState([]);
 
+  const [prickingConsistency, setPrickingConsistency] = useState(null);
+
   const [seedSearch, setSeedSearch] = useState("");
 
   const [seedSort, setSeedSort] = useState("name-asc");
@@ -255,6 +257,7 @@ function App() {
       .then(() => {
         loadPots();
         loadReminders();
+        loadPrickingConsistency();
 
         setShowReleaseDialog(false);
         setPotToReleaseId(null);
@@ -293,6 +296,14 @@ function App() {
       .then((data) => setReminders(data))
       .catch((err) => console.error("Erinnerungen Fehler:", err));
   }
+
+  function loadPrickingConsistency() {
+    fetch(`${API_BASE_URL}/api/pricking/consistency`)
+      .then((res) => res.json())
+      .then((data) => setPrickingConsistency(data))
+      .catch((err) => console.error("Pikier-Konsistenzprüfung Fehler:", err));
+  }
+
   function loadSeedProfiles() {
     fetch(`${API_BASE_URL}/api/seed-profiles`)
       .then((res) => res.json())
@@ -363,6 +374,7 @@ function App() {
   useEffect(() => {
     loadPots();
     loadReminders();
+    loadPrickingConsistency();
     loadSeedProfiles();
     loadSeedProfilePhotos();
   }, []);
@@ -476,6 +488,7 @@ function App() {
 
       loadPots();
       loadReminders();
+      loadPrickingConsistency();
 
       setFormData(emptyFormData);
       setEditingPotId(null);
@@ -621,6 +634,8 @@ function App() {
       .then(() => {
         loadPots();
         loadReminders();
+        loadPrickingConsistency();
+
         setEmptyPotCount(1);
         setFormError("");
       })
@@ -858,6 +873,8 @@ function App() {
               hideReminder={hideReminder}
               resetHiddenReminders={resetHiddenReminders}
               markReminderDone={markReminderDone}
+              prickingConsistency={prickingConsistency}
+              loadPrickingConsistency={loadPrickingConsistency}
             />
           }
         />
