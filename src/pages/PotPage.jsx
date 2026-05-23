@@ -96,6 +96,20 @@ function PotPage({
       )
     : [];
 
+  const hasPrickedTargetPots = prickedTargetPots.length > 0;
+
+  const photoHintText = isPrickedTargetPot
+    ? "Optional: Foto des Ziel-Topfs aufnehmen oder hochladen. Nach dem Pikieren sind Fotos zur Anwachsphase und weiteren Entwicklung besonders sinnvoll."
+    : hasPrickedTargetPots
+      ? "Optional: Foto des Ursprungstopfs aufnehmen oder hochladen. Nach dem Pikieren kann dokumentiert werden, wie viele Pflanzen im Ursprungstopf verbleiben und wie sich diese weiterentwickeln."
+      : "Optional: Foto aufnehmen oder hochladen. Die Fotoart hilft später bei der Zuordnung, z. B. Aussaat, Keimkontrolle, vor dem Pikieren, nach dem Pikieren oder Entwicklung.";
+
+  const recommendedPhotoText = isPrickedTargetPot
+    ? "Empfehlung: Bei pikierten Ziel-Töpfen zuerst „Pikiert / nach dem Pikieren“ verwenden. Für spätere Kontrollen dann „Entwicklung“."
+    : hasPrickedTargetPots
+      ? "Empfehlung: Beim Ursprungstopf nach dem Pikieren „Entwicklung“ verwenden, wenn der weitere Wuchs dokumentiert werden soll."
+      : "Empfehlung: Wähle die Fotoart passend zum aktuellen Arbeitsschritt.";
+
   const siblingPrickedTargetPots = isPrickedTargetPot
     ? pots
         .filter(
@@ -158,8 +172,13 @@ function PotPage({
   useEffect(() => {
     if (isPrickedTargetPot) {
       setPhotoType("pricking");
+      return;
     }
-  }, [isPrickedTargetPot, potId]);
+
+    if (hasPrickedTargetPots) {
+      setPhotoType("progress");
+    }
+  }, [isPrickedTargetPot, hasPrickedTargetPots, potId]);
 
   // Lädt die Topfdaten ins Formular und wechselt zurück zur Übersichtsseite
   function handleEditAndGoBack() {
@@ -722,11 +741,9 @@ function PotPage({
       {selectedPot && (
         <>
           <div className="photo-upload">
-            <p className="hint">
-              Optional: Foto aufnehmen oder hochladen. Die Fotoart hilft später
-              bei der Zuordnung, z. B. Aussaat, Keimkontrolle, vor dem Pikieren,
-              nach dem Pikieren oder Entwicklung.
-            </p>
+            <p className="hint">{photoHintText}</p>
+
+            <p className="form-muted-text">{recommendedPhotoText}</p>
             <div className="photo-type-select">
               <label>Fotoart</label>
               <select
@@ -742,7 +759,11 @@ function PotPage({
             </div>
 
             <label className="button-link photo-upload-button">
-              Foto aufnehmen / hochladen
+              {isPrickedTargetPot
+                ? "Foto Ziel-Topf aufnehmen / hochladen"
+                : hasPrickedTargetPots
+                  ? "Foto Ursprungstopf aufnehmen / hochladen"
+                  : "Foto aufnehmen / hochladen"}
               <input
                 type="file"
                 accept="image/*"
