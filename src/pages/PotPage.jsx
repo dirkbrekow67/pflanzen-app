@@ -194,6 +194,11 @@ function PotPage({
   const isCurrentGuideTargetPage =
     hasActivePrickingGuide && selectedPot?.id === currentGuideTargetId;
 
+  const shouldAdvancePrickingGuideAfterPhoto =
+    hasActivePrickingGuide &&
+    isCurrentGuideTargetPage &&
+    photoType === "pricking";
+
   function clearStoredPrickingGuide() {
     localStorage.removeItem(PRICKING_GUIDE_STORAGE_KEY);
   }
@@ -452,8 +457,12 @@ function PotPage({
 
       console.log("Upload erfolgreich:", data);
 
-      if (hasActivePrickingGuide) {
-        setPhotoMessage("Foto wurde gespeichert.");
+      if (shouldAdvancePrickingGuideAfterPhoto) {
+        setPhotoMessage(
+          nextGuideTargetId
+            ? `Foto wurde gespeichert. Weiter zum nächsten Ziel-Topf: ${nextGuideTargetId}`
+            : "Foto wurde gespeichert. Pikierführung kann abgeschlossen werden.",
+        );
         loadReminders();
         skipCurrentGuideTarget();
         return;
@@ -778,8 +787,10 @@ function PotPage({
           <p>
             Öffne den Ziel-Topf, prüfe die Jungpflanze und mache bei Bedarf
             direkt ein Foto mit der Fotoart{" "}
-            <strong>Pikiert / nach dem Pikieren</strong>. Du kannst den Schritt
-            auch überspringen.
+            <strong>Pikiert / nach dem Pikieren</strong>. Wenn das Foto auf dem
+            aktuell geführten Ziel-Topf gespeichert wird, springt die Führung
+            automatisch zum nächsten Ziel-Topf. Du kannst den Schritt auch
+            überspringen.
           </p>
 
           <p className="form-muted-text">
@@ -790,6 +801,20 @@ function PotPage({
           {currentGuideTargetPot && (
             <p className="form-muted-text">
               Pflanze: <strong>{currentGuideTargetPot.plantName || "-"}</strong>
+            </p>
+          )}
+
+          {isCurrentGuideTargetPage ? (
+            <p className="form-muted-text">
+              Du befindest dich auf dem aktuell geführten Ziel-Topf. Ein Foto
+              mit der Fotoart <strong>Pikiert / nach dem Pikieren</strong>{" "}
+              schaltet die Führung automatisch weiter.
+            </p>
+          ) : (
+            <p className="form-muted-text">
+              Du befindest dich aktuell nicht auf dem geführten Ziel-Topf. Fotos
+              an diesem Topf werden gespeichert, schalten die Pikierführung aber
+              nicht weiter.
             </p>
           )}
 
