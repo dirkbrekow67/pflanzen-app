@@ -123,6 +123,7 @@ function App() {
 
   const [releaseReason, setReleaseReason] = useState("freigegeben");
   const [releaseReasonNote, setReleaseReasonNote] = useState("");
+  const [confirmReleaseAwareness, setConfirmReleaseAwareness] = useState(false);
   const [showReleaseDialog, setShowReleaseDialog] = useState(false);
   const [potToReleaseId, setPotToReleaseId] = useState(null);
   const [seedFilter, setSeedFilter] = useState("all");
@@ -194,6 +195,8 @@ function App() {
     setPotToReleaseId(potId);
     setReleaseReason("freigegeben");
     setReleaseReasonNote("");
+    setConfirmReleaseAwareness(false);
+    setFormError("");
     setShowReleaseDialog(true);
     setTimeout(() => {
       window.scrollTo({
@@ -207,6 +210,13 @@ function App() {
     const potToClear = potToRelease;
 
     if (!potToClear) return;
+
+    if (!confirmReleaseAwareness) {
+      setFormError(
+        "Bitte bestätige, dass die Auswirkungen der Topf-Freigabe verstanden wurden.",
+      );
+      return;
+    }
 
     const finalReason = releaseReason;
     const finalReasonNote =
@@ -250,6 +260,7 @@ function App() {
         setPotToReleaseId(null);
         setReleaseReason("freigegeben");
         setReleaseReasonNote("");
+        setConfirmReleaseAwareness(false);
         setEditingPotId(null);
         setFormError("");
       })
@@ -734,19 +745,33 @@ function App() {
               </p>
             )}
 
-            {hasActiveTargetPotsForRelease && (
-              <div className="error-box">
-                <strong>Hinweis:</strong> Zu diesem Topf bestehen noch pikiert
-                erzeugte Ziel-Töpfe. Die Freigabe beendet nur den aktuellen
-                Zustand des Ursprungstopfs. Die Ziel-Töpfe bleiben erhalten.
-                <br />
-                <br />
-                Aktive Ziel-Töpfe:{" "}
-                <strong>
-                  {activeTargetPotsForRelease.map((pot) => pot.id).join(", ")}
-                </strong>
-              </div>
-            )}
+            <div className="error-box">
+              <strong>Wichtiger Hinweis:</strong> Die Freigabe leert nur diesen
+              Topf und schreibt den aktuellen Zustand in den Verlauf. Die
+              Topf-ID bleibt erhalten und kann später neu belegt werden.
+              {hasActiveTargetPotsForRelease && (
+                <>
+                  <br />
+                  <br />
+                  Zu diesem Topf bestehen noch pikiert erzeugte aktive
+                  Ziel-Töpfe. Diese Ziel-Töpfe bleiben erhalten und werden durch
+                  die Freigabe nicht verändert.
+                  <br />
+                  <br />
+                  Aktive Ziel-Töpfe:{" "}
+                  <strong>
+                    {activeTargetPotsForRelease.map((pot) => pot.id).join(", ")}
+                  </strong>
+                  <br />
+                  <br />
+                  Bereits gespeicherte Herkunftsdaten an Ziel-Töpfen bleiben
+                  dort erhalten. Bei älteren Ziel-Töpfen kann die Herkunft nur
+                  eingeschränkt dokumentiert sein.
+                </>
+              )}
+            </div>
+
+            {formError && <p className="error-box">{formError}</p>}
 
             <div className="form-field">
               <label>Beendigungsgrund</label>
@@ -773,8 +798,25 @@ function App() {
                 />
               </div>
             )}
+
+            <label className="label-select-checkbox">
+              <input
+                type="checkbox"
+                checked={confirmReleaseAwareness}
+                onChange={(event) =>
+                  setConfirmReleaseAwareness(event.target.checked)
+                }
+              />
+              Ich habe verstanden, dass dieser Topf geleert und der aktuelle
+              Zustand in den Verlauf übernommen wird.
+            </label>
+
             <div className="filter-bar">
-              <button className="button" onClick={confirmClearPot}>
+              <button
+                className="button"
+                onClick={confirmClearPot}
+                disabled={!confirmReleaseAwareness}
+              >
                 {hasActiveTargetPotsForRelease
                   ? "Freigabe trotz Ziel-Töpfen bestätigen"
                   : "Freigabe bestätigen"}
@@ -787,6 +829,8 @@ function App() {
                   setPotToReleaseId(null);
                   setReleaseReason("freigegeben");
                   setReleaseReasonNote("");
+                  setConfirmReleaseAwareness(false);
+                  setFormError("");
                 }}
               >
                 Abbrechen
