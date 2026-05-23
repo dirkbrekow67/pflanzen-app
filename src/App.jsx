@@ -204,7 +204,7 @@ function App() {
   }
 
   function confirmClearPot() {
-    const potToClear = pots.find((pot) => pot.id === potToReleaseId);
+    const potToClear = potToRelease;
 
     if (!potToClear) return;
 
@@ -322,6 +322,20 @@ function App() {
 
     return new Date() >= new Date(hiddenUntil);
   });
+
+  const potToRelease = pots.find((pot) => pot.id === potToReleaseId);
+
+  const activeTargetPotsForRelease = potToRelease
+    ? pots
+        .filter(
+          (pot) =>
+            pot.sourcePotId === potToRelease.id &&
+            (pot.status || "active") !== "empty",
+        )
+        .sort((a, b) => a.id.localeCompare(b.id, "de"))
+    : [];
+
+  const hasActiveTargetPotsForRelease = activeTargetPotsForRelease.length > 0;
 
   function resetHiddenReminders() {
     setHiddenReminders({});
@@ -709,6 +723,28 @@ function App() {
         <div className="modal-backdrop">
           <div className="modal-card">
             <h2>Topf freigeben</h2>
+
+            {potToRelease && (
+              <p className="form-muted-text">
+                Topf: <strong>{potToRelease.id}</strong>
+                {potToRelease.plantName ? ` – ${potToRelease.plantName}` : ""}
+              </p>
+            )}
+
+            {hasActiveTargetPotsForRelease && (
+              <div className="error-box">
+                <strong>Hinweis:</strong> Zu diesem Topf bestehen noch pikiert
+                erzeugte Ziel-Töpfe. Die Freigabe beendet nur den aktuellen
+                Zustand des Ursprungstopfs. Die Ziel-Töpfe bleiben erhalten.
+                <br />
+                <br />
+                Aktive Ziel-Töpfe:{" "}
+                <strong>
+                  {activeTargetPotsForRelease.map((pot) => pot.id).join(", ")}
+                </strong>
+              </div>
+            )}
+
             <div className="form-field">
               <label>Beendigungsgrund</label>
               <select
@@ -736,7 +772,9 @@ function App() {
             )}
             <div className="filter-bar">
               <button className="button" onClick={confirmClearPot}>
-                Freigabe bestätigen
+                {hasActiveTargetPotsForRelease
+                  ? "Freigabe trotz Ziel-Töpfen bestätigen"
+                  : "Freigabe bestätigen"}
               </button>
 
               <button
