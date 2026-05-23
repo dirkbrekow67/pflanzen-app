@@ -48,17 +48,23 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
   const qrValue = `${QR_BASE_URL}/pot/${pot.id}`;
 
   const hasSowingExtras =
-    hasValue(pot.sowingDepthNote) ||
-    hasValue(pot.sowingNotes) ||
-    hasValue(pot.rowSpacingCm) ||
-    hasValue(pot.plantSpacingCm) ||
-    hasValue(pot.sowingWidthCm) ||
-    hasValue(pot.sowingMode) ||
+    hasValue(pot.sowingDepthNote) || hasValue(pot.sowingNotes);
+
+  const hasPrickingData =
     hasValue(pot.seedCount) ||
     hasValue(pot.seedlingsCount) ||
     hasValue(pot.plantsInPot) ||
     hasValue(pot.prickedDate) ||
-    hasValue(pot.sourcePotId);
+    hasValue(pot.sourcePotId) ||
+    hasValue(pot.sourcePlantName) ||
+    hasValue(pot.sourceSeedProfileId) ||
+    hasValue(pot.sourcePrickingDate);
+
+  const hasSourceData =
+    hasValue(pot.sourcePotId) ||
+    hasValue(pot.sourcePlantName) ||
+    hasValue(pot.sourceSeedProfileId) ||
+    hasValue(pot.sourcePrickingDate);
 
   const hasHarvestData =
     hasValue(pot.harvestFromMonth) || hasValue(pot.harvestToMonth);
@@ -209,45 +215,6 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
                 <span className="detail-label">Aussaat-Art</span>
                 <strong>{formatSowingMode(pot.sowingMode)}</strong>
               </p>
-
-              <p>
-                <span className="detail-label">Ausgesäte Samen</span>
-                <strong>{formatValue(pot.seedCount)}</strong>
-              </p>
-
-              <p>
-                <span className="detail-label">Entstandene Pflanzen</span>
-                <strong>{formatValue(pot.seedlingsCount)}</strong>
-              </p>
-
-              <p>
-                <span className="detail-label">Pflanzen im Topf</span>
-                <strong>{formatValue(pot.plantsInPot)}</strong>
-              </p>
-
-              <p>
-                <span className="detail-label">Pikiert am</span>
-                <strong>{formatDateGerman(pot.prickedDate)}</strong>
-              </p>
-
-              <p>
-                <span className="detail-label">Ursprungstopf</span>
-                <strong>{pot.sourcePotId || "-"}</strong>
-              </p>
-              <p>
-                <span className="detail-label">Herkunft Pflanze</span>
-                <strong>{pot.sourcePlantName || "-"}</strong>
-              </p>
-
-              <p>
-                <span className="detail-label">Herkunft Samenprofil</span>
-                <strong>{pot.sourceSeedProfileId || "-"}</strong>
-              </p>
-
-              <p>
-                <span className="detail-label">Herkunft Pikierdatum</span>
-                <strong>{formatDateGerman(pot.sourcePrickingDate)}</strong>
-              </p>
             </div>
 
             {hasSowingExtras && (
@@ -266,6 +233,68 @@ function PotDetails({ pot, onEditPot, onClearPot }) {
               </div>
             )}
           </section>
+
+          {hasPrickingData && (
+            <section className="detail-section detail-section-card">
+              <h3>Pikierung / Herkunft</h3>
+
+              <div className="detail-fact-grid">
+                <p>
+                  <span className="detail-label">Ausgesäte Samen</span>
+                  <strong>{formatValue(pot.seedCount)}</strong>
+                </p>
+
+                <p>
+                  <span className="detail-label">Entstandene Pflanzen</span>
+                  <strong>{formatValue(pot.seedlingsCount)}</strong>
+                </p>
+
+                <p>
+                  <span className="detail-label">Pflanzen im Topf</span>
+                  <strong>{formatValue(pot.plantsInPot)}</strong>
+                </p>
+
+                <p>
+                  <span className="detail-label">Pikiert am</span>
+                  <strong>{formatDateGerman(pot.prickedDate)}</strong>
+                </p>
+
+                {hasSourceData && (
+                  <>
+                    <p>
+                      <span className="detail-label">Ursprungstopf</span>
+                      <strong>{pot.sourcePotId || "-"}</strong>
+                    </p>
+
+                    <p>
+                      <span className="detail-label">Herkunft Pflanze</span>
+                      <strong>{pot.sourcePlantName || "-"}</strong>
+                    </p>
+
+                    <p>
+                      <span className="detail-label">Herkunft Samenprofil</span>
+                      <strong>{pot.sourceSeedProfileId || "-"}</strong>
+                    </p>
+
+                    <p>
+                      <span className="detail-label">Herkunft Pikierdatum</span>
+                      <strong>
+                        {formatDateGerman(pot.sourcePrickingDate)}
+                      </strong>
+                    </p>
+                  </>
+                )}
+              </div>
+
+              {hasSourceData && (
+                <p className="detail-note">
+                  Dieser Topf wurde aus einem Ursprungstopf pikiert. Die
+                  Herkunftsdaten bleiben am Ziel-Topf gespeichert, auch wenn der
+                  Ursprungstopf später freigegeben oder neu belegt wird.
+                </p>
+              )}
+            </section>
+          )}
 
           <section className="detail-section detail-section-card">
             <h3>Nach draußen</h3>
