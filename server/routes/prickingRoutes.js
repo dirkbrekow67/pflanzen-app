@@ -3,6 +3,41 @@
 import express from "express";
 import db from "../database/db.js";
 
+function parseTargetPotIds(targetPotIdsJson) {
+  if (!targetPotIdsJson) return [];
+
+  try {
+    const parsed = JSON.parse(targetPotIdsJson);
+
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function mapPrickingEvent(event, potById = new Map()) {
+  const targetPotIds = parseTargetPotIds(event.targetPotIdsJson);
+
+  return {
+    ...event,
+    targetPotIds,
+    sourcePotStatus: potById.get(event.sourcePotId)?.status || "",
+    sourcePotCurrentPlantName: potById.get(event.sourcePotId)?.plantName || "",
+    targetPotDetails: targetPotIds.map((targetPotId) => {
+      const targetPot = potById.get(targetPotId);
+
+      return {
+        id: targetPotId,
+        exists: Boolean(targetPot),
+        status: targetPot?.status || "",
+        plantName: targetPot?.plantName || "",
+        sourcePotId: targetPot?.sourcePotId || "",
+        prickedDate: targetPot?.prickedDate || "",
+      };
+    }),
+  };
+}
+
 const router = express.Router();
 
 router.post("/", (req, res) => {
@@ -533,6 +568,9 @@ router.get("/consistency", (req, res) => {
 
 router.get("/events", (req, res) => {
   try {
+    const pots = db.prepare("SELECT * FROM pots ORDER BY id").all();
+    const potById = new Map(pots.map((pot) => [pot.id, pot]));
+
     const events = db
       .prepare(
         `
@@ -542,12 +580,7 @@ router.get("/events", (req, res) => {
       `,
       )
       .all()
-      .map((event) => ({
-        ...event,
-        targetPotIds: event.targetPotIdsJson
-          ? JSON.parse(event.targetPotIdsJson)
-          : [],
-      }));
+      .map((event) => mapPrickingEvent(event, potById));
 
     res.json(events);
   } catch (error) {
@@ -563,6 +596,9 @@ router.get("/events/:potId", (req, res) => {
   try {
     const { potId } = req.params;
 
+    const pots = db.prepare("SELECT * FROM pots ORDER BY id").all();
+    const potById = new Map(pots.map((pot) => [pot.id, pot]));
+
     const events = db
       .prepare(
         `
@@ -574,12 +610,7 @@ router.get("/events/:potId", (req, res) => {
       `,
       )
       .all(potId, `%"${potId}"%`)
-      .map((event) => ({
-        ...event,
-        targetPotIds: event.targetPotIdsJson
-          ? JSON.parse(event.targetPotIdsJson)
-          : [],
-      }));
+      .map((event) => mapPrickingEvent(event, potById));
 
     res.json(events);
   } catch (error) {

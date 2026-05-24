@@ -36,6 +36,13 @@ function formatHistoryReason(value) {
   return value || "-";
 }
 
+function formatPotStatus(value) {
+  if (value === "active") return "belegt";
+  if (value === "empty") return "frei";
+
+  return value || "-";
+}
+
 function isPrickingHistoryReason(value) {
   return value === "teilpikiert" || value === "pikiert";
 }
@@ -974,9 +981,18 @@ function PotPage({
                       ? new Date(event.prickingDate).toLocaleDateString("de-DE")
                       : "-"}
                   </p>
+                  {event.createdAt && (
+                    <p>
+                      Gespeichert am:{" "}
+                      {new Date(event.createdAt).toLocaleString("de-DE")}
+                    </p>
+                  )}
 
                   <p>
                     Ursprungstopf: <strong>{event.sourcePotId || "-"}</strong>
+                    {event.sourcePotStatus
+                      ? ` · aktuell ${formatPotStatus(event.sourcePotStatus)}`
+                      : ""}
                   </p>
 
                   <p>
@@ -1001,6 +1017,25 @@ function PotPage({
                     </strong>
                   </p>
 
+                  {event.targetPotDetails?.length > 0 && (
+                    <div className="detail-fact-grid">
+                      {event.targetPotDetails.map((targetPot) => (
+                        <p key={targetPot.id}>
+                          <span className="detail-label">
+                            Ziel-Topf {targetPot.id}
+                          </span>
+                          <strong>
+                            {targetPot.exists
+                              ? `${formatPotStatus(targetPot.status)} · ${
+                                  targetPot.plantName || "-"
+                                }`
+                              : "nicht gefunden"}
+                          </strong>
+                        </p>
+                      ))}
+                    </div>
+                  )}
+
                   <p>
                     Verbleibend im Ursprungstopf:{" "}
                     <strong>{event.plantsRemainingInSourcePot ?? "-"}</strong>
@@ -1017,17 +1052,26 @@ function PotPage({
                         </Link>
                       )}
 
-                    {targetIds
-                      .filter((targetId) => targetId !== selectedPot.id)
-                      .map((targetId) => (
-                        <Link
-                          key={targetId}
-                          to={`/pot/${targetId}`}
-                          className="button-link"
-                        >
-                          Ziel-Topf {targetId} öffnen
-                        </Link>
-                      ))}
+                    {event.targetPotDetails
+                      ?.filter((targetPot) => targetPot.id !== selectedPot.id)
+                      .map((targetPot) =>
+                        targetPot.exists ? (
+                          <Link
+                            key={targetPot.id}
+                            to={`/pot/${targetPot.id}`}
+                            className="button-link"
+                          >
+                            Ziel-Topf {targetPot.id} öffnen
+                          </Link>
+                        ) : (
+                          <span
+                            key={targetPot.id}
+                            className="button-link button-link-disabled"
+                          >
+                            Ziel-Topf {targetPot.id} nicht gefunden
+                          </span>
+                        ),
+                      )}
                   </div>
                 </div>
               );
