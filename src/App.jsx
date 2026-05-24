@@ -450,6 +450,12 @@ function App() {
     */
     try {
       if (editingPotId) {
+        const existingPot = pots.find((pot) => pot.id === editingPotId);
+        const protectedPotData = preserveProtectedPrickingFields(
+          existingPot,
+          potData,
+        );
+
         const response = await fetch(
           `${API_BASE_URL}/api/pots/${editingPotId}`,
           {
@@ -459,7 +465,7 @@ function App() {
             },
             body: JSON.stringify({
               id: editingPotId,
-              ...potData,
+              ...protectedPotData,
             }),
           },
         );
@@ -533,6 +539,20 @@ function App() {
 
   function handleEditPot(pot) {
     loadPotIntoForm(pot);
+  }
+
+  function preserveProtectedPrickingFields(existingPot, potData) {
+    if (!existingPot?.sourcePotId) {
+      return potData;
+    }
+
+    return {
+      ...potData,
+      sourcePotId: existingPot.sourcePotId || "",
+      sourcePlantName: existingPot.sourcePlantName || "",
+      sourceSeedProfileId: existingPot.sourceSeedProfileId || "",
+      sourcePrickingDate: existingPot.sourcePrickingDate || "",
+    };
   }
 
   function handleEditPotById(potId) {

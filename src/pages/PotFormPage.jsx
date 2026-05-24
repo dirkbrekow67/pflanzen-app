@@ -38,6 +38,9 @@ function PotFormPage({
     (profile) => profile.id === selectedSeedProfileId,
   );
 
+  const isPrickedTargetPot =
+    editingPotId && formData.sourcePotId && formData.sourcePotId !== "";
+
   async function handleSaveAndGoBack() {
     const success = await handleAddPot();
 
@@ -53,6 +56,23 @@ function PotFormPage({
   return (
     <div className="container">
       <h1>Topf belegen / bearbeiten</h1>
+
+      {isPrickedTargetPot && (
+        <div className="card-light">
+          <h2>Pikiertes Ziel</h2>
+          <p>
+            Dieser Topf wurde aus <strong>{formData.sourcePotId}</strong>{" "}
+            pikiert. Die Herkunftsdaten werden beim Bearbeiten geschützt und
+            nicht durch leere Formularwerte überschrieben.
+          </p>
+
+          <p className="form-muted-text">
+            Änderungen an Pflanze, Anzahl, Notizen oder weiteren
+            Entwicklungsdaten sind möglich. Ursprungstopf und gespeicherte
+            Herkunftsdaten bleiben erhalten.
+          </p>
+        </div>
+      )}
 
       <div className="page-actions">
         <Link to="/" className="button-link">
