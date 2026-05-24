@@ -240,6 +240,10 @@ function App() {
         endedAt: new Date().toISOString().split("T")[0],
         endReason: finalReason,
         endReasonNote: finalReasonNote,
+        sourcePotId: potToClear.sourcePotId || "",
+        sourcePlantName: potToClear.sourcePlantName || "",
+        sourceSeedProfileId: potToClear.sourceSeedProfileId || "",
+        sourcePrickingDate: potToClear.sourcePrickingDate || "",
       }),
     })
       .then(() => {

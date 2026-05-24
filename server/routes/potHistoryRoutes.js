@@ -1,3 +1,5 @@
+// server/routes/potHistoryRoutes.js
+
 import express from "express";
 import db from "../database/db.js";
 
@@ -16,6 +18,10 @@ router.post("/", (req, res) => {
       endedAt,
       endReason,
       endReasonNote,
+      sourcePotId = "",
+      sourcePlantName = "",
+      sourceSeedProfileId = "",
+      sourcePrickingDate = "",
     } = req.body;
 
     const stmt = db.prepare(`
@@ -29,9 +35,13 @@ router.post("/", (req, res) => {
         startedAt,
         endedAt,
         endReason,
-        endReasonNote
+        endReasonNote,
+        sourcePotId,
+        sourcePlantName,
+        sourceSeedProfileId,
+        sourcePrickingDate
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     stmt.run(
@@ -45,6 +55,10 @@ router.post("/", (req, res) => {
       endedAt,
       endReason,
       endReasonNote,
+      sourcePotId,
+      sourcePlantName,
+      sourceSeedProfileId,
+      sourcePrickingDate,
     );
 
     res.json({

@@ -977,6 +977,26 @@ function PotPage({
 
                 <p>Grund: {formatHistoryReason(entry.endReason)}</p>
 
+                {entry.sourcePotId && (
+                  <p>
+                    <small>
+                      Pikiertes Ziel aus Ursprungstopf:{" "}
+                      <strong>{entry.sourcePotId}</strong>
+                      {entry.sourcePlantName
+                        ? ` · Pflanze: ${entry.sourcePlantName}`
+                        : ""}
+                      {entry.sourceSeedProfileId
+                        ? ` · Samenprofil: ${entry.sourceSeedProfileId}`
+                        : ""}
+                      {entry.sourcePrickingDate
+                        ? ` · Pikiert am ${new Date(
+                            entry.sourcePrickingDate,
+                          ).toLocaleDateString("de-DE")}`
+                        : ""}
+                    </small>
+                  </p>
+                )}
+
                 {entry.endReasonNote && (
                   <p>
                     <small>Hinweis: {entry.endReasonNote}</small>

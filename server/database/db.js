@@ -139,24 +139,56 @@ try {
 }
 
 db.exec(`
-CREATE TABLE IF NOT EXISTS pot_history (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  potId TEXT,
-  plantName TEXT,
-  seedProfileId TEXT,
-  sowingDate TEXT,
-  resowingDate TEXT,
-  potNotes TEXT,
-  startedAt TEXT,
-  endedAt TEXT,
-  endReason TEXT,
-  endReasonNote TEXT,
-  createdAt TEXT DEFAULT CURRENT_TIMESTAMP
-);
+  CREATE TABLE IF NOT EXISTS pot_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    potId TEXT,
+    plantName TEXT,
+    seedProfileId TEXT,
+    sowingDate TEXT,
+    resowingDate TEXT,
+    potNotes TEXT,
+    startedAt TEXT,
+    endedAt TEXT,
+    endReason TEXT,
+    endReasonNote TEXT,
+    sourcePotId TEXT,
+    sourcePlantName TEXT,
+    sourceSeedProfileId TEXT,
+    sourcePrickingDate TEXT,
+    createdAt TEXT DEFAULT CURRENT_TIMESTAMP
+  )
 `);
 
 try {
   db.prepare("ALTER TABLE pot_history ADD COLUMN endReasonNote TEXT").run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare("ALTER TABLE pot_history ADD COLUMN sourcePotId TEXT").run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare("ALTER TABLE pot_history ADD COLUMN sourcePlantName TEXT").run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare(
+    "ALTER TABLE pot_history ADD COLUMN sourceSeedProfileId TEXT",
+  ).run();
+} catch {
+  // Spalte existiert bereits
+}
+
+try {
+  db.prepare(
+    "ALTER TABLE pot_history ADD COLUMN sourcePrickingDate TEXT",
+  ).run();
 } catch {
   // Spalte existiert bereits
 }
