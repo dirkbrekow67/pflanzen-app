@@ -48,6 +48,7 @@ function PotPage({
   loadReminders,
 }) {
   const [history, setHistory] = useState([]);
+  const [prickingEvents, setPrickingEvents] = useState([]);
   const [photos, setPhotos] = useState([]);
   const [photoType, setPhotoType] = useState("progress");
   const [photoMessage, setPhotoMessage] = useState("");
@@ -216,6 +217,13 @@ function PotPage({
       .then((res) => res.json())
       .then((data) => setHistory(data))
       .catch((err) => console.error("Historie Fehler:", err));
+  }, [potId, pots]);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/pricking/events/${potId}`)
+      .then((res) => res.json())
+      .then((data) => setPrickingEvents(data))
+      .catch((err) => console.error("Pikierereignisse Fehler:", err));
   }, [potId, pots]);
 
   useEffect(() => {
@@ -397,6 +405,11 @@ function PotPage({
 
       loadPots();
       loadReminders();
+
+      fetch(`${API_BASE_URL}/api/pricking/events/${selectedPot.id}`)
+        .then((res) => res.json())
+        .then((data) => setPrickingEvents(data))
+        .catch((err) => console.error("Pikierereignisse Fehler:", err));
 
       setShowPrickingDialog(false);
       setSelectedTargetPotIds([]);
@@ -928,6 +941,99 @@ function PotPage({
             </div>
           )}
         </>
+      )}
+
+      {selectedPot && prickingEvents.length > 0 && (
+        <section className="card-light page-actions-large">
+          <h2>Pikierhistorie</h2>
+
+          <div className="history-wrapper">
+            {prickingEvents.map((event) => {
+              const targetIds = Array.isArray(event.targetPotIds)
+                ? event.targetPotIds
+                : [];
+
+              const isSourceEvent = event.sourcePotId === selectedPot.id;
+              const isTargetEvent = targetIds.includes(selectedPot.id);
+
+              return (
+                <div key={event.id} className="history-entry">
+                  <p>
+                    <strong>
+                      {isSourceEvent
+                        ? "Pikierung aus diesem Ursprungstopf"
+                        : isTargetEvent
+                          ? "Entstanden durch Pikierung"
+                          : "Pikierereignis"}
+                    </strong>
+                  </p>
+
+                  <p>
+                    Pikierdatum:{" "}
+                    {event.prickingDate
+                      ? new Date(event.prickingDate).toLocaleDateString("de-DE")
+                      : "-"}
+                  </p>
+
+                  <p>
+                    Ursprungstopf: <strong>{event.sourcePotId || "-"}</strong>
+                  </p>
+
+                  <p>
+                    Pflanze: <strong>{event.sourcePlantName || "-"}</strong>
+                  </p>
+
+                  {event.sourceSeedProfileId && (
+                    <p>
+                      Samenprofil: <strong>{event.sourceSeedProfileId}</strong>
+                    </p>
+                  )}
+
+                  <p>
+                    Entstandene Pflanzen:{" "}
+                    <strong>{event.totalSeedlings ?? "-"}</strong>
+                  </p>
+
+                  <p>
+                    Ziel-Töpfe:{" "}
+                    <strong>
+                      {targetIds.length > 0 ? targetIds.join(", ") : "-"}
+                    </strong>
+                  </p>
+
+                  <p>
+                    Verbleibend im Ursprungstopf:{" "}
+                    <strong>{event.plantsRemainingInSourcePot ?? "-"}</strong>
+                  </p>
+
+                  <div className="filter-bar reminder-actions">
+                    {event.sourcePotId &&
+                      event.sourcePotId !== selectedPot.id && (
+                        <Link
+                          to={`/pot/${event.sourcePotId}`}
+                          className="button-link"
+                        >
+                          Ursprungstopf öffnen
+                        </Link>
+                      )}
+
+                    {targetIds
+                      .filter((targetId) => targetId !== selectedPot.id)
+                      .map((targetId) => (
+                        <Link
+                          key={targetId}
+                          to={`/pot/${targetId}`}
+                          className="button-link"
+                        >
+                          Ziel-Topf {targetId} öffnen
+                        </Link>
+                      ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
       )}
 
       <h2 className="history-title">Verlauf</h2>

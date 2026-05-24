@@ -188,6 +188,31 @@ router.post("/", (req, res) => {
       historyNote,
     );
 
+    db.prepare(
+      `
+  INSERT INTO pricking_events (
+    sourcePotId,
+    sourcePlantName,
+    sourceSeedProfileId,
+    prickingDate,
+    totalSeedlings,
+    targetPotIdsJson,
+    plantsRemainingInSourcePot,
+    note
+  )
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+`,
+    ).run(
+      sourcePot.id,
+      sourcePot.plantName || "",
+      sourcePot.seedProfileId || "",
+      prickingDate,
+      seedlingsTotal,
+      JSON.stringify(targetPotIds),
+      plantsRemainingInSourcePot,
+      "",
+    );
+
     const updateTargetPot = db.prepare(`
       UPDATE pots
       SET plantName = ?,
@@ -502,6 +527,66 @@ router.get("/consistency", (req, res) => {
 
     res.status(500).json({
       error: "Pikier-Konsistenz konnte nicht geprüft werden.",
+    });
+  }
+});
+
+router.get("/events", (req, res) => {
+  try {
+    const events = db
+      .prepare(
+        `
+        SELECT *
+        FROM pricking_events
+        ORDER BY prickingDate DESC, id DESC
+      `,
+      )
+      .all()
+      .map((event) => ({
+        ...event,
+        targetPotIds: event.targetPotIdsJson
+          ? JSON.parse(event.targetPotIdsJson)
+          : [],
+      }));
+
+    res.json(events);
+  } catch (error) {
+    console.error("Fehler beim Laden der Pikierereignisse:", error);
+
+    res.status(500).json({
+      error: "Pikierereignisse konnten nicht geladen werden.",
+    });
+  }
+});
+
+router.get("/events/:potId", (req, res) => {
+  try {
+    const { potId } = req.params;
+
+    const events = db
+      .prepare(
+        `
+        SELECT *
+        FROM pricking_events
+        WHERE sourcePotId = ?
+           OR targetPotIdsJson LIKE ?
+        ORDER BY prickingDate DESC, id DESC
+      `,
+      )
+      .all(potId, `%"${potId}"%`)
+      .map((event) => ({
+        ...event,
+        targetPotIds: event.targetPotIdsJson
+          ? JSON.parse(event.targetPotIdsJson)
+          : [],
+      }));
+
+    res.json(events);
+  } catch (error) {
+    console.error("Fehler beim Laden der Topf-Pikierereignisse:", error);
+
+    res.status(500).json({
+      error: "Pikierereignisse für diesen Topf konnten nicht geladen werden.",
     });
   }
 });

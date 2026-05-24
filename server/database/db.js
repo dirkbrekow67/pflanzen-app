@@ -194,6 +194,21 @@ try {
 }
 
 db.exec(`
+  CREATE TABLE IF NOT EXISTS pricking_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sourcePotId TEXT,
+    sourcePlantName TEXT,
+    sourceSeedProfileId TEXT,
+    prickingDate TEXT,
+    totalSeedlings INTEGER,
+    targetPotIdsJson TEXT,
+    plantsRemainingInSourcePot INTEGER,
+    createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+    note TEXT
+  )
+`);
+
+db.exec(`
 CREATE TABLE IF NOT EXISTS seed_profiles (
   id TEXT PRIMARY KEY,
   plantName TEXT,
