@@ -20,6 +20,8 @@ function HomePage({
   markReminderDone,
   prickingConsistency,
   loadPrickingConsistency,
+  prickingEvents,
+  loadPrickingEvents,
 }) {
   const [showManagement, setShowManagement] = useState(false);
 
@@ -263,6 +265,13 @@ function HomePage({
               >
                 Pikierdaten prüfen
               </button>
+              <button
+                type="button"
+                onClick={loadPrickingEvents}
+                className="button"
+              >
+                Pikierhistorie aktualisieren
+              </button>
 
               {prickingConsistency && (
                 <div className="form-muted-text">
@@ -292,7 +301,128 @@ function HomePage({
                   </p>
                 </div>
               )}
+
+              {prickingEvents?.length > 0 && (
+                <div className="form-muted-text">
+                  <p>
+                    Gespeicherte Pikierungen:{" "}
+                    <strong>{prickingEvents.length}</strong>
+                  </p>
+                </div>
+              )}
             </div>
+          </div>
+        </section>
+      )}
+
+      {showManagement && prickingEvents?.length > 0 && (
+        <section className="card-light reminder-box">
+          <h2>Pikierhistorie</h2>
+
+          <div className="reminder-list">
+            {prickingEvents.map((event) => {
+              const targetPotDetails = event.targetPotDetails || [];
+              const targetIds = Array.isArray(event.targetPotIds)
+                ? event.targetPotIds
+                : [];
+
+              return (
+                <div key={event.id} className="reminder-item">
+                  <div className="reminder-header">
+                    <div>
+                      <p className="reminder-title">
+                        <strong>{event.sourcePotId}</strong> –{" "}
+                        {event.sourcePlantName || "-"}
+                      </p>
+
+                      <p className="reminder-message">
+                        Pikiert am{" "}
+                        {event.prickingDate
+                          ? new Date(event.prickingDate).toLocaleDateString(
+                              "de-DE",
+                            )
+                          : "-"}
+                        {" · "}
+                        Ziel-Töpfe:{" "}
+                        <strong>
+                          {targetIds.length > 0 ? targetIds.join(", ") : "-"}
+                        </strong>
+                      </p>
+                    </div>
+
+                    <div className="reminder-days">
+                      {event.totalSeedlings ?? "-"} Pflanzen
+                    </div>
+                  </div>
+
+                  <div className="reminder-details">
+                    <p>
+                      <small>
+                        Samenprofil: {event.sourceSeedProfileId || "-"} ·
+                        Verbleibend im Ursprungstopf:{" "}
+                        {event.plantsRemainingInSourcePot ?? "-"} · Gespeichert
+                        am:{" "}
+                        {event.createdAt
+                          ? new Date(event.createdAt).toLocaleString("de-DE")
+                          : "-"}
+                      </small>
+                    </p>
+
+                    {targetPotDetails.length > 0 && (
+                      <p>
+                        <small>
+                          Aktuelle Ziel-Töpfe:{" "}
+                          {targetPotDetails
+                            .map((targetPot) => {
+                              const status =
+                                targetPot.status === "active"
+                                  ? "belegt"
+                                  : targetPot.status === "empty"
+                                    ? "frei"
+                                    : targetPot.status || "-";
+
+                              return `${targetPot.id} (${status}, ${
+                                targetPot.plantName || "-"
+                              })`;
+                            })
+                            .join(" · ")}
+                        </small>
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="filter-bar reminder-actions">
+                    {event.sourcePotId && (
+                      <Link
+                        to={`/pot/${event.sourcePotId}`}
+                        className="button-link"
+                      >
+                        Ursprungstopf öffnen
+                      </Link>
+                    )}
+
+                    {targetPotDetails.map((targetPot) =>
+                      targetPot.exists ? (
+                        <Link
+                          key={targetPot.id}
+                          to={`/pot/${targetPot.id}`}
+                          className="button-link"
+                        >
+                          Ziel-Topf {targetPot.id} öffnen
+                        </Link>
+                      ) : (
+                        <span
+                          key={targetPot.id}
+                          className="button-link button-link-disabled"
+                        >
+                          Ziel-Topf {targetPot.id} nicht gefunden
+                        </span>
+                      ),
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </section>
       )}
